@@ -1,0 +1,8 @@
+spring:
+  cloud:
+    config:
+      name: discovery
+      uri: http://localhost:8081
+
+#      spring.cloud.config.name=discovery
+#      spring.cloud.config.uri=http://localhost:8081
