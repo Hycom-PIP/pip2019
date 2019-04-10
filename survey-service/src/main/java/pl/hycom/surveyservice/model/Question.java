@@ -9,8 +9,9 @@ public class Question {
 
     @NotNull(message = "Question Text cannot be null.")
     private String questionText;
-    private String questionDescription;
+    @NotNull(message = "isRequired cannot be null.")
     private boolean isRequiered;
+    private String questionDescription;
     @NotNull(message = "Question Type cannot be null.")
     private String questionType;
     private Answer[] answers;
