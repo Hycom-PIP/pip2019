@@ -2,17 +2,16 @@ package pl.hycom.surveyservice.model;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 @Document(collection = "surveys")
 public class Question {
 
-    @NotNull(message = "Question Text cannot be null.")
+    @NotBlank(message = "Question Text cannot be null.")
     private String questionText;
-    @NotNull(message = "isRequired cannot be null.")
     private boolean isRequiered;
     private String questionDescription;
-    @NotNull(message = "Question Type cannot be null.")
+    @NotBlank(message = "Question Type cannot be blank.")
     private String questionType;
     private Answer[] answers;
 
