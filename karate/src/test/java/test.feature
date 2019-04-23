@@ -1,6 +1,7 @@
-Feature: Demo karate script
-  Scenario: verify that hello service is up and running
-    Given url http://localhost:8080/hello-service/hello
-    When method get
+Feature:  Demo karate script
+  Scenario:  verify that survey-service is up and recives survey
+    Given url 'http://localhost:8080/survey-service'
+    And request read('shortSurvey.json')
+    And header Content-Type = 'application/json'
+    When method post
     Then status 200
-    And match response contains "Hello World"
