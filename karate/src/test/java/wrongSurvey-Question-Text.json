@@ -1,0 +1,54 @@
+{
+  "oldVersionToken": "9303JF1209F1092D2SE290(421D213#532F",
+  "surveyName": "AAAAAAAAAAAAAAAA",
+  "surveyDescription": "SurveyDescription",
+  "pageList": [
+    {
+      "pageDescription": "PageDescription",
+      "questionList": [
+        {
+          "questionText": "",
+          "questionDescription": "This is a short text question",
+          "isRequiered": true,
+          "questionType": "",
+          "answers": [],
+          "answered": []
+        },
+        {
+          "questionText": "",
+          "questionDescription": "This is a long text question",
+          "isRequiered": false,
+          "questionType": "",
+          "answers": [],
+          "answered": []
+        },
+        {
+          "questionText": "",
+          "questionDescription": "This is a checkbox question",
+          "isRequiered": false,
+          "questionType": "",
+          "answers":
+          [
+            {"id": "0", "answer": "Tak"},
+            {"id": "1", "answer": "Nie"},
+            {"id": "2", "answer": "Może"}
+          ],
+          "answered": ["0", "1"]
+        },
+        {
+          "questionText": "",
+          "questionDescription": "This is a long text question",
+          "isRequiered": false,
+          "questionType": "",
+          "answers":
+          [
+            {"id": "0", "answer": "Tak"},
+            {"id": "1", "answer": "Nie"},
+            {"id": "2", "answer": "Może"}
+          ],
+          "answered": ["0"]
+        }
+      ]
+    }
+  ]
+}
