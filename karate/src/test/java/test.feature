@@ -29,3 +29,21 @@ Feature:  Demo karate script
     And header Content-Type = 'application/json'
     When method post
     Then status 400
+  Scenario: verify if empty question type returns 400 @not working - not checking question text status
+    Given url 'http://localhost:8080/survey-service'
+    And request read('wrongSurvey-Question-Type.json')
+    And header Content-Type = 'application/json'
+    When method post
+    Then status 400
+  Scenario: verify if user decided if question is required @not working - not checking if question is required
+    Given url 'http://localhost:8080/survey-service'
+    And request read('wrongSurvey-Question-Required.json')
+    And header Content-Type = 'application/json'
+    When method post
+    Then status 400
+  Scenario: verify if question type and questions are correct @not working - not checking question type
+    Given url 'http://localhost:8080/survey-service'
+    And request read('wrongSurvey-Question-Type-Correct.json')
+    And header Content-Type = 'application/json'
+    When method post
+    Then status 400

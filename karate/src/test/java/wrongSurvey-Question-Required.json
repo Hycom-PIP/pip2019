@@ -7,23 +7,23 @@
       "pageDescription": "PageDescription",
       "questionList": [
         {
+          "questionText": "Do you like short text questions?",
           "questionDescription": "This is a short text question",
-          "isRequiered": true,
-          "questionType": "",
+          "questionType": "shortText",
           "answers": [],
           "answered": []
         },
         {
+          "questionText": "Do you like looooooooooooooooooong text questions?",
           "questionDescription": "This is a long text question",
-          "isRequiered": false,
-          "questionType": "",
+          "questionType": "longText",
           "answers": [],
           "answered": []
         },
         {
+          "questionText": "Do you like checkbox questions?",
           "questionDescription": "This is a checkbox question",
-          "isRequiered": false,
-          "questionType": "",
+          "questionType": "multipleOptions",
           "answers":
           [
             {"id": "0", "answer": "Tak"},
@@ -33,9 +33,9 @@
           "answered": ["0", "1"]
         },
         {
+          "questionText": "Do you like radio text questions?",
           "questionDescription": "This is a long text question",
-          "isRequiered": false,
-          "questionType": "",
+          "questionType": "singleOption",
           "answers":
           [
             {"id": "0", "answer": "Tak"},
