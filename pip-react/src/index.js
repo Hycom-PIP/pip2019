@@ -40,9 +40,11 @@ class MainView extends Component {
                 this.generateJson = this.generateJson.bind(this);
                 this.HandleSurveyChange = this.HandleSurveyChange.bind(this);
                 this.HandleSurveyDescritpionChange = this.HandleSurveyDescritpionChange.bind(this);
-                this.FillQuestion = this.FillQuestion.bind(this);
+                this.DataChange = this.DataChange.bind(this);
+                this.DeleteQuestion = this.DeleteQuestion.bind(this);
+                this.MoveQuestion = this.MoveQuestion.bind(this);
         }
-        FillQuestion(e, index, type) {
+        DataChange(e, index, type) {
                 this.setState((prevState) => {
                         let old = prevState.questionList;
                         let temp = old[index];
@@ -67,9 +69,8 @@ class MainView extends Component {
                         return { questionList: old }
                 }
                 )
-
-
         }
+
         generateJson() {
                 console.log(JSON.stringify(this.state));
         }
@@ -79,7 +80,7 @@ class MainView extends Component {
         HandleSurveyDescritpionChange(e) {
                 this.setState({ surveyDescription: e.target.value });
         }
-        
+
         AddQuestionCard() {
                 this.setState((prevState) => {
                         let old = prevState.questionList;
@@ -99,7 +100,27 @@ class MainView extends Component {
 
         }
         ChangePage(e) {
-              
+
+        }
+        MoveQuestion(index, direction) {
+                console.log(index, direction);
+                if (direction == "up" && index > 0) {
+                        let up = this.state.questionList;
+                        let uupp = up[index - 1];
+                        up[index - 1] = up[index];
+                        up[index] = uupp;
+                        this.setState((prevState) => ({ questionList: up }))
+
+                }
+                if (direction == "down" && this.state.questionList.lenght - 1 > index) {
+                        [this.state.questionList[index + 1], this.state.questionList[index]] = [this.state.questionList[index], this.state.questionList[index + 1]]
+                }
+        }
+        DeleteQuestion(index) {
+                let newState = this.state.questionList;
+                newState.splice(index, 1);
+
+                this.setState((prevState) => ({ questionList: newState }))
         }
         render() {
                 return (
@@ -135,7 +156,7 @@ class MainView extends Component {
                                                                 (this.state.questionList || []).map(
                                                                         (question, value) =>
                                                                                 (
-                                                                                        <QuestionCard index={value} func={this.FillQuestion} />
+                                                                                        <QuestionCard key={value} data={question} index={value} func={this.DataChange} dltFunc={this.DeleteQuestion} moveFunc={this.MoveQuestion} />
                                                                                 )
                                                                 )
                                                         }

@@ -16,23 +16,23 @@ class MultipleAnswer extends Component {
     let answwweeers = this.state.answers;
     answwweeers.push("");
     this.setState(
-      (prevState)=>({ answers: answwweeers })
-      ,this.props.func(this.state.answers));
-   // this.props.func(this.answers);
-   
+      (prevState) => ({ answers: answwweeers })
+      , this.props.func(this.state.answers));
+    // this.props.func(this.answers);
+
   }
   handleChange(event) {
     let index = event.target.id.replace('AnswerTextInput', '');
     let AllAnwsers = this.state.answers;
     AllAnwsers[index] = event.target.value;
-    this.setState((prevState)=>({ answers: AllAnwsers }),this.props.func(this.state.answers))
+    this.setState((prevState) => ({ answers: AllAnwsers }), this.props.func(this.state.answers))
   }
   render() {
     return (
-      <MDBContainer fluid id="MultiChoice"  class>
+      <MDBContainer fluid id="MultiChoice" class>
         {(this.state.answers || []).map((values, index) =>
           (
-            <MDBRow  className="pt-0">
+            <MDBRow className="pt-0">
               <MDBCol size="auto" className="pr-0">
                 <div class="custom-control custom-checkbox ">
                   <input type="checkbox" class="custom-control-input" id={"IsRequiredCheckbox" + index} />
@@ -55,7 +55,8 @@ class QuestionCard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isRequiered: false,
+      questionText: props.data.questionText,
+      isRequiered: props.data.isRequiered,
       questionType: "Short",
       answers: [],
       questionComponent: (
@@ -68,31 +69,43 @@ class QuestionCard extends Component {
     this.questionDescriptionChange = this.questionDescriptionChange.bind(this);
     this.isRequieredChange = this.isRequieredChange.bind(this);
     this.questionTypeChange = this.questionTypeChange.bind(this);
-    this.addAnswers=this.addAnswers.bind(this);
-
+    this.addAnswers = this.addAnswers.bind(this);
+    this.MoveUp = this.MoveUp.bind(this);
+    this.MoveDown = this.MoveDown.bind(this);
+    this.DeleteAnswer= this.DeleteAnswer.bind(this);
+  }
+  MoveUp() {
+    this.props.moveFunc(this.props.index, "up");
+  }
+  MoveDown() {
+    this.props.moveFunc(this.props.index, "down");
   }
   questionTextChange(e) {
-    this.props.func(e.target.value,this.props.index,"questionText");
+    this.props.func(e.target.value, this.props.index, "questionText")
+
   }
   questionDescriptionChange(e) {
-    this.props.func(e.target.value,this.props.index,"questionDescription");
+    this.props.func(e.target.value, this.props.index, "questionDescription");
   }
   isRequieredChange(e) {
-    this.props.func(!this.state.isRequiered,this.props.index,"isRequiered");
-    this.setState((prevStats)=>({isRequiered: !prevStats.isRequiered}))
+    this.props.func(!this.state.isRequiered, this.props.index, "isRequiered");
+    this.setState((prevStats) => ({ isRequiered: !prevStats.isRequiered }))
   }
-  addAnswers(e)
+  DeleteAnswer()
   {
-    this.setState((PrevState)=>({answers: e}),this.props.func(e,this.props.index,"Multi"))
+    this.props.dltFunc(this.props.index);
+  }
+  addAnswers(e) {
+    this.setState((PrevState) => ({ answers: e }), this.props.func(e, this.props.index, "Multi"))
   }
   questionTypeChange(e) {
-    this.props.func(e,this.props.index,"questionType");
+    this.props.func(e, this.props.index, "questionType");
     this.setState({ questionTypeChange: e, answers: [] });
     if (e === "Short" || e === "Long") {
       this.setState({
         questionComponent: (
           <MDBContainer>
-            <MDBInput  hint="Przykładowa odpowiedź" className="p-0" type="textarea" rows="1" />
+            <MDBInput hint="Przykładowa odpowiedź" className="p-0" type="textarea" rows="1" />
           </MDBContainer>
         )
       });
@@ -106,36 +119,34 @@ class QuestionCard extends Component {
     }
 
   }
-  
+
   render() {
     return (
-      
+
       <div >
         <div class="row">
           <div class="col-2 align-self-center">
-
             <MDBCard className="text-center " >
               <MDBListGroup className="h-100  " >
-                <MDBListGroupItem  >
+                <MDBListGroupItem onClick={this.MoveUp}>
                   <MDBIcon icon="angle-up " />
                 </MDBListGroupItem>
                 <MDBListGroupItem>
                   <MDBIcon icon="ellipsis-h" />
                 </MDBListGroupItem>
-                <MDBListGroupItem>
+                <MDBListGroupItem onClick={this.DeleteAnswer}>
                   <MDBIcon icon="trash-alt" />
                 </MDBListGroupItem>
-                <MDBListGroupItem>
+                <MDBListGroupItem onClick={this.MoveDown} >
                   <MDBIcon icon="angle-down" />
                 </MDBListGroupItem>
               </MDBListGroup>
             </MDBCard>
-
           </div>
           <div class="col">
-            <MDBInput type="textarea" onChange={this.questionTextChange} label="Pytanie" rows="2" />
+            <MDBInput type="textarea" valueDefault={this.state.questionText} onChange={this.questionTextChange} label="Pytanie" rows="2" />
             <div>
-              <MDBInput type="textarea" onChange={this.questionDescriptionChange} label="Opis pytania" rows="2" />
+              <MDBInput type="textarea" valueDefault={this.props.data.questionDescription} onChange={this.questionDescriptionChange} label="Opis pytania" rows="2" />
             </div>
           </div>
         </div>
@@ -148,7 +159,6 @@ class QuestionCard extends Component {
               <Dropdown.Item eventKey='Long'>Long</Dropdown.Item>
               <Dropdown.Item eventKey='Radio'>Radio</Dropdown.Item>
               <Dropdown.Item eventKey='Check'>Check</Dropdown.Item>
-
             </DropdownButton>;
           </div>
         </div>
