@@ -1,6 +1,9 @@
 #AnswerTextInput {
  margin-top: -1.5rem !important;
 }
+.MinusMarginTop {
+  margin-top: -1.5rem !important;
+ }
 
 .CenterThenEnd {
     display: flex;
