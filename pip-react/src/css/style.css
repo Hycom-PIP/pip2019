@@ -4,7 +4,9 @@
 .MinusMarginTop {
   margin-top: -1.5rem !important;
  }
-
+.PointerMouse{
+  cursor: pointer;
+}
 .CenterThenEnd {
     display: flex;
   }

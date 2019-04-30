@@ -8,30 +8,33 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'bootstrap-css-only/css/bootstrap.min.css';
 import 'mdbreact/dist/css/mdb.css';
 import './css/style.css';
-let skelet = {
-        questionText: "",
-        questionDescription: "",
-        isRequiered: false,
-        questionType: "short",
-        answers: []
 
-}
 class MainView extends Component {
         constructor(props) {
                 super(props);
                 this.state = {
-                        oldVersionToken: null,
-                        surveyName: null,
-                        surveyDescription: null,
-                        questionList: [{
-                                questionText: "",
-                                questionDescription: "",
-                                isRequiered: false,
-                                questionType: "short",
-                                answers: []
+                        currentPage: 1,
+                        survey: {
+                                oldVersionToken: null,
+                                surveyName: null,
+                                surveyDescription: null,
+                                pageList: [
+                                        {
+                                                pageDescription: "",
+                                                questionList: [
+                                                        {
+                                                                questionText: "",
+                                                                questionDescription: "",
+                                                                isRequiered: false,
+                                                                questionType: "Radio",
+                                                                answers: [{ answer: "" }]
+                                                        }
+                                                ]
+                                        }
 
-                        }],
-                        CurrentPage: 1,
+                                ]
+
+                        }
 
                 };
                 this.AddQuestionCard = this.AddQuestionCard.bind(this);
@@ -46,8 +49,8 @@ class MainView extends Component {
         }
         DataChange(e, index, type) {
                 this.setState((prevState) => {
-                        let old = prevState.questionList;
-                        let temp = old[index];
+                        let old = prevState.survey;
+                        let temp = old.pageList[this.state.currentPage - 1].questionList[index];
                         switch (type) {
                                 case "questionText":
                                         temp.questionText = e;
@@ -62,65 +65,119 @@ class MainView extends Component {
                                         temp.questionType = e;
                                         break;
                                 case "Multi":
-                                        temp.answers = e;
+                                        temp.answers = [];
+                                        if (e != null) {
+                                                e.forEach(function (element) {
+                                                        temp.answers.push({ answer: element.answer })
+                                                })
+                                        }
                                         break;
                         }
-                        old[index] = temp;
+                        old.pageList[this.state.currentPage - 1].questionList[index] = temp;
                         return { questionList: old }
                 }
                 )
         }
 
         generateJson() {
-                console.log(JSON.stringify(this.state));
+                console.log(JSON.stringify(this.state.survey))
+                var xhttp = new XMLHttpRequest()
+                xhttp.open("POST", "http://localhost:8083/", true)
+                xhttp.setRequestHeader("Content-type", "application/json")
+                xhttp.send(JSON.stringify(this.state.survey))
+
         }
         HandleSurveyChange(e) {
-                this.setState({ surveyName: e.target.value });
+                let textChange = e.target.value
+                this.setState((preState) => {
+                        let old = preState.survey;
+                        old.surveyName = textChange;
+                        return { survey: old }
+                });
         }
         HandleSurveyDescritpionChange(e) {
-                this.setState({ surveyDescription: e.target.value });
+                let textChange = e.target.value
+                this.setState((preState) => {
+                        let old = this.state.survey;
+                        old.surveyDescription = textChange;
+                        return { survey: old }
+                });
         }
 
         AddQuestionCard() {
                 this.setState((prevState) => {
-                        let old = prevState.questionList;
-                        old.push({
+                        let old = prevState.survey;
+                        old.pageList[this.state.currentPage - 1].questionList.push({
                                 questionText: "",
                                 questionDescription: "",
                                 isRequiered: false,
-                                questionType: "short",
+                                questionType: "Short",
                                 answers: []
 
                         });
-                        return { questionList: old }
+                        return { survey: old }
                 }
                 );
         }
         AddPage() {
-
+                this.setState((prevState) => {
+                        let old = prevState.survey;
+                        old.pageList.push({
+                                pageDescription: "",
+                                questionList: [
+                                        {
+                                                questionText: "",
+                                                questionDescription: "",
+                                                isRequiered: false,
+                                                questionType: "Short",
+                                                answers: []
+                                        }
+                                ]
+                        });
+                        return { survey: old }
+                }
+                );
         }
         ChangePage(e) {
-
+                let toChange = e.target.firstChild.data;
+                this.setState((prevState) => {
+                        return { currentPage: toChange }
+                });
         }
         MoveQuestion(index, direction) {
-                console.log(index, direction);
                 if (direction == "up" && index > 0) {
-                        let up = this.state.questionList;
-                        let uupp = up[index - 1];
-                        up[index - 1] = up[index];
-                        up[index] = uupp;
-                        this.setState((prevState) => ({ questionList: up }))
+
+                        this.setState((prevState) => {
+                                let old = prevState.survey;
+                                let up = prevState.survey.pageList[this.state.currentPage - 1].questionList;
+                                let tempSwitch = up[index - 1];
+                                up[index - 1] = up[index];
+                                up[index] = tempSwitch;
+                                old.pageList[this.state.currentPage - 1].questionList = up;
+                                return { survey: old }
+                        })
 
                 }
-                if (direction == "down" && this.state.questionList.lenght - 1 > index) {
-                        [this.state.questionList[index + 1], this.state.questionList[index]] = [this.state.questionList[index], this.state.questionList[index + 1]]
+                if (direction == "down" && this.state.survey.pageList[this.state.currentPage - 1].questionList.length - 1 > index) {
+                        this.setState((prevState) => {
+                                let old = prevState.survey;
+                                let up = prevState.survey.pageList[this.state.currentPage - 1].questionList;
+                                let tempSwitch = up[index + 1];
+                                up[index + 1] = up[index];
+                                up[index] = tempSwitch;
+                                old.pageList[this.state.currentPage - 1].questionList = up;
+                                return { survey: old }
+                        })
                 }
         }
         DeleteQuestion(index) {
-                let newState = this.state.questionList;
-                newState.splice(index, 1);
-
-                this.setState((prevState) => ({ questionList: newState }))
+                this.setState((prevState) => {
+                        let old = prevState.survey
+                        let newState = old.pageList[this.state.currentPage - 1].questionList;
+                        newState.splice(index, 1);
+                        old.pageList[this.state.currentPage - 1].questionList = newState;
+                        return { survey: old }
+                })
         }
         render() {
                 return (
@@ -134,14 +191,14 @@ class MainView extends Component {
                                                         <span aria-hidden="true">Previous</span>
                                                 </MDBPageNav>
                                         </MDBPageItem>
-                                        {/* {
-                                                this.state.Components.map((vaule, index) =>
-                                                        (<MDBPageItem onClick={this.ChangePage} key={index + 1} data-id={index + 1} >
+                                        {
+                                                (this.state.survey.pageList || []).map((vaule, index) =>
+                                                        (<MDBPageItem active={this.state.currentPage - 1 == index} onClick={this.ChangePage} key={index + 1} data-id={index + 1} >
                                                                 <MDBPageNav>
                                                                         {index + 1}
                                                                 </MDBPageNav>
                                                         </MDBPageItem>))
-                                        } */}
+                                        }
                                         <MDBPageItem disabled>
                                                 <MDBPageNav aria-label="Previous">
                                                         <span aria-hidden="true">Next</span>
@@ -153,27 +210,38 @@ class MainView extends Component {
                                         <div class="row">
                                                 <div class="col-sm">
                                                         {
-                                                                (this.state.questionList || []).map(
+                                                                (this.state.survey.pageList[this.state.currentPage - 1].questionList || []).map(
                                                                         (question, value) =>
                                                                                 (
-                                                                                        <QuestionCard key={value} data={question} index={value} func={this.DataChange} dltFunc={this.DeleteQuestion} moveFunc={this.MoveQuestion} />
+                                                                                        <QuestionCard key={'' + this.state.currentPage + '.' + value} parentKey={'' + this.state.currentPage + '.' + value} data={question} index={value} func={this.DataChange} dltFunc={this.DeleteQuestion} moveFunc={this.MoveQuestion} />
                                                                                 )
                                                                 )
                                                         }
                                                 </div>
-                                                {/* <div class="col-sm">
-                                                        {
-                                                                (this.state.Components[this.state.CurrentPage-1] || []).map(
-                                                                        (question, value) =>
-                                                                                (
-                                                                                        <React.Fragment key={value}>{question}</React.Fragment>
-                                                                                )
-                                                                )
-                                                        }
-                                                </div> */}
                                         </div>
                                 </div>
                                 <br />
+                                <MDBPagination className="d-flex justify-content-center" size="lg">
+                                        <MDBPageItem disabled>
+                                                <MDBPageNav aria-label="Previous">
+                                                        <span aria-hidden="true">Previous</span>
+                                                </MDBPageNav>
+                                        </MDBPageItem>
+                                        {
+                                                (this.state.survey.pageList || []).map((vaule, index) =>
+                                                        (<MDBPageItem active={this.state.currentPage - 1 == index} onClick={this.ChangePage} key={index + 1} data-id={index + 1} >
+                                                                <MDBPageNav >
+                                                                        {index + 1}
+                                                                </MDBPageNav>
+                                                        </MDBPageItem>))
+                                        }
+                                        <MDBPageItem disabled>
+                                                <MDBPageNav aria-label="Previous">
+                                                        <span aria-hidden="true">Next</span>
+                                                </MDBPageNav>
+                                        </MDBPageItem>
+                                </MDBPagination>
+
                                 <MDBBtn onClick={this.AddQuestionCard} color="primary">Dodaj nowe pytanie</MDBBtn>
                                 <div id="DivForButtons" class="CenterThenEnd">
                                         <div>Empty object</div>
