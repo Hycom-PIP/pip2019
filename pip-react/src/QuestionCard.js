@@ -40,7 +40,7 @@ class MultipleAnswer extends Component {
                 </div>
               </MDBCol>
               <MDBCol size="6" className="m-0 p-0" >
-                <MDBInput id={"AnswerTextInput" + index} onChange={this.handleChange} hint="Przykładowa odpowiedź" value={values.answer} className="m-0 p-0 MinusMarginTop" />
+                <MDBInput id={"AnswerTextInput" + index} onChange={this.handleChange} hint="Przykładowe pytanie" value={values.answer} className="m-0 p-0 MinusMarginTop" />
               </MDBCol>
               <MDBCol size="auto" > <MDBIcon icon="trash-alt" /></MDBCol>
             </MDBRow>
@@ -54,7 +54,6 @@ class MultipleAnswer extends Component {
 class QuestionCard extends Component {
   constructor(props) {
     super(props);
-    // console.log(props);
     this.state = {
       answers: props.data.answers,
       questionComponent: null

@@ -80,9 +80,22 @@ class MainView extends Component {
         }
 
         generateJson() {
-                console.log(JSON.stringify(this.state.survey))
+                //console.log(JSON.stringify(this.state.survey))
                 var xhttp = new XMLHttpRequest()
                 xhttp.open("POST", "http://localhost:8083/", true)
+                xhttp.onreadystatechange =()=>{
+                        if(xhttp.readyState==4)
+                        {
+                                if(xhttp.status==200)
+                                {
+                                        alert("Serwis przyjął dane, kod http: "+xhttp.status);
+                                }
+                                else
+                                {
+                                        alert("Serwis zwrócił kod błędu http: "+xhttp.status);
+                                }
+                        }
+                }
                 xhttp.setRequestHeader("Content-type", "application/json")
                 xhttp.send(JSON.stringify(this.state.survey))
 
