@@ -46,6 +46,7 @@ class MainView extends Component {
                 this.DataChange = this.DataChange.bind(this);
                 this.DeleteQuestion = this.DeleteQuestion.bind(this);
                 this.MoveQuestion = this.MoveQuestion.bind(this);
+                this.DeleteMultiQuestion = this.DeleteMultiQuestion.bind(this);
         }
         DataChange(e, index, type) {
                 this.setState((prevState) => {
@@ -80,7 +81,7 @@ class MainView extends Component {
         }
 
         generateJson() {
-                //console.log(JSON.stringify(this.state.survey))
+                // console.log(JSON.stringify(this.state.survey))
                 var xhttp = new XMLHttpRequest()
                 xhttp.open("POST", "http://localhost:8083/", true)
                 xhttp.onreadystatechange =()=>{
@@ -192,6 +193,17 @@ class MainView extends Component {
                         return { survey: old }
                 })
         }
+        DeleteMultiQuestion(parentIndex,childIndex)
+        {
+                this.setState((prevState) => {
+                        let old = prevState.survey
+                        let newState = old.pageList[this.state.currentPage - 1].questionList[parentIndex].answers;
+                        newState.splice(childIndex, 1);
+                        old.pageList[this.state.currentPage - 1].questionList[parentIndex].answers = newState;
+                        return { survey: old }
+                });
+                this.forceUpdate();
+        }
         render() {
                 return (
                         <MDBContainer>
@@ -226,7 +238,7 @@ class MainView extends Component {
                                                                 (this.state.survey.pageList[this.state.currentPage - 1].questionList || []).map(
                                                                         (question, value) =>
                                                                                 (
-                                                                                        <QuestionCard key={'' + this.state.currentPage + '.' + value} parentKey={'' + this.state.currentPage + '.' + value} data={question} index={value} func={this.DataChange} dltFunc={this.DeleteQuestion} moveFunc={this.MoveQuestion} />
+                                                                                        <QuestionCard key={'' + this.state.currentPage + '.' + value} parentKey={'' + this.state.currentPage + '.' + value} data={question} index={value} func={this.DataChange} dltFunc={this.DeleteQuestion} multiDltfunc={this.DeleteMultiQuestion} moveFunc={this.MoveQuestion} />
                                                                                 )
                                                                 )
                                                         }

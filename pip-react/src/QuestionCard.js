@@ -9,6 +9,11 @@ class MultipleAnswer extends Component {
 
     this.AddNewQuestion = this.AddNewQuestion.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.DeleteMultiQuestion = this.DeleteMultiQuestion.bind(this);
+  }
+  DeleteMultiQuestion(e) {
+    this.props.multiDltfunc(this.props.index, e)
+    this.forceUpdate();
   }
   AddNewQuestion() {
     let old = this.props.answers
@@ -32,18 +37,22 @@ class MultipleAnswer extends Component {
       <MDBContainer fluid id="MultiChoice" >
         {(this.props.answers || []).map((values, index) =>
           (
-            <MDBRow className="pt-0">
-              <MDBCol size="auto" className="pr-0">
-                <div className="custom-control custom-checkbox ">
-                  <input type="checkbox" className="custom-control-input" id={"IsRequiredCheckbox" + index} />
-                  <label className="custom-control-label" style={{ color: "#757575" }} for={"IsRequiredCheckbox" + index}></label>
-                </div>
-              </MDBCol>
-              <MDBCol size="6" className="m-0 p-0" >
-                <MDBInput id={"AnswerTextInput" + index} onChange={this.handleChange} hint="Przykładowe pytanie" value={values.answer} className="m-0 p-0 MinusMarginTop" />
-              </MDBCol>
-              <MDBCol size="auto" > <MDBIcon icon="trash-alt" /></MDBCol>
-            </MDBRow>
+            <React.Fragment key={'.' + this.props.parentKey + '.' + index}>
+              <MDBRow className="pt-0">
+                <MDBCol size="auto" className="pr-0">
+                  <div className="custom-control custom-checkbox ">
+                    <input type="checkbox" className="custom-control-input" id={"IsRequiredCheckbox" + index} />
+                    <label className="custom-control-label" style={{ color: "#757575" }} for={"IsRequiredCheckbox" + index}></label>
+                  </div>
+                </MDBCol>
+                <MDBCol size="6" className="m-0 p-0" >
+                  <MDBInput id={"AnswerTextInput" + index} onChange={this.handleChange} hint="Przykładowe pytanie" value={values.answer} className="m-0 p-0 MinusMarginTop" />
+                </MDBCol>
+                <MDBCol size="auto" >
+                  <MDBIcon className="PointerMouse" icon="trash-alt" onClick={() => this.DeleteMultiQuestion(index)} />
+                </MDBCol>
+              </MDBRow>
+            </React.Fragment>
           ))}
         <MDBBtn onClick={this.AddNewQuestion} color="primary">Dodaj nową odpowiedź</MDBBtn>
       </MDBContainer>
@@ -54,18 +63,7 @@ class MultipleAnswer extends Component {
 class QuestionCard extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      answers: props.data.answers,
-      questionComponent: null
-    }
-    if (props.data.questionType === "Long" || props.data.questionType === "Short") {
-      this.state.questionComponent = (<MDBContainer>
-        <MDBInput value="Przykładowa odpowiedź" className="p-0" type="textarea" rows="1" />
-      </MDBContainer>)
-    }
-    else {
-      this.state.questionComponent = (<MultipleAnswer parentKey={this.props.parentKey} index={props.index} func={this.props.func} answers={props.data.answers} />)
-    }
+
     this.questionTextChange = this.questionTextChange.bind(this);
     this.questionDescriptionChange = this.questionDescriptionChange.bind(this);
     this.isRequieredChange = this.isRequieredChange.bind(this);
@@ -74,6 +72,8 @@ class QuestionCard extends Component {
     this.MoveUp = this.MoveUp.bind(this);
     this.MoveDown = this.MoveDown.bind(this);
     this.DeleteAnswer = this.DeleteAnswer.bind(this);
+    this.DltMultiAndUpadte = this.DltMultiAndUpadte.bind(this);
+    this.GetQuestionRender = this.GetQuestionRender.bind(this);
   }
   MoveUp() {
     this.props.moveFunc(this.props.index, "up");
@@ -97,24 +97,24 @@ class QuestionCard extends Component {
     this.setState((PrevState) => ({ answers: e }), this.props.func(e, this.props.index, "Multi"))
   }
   questionTypeChange(e) {
-
-    if (e === "Short" || e === "Long") {
-      this.setState({
-        questionComponent: (
-          <MDBContainer>
-            <MDBInput hint="Przykładowa odpowiedź" className="p-0" type="textarea" rows="1" />
-          </MDBContainer>
-        )
-      });
-
-    }
-    else if (e === "Radio" || e === "Check") {
-      this.setState({ questionComponent: <MultipleAnswer index={this.props.index} func={this.props.func} answers={this.props.data.answers} /> })
-    }
     this.props.func(e, this.props.index, "questionType")
     this.props.func(null, this.props.index, "Multi")
   }
-
+  DltMultiAndUpadte(parentIndex, childIndex) {
+    this.props.multiDltfunc(parentIndex, childIndex)
+    this.forceUpdate();
+  }
+  GetQuestionRender() {
+    if (this.props.data.questionType === "Long" || this.props.data.questionType === "Short") {
+      return (
+        <MDBContainer>
+          <MDBInput value="Przykładowa odpowiedź" className="p-0" type="textarea" rows="1" />
+        </MDBContainer>)
+    }
+    else {
+      return (<MultipleAnswer key={this.props.parentKey + '.' + this.props.index} parentKey={this.props.parentKey} index={this.props.index} func={this.props.func} answers={this.props.data.answers} multiDltfunc={this.DltMultiAndUpadte} />)
+    }
+  }
   render() {
 
     return (
@@ -159,7 +159,7 @@ class QuestionCard extends Component {
         </div>
         <MDBContainer id="AnswerHolder" className="block-example border">
           {
-            this.state.questionComponent
+            this.GetQuestionRender()
           }
         </MDBContainer>
         <div className="d-flex flex-row-reverse mt-3">
@@ -181,7 +181,6 @@ class QuestionCard extends Component {
       </div>
     );
   }
-
 }
 
 export default QuestionCard;
