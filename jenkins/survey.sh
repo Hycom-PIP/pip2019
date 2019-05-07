@@ -20,4 +20,4 @@ else
 echo "Survey service failed to start"
 exit 1
 fi
-#HELLO END
+#SURVEY END

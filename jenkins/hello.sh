@@ -10,7 +10,7 @@ IsDiscoveryRunning=$(wget --server-response localhost:8083/actuator/health 2>&1|
 while [ $IsDiscoveryRunning -eq 0 -a $iteration -ge 0 ] ; do
 echo "Waiting 3 seconds for hello-service service to start"
 sleep 3
-((iteration--))
+(($iteration--))
 IsDiscoveryRunning=$(wget --server-response localhost:8083/actuator/health 2>&1| grep -c 'HTTP/1.1 200')
 done
 if [ $iteration -ge 0 ] ; then
