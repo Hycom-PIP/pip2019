@@ -1,12 +1,13 @@
 package pl.hycom.surveyservice.model;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 public class Page {
 
     private String pageDescription;
     @NotNull(message = "Question List cannot be null.")
-    private Question[] questionList;
+    private @Valid Question[] questionList;
 
     public String getPageDescription() {
         return pageDescription;

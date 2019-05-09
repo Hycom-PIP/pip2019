@@ -24,6 +24,9 @@ public class NewSurveyController {
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public ResponseEntity<Survey> addNewSurvey(@Valid @RequestBody Survey survey) {
+        if (!areQuestionTypesCorrect(survey))
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
         surveyRepository.insert(survey);
         return new ResponseEntity<>(survey, HttpStatus.OK);
     }
@@ -32,5 +35,18 @@ public class NewSurveyController {
     public ResponseEntity<List<Survey>> getAllSurveys() {
         List<Survey> surveyList = surveyRepository.findAll();
         return new ResponseEntity<>(surveyList, HttpStatus.OK);
+    }
+
+    private boolean areQuestionTypesCorrect(Survey survey) {
+        for (Page page : survey.getPageList()) {
+            for (Question question : page.getQuestionList()) {
+                if ("longText".equals(question.getQuestionType()) || "shortText".equals(question.getQuestionType())) {
+                    if (question.getAnswers().length > 0) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 }
