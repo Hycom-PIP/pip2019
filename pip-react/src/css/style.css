@@ -1,19 +1,7 @@
-#AnswerTextInput {
- margin-top: -1.5rem !important;
-}
 .MinusMarginTop {
   margin-top: -1.5rem !important;
+  margin-bottom: -1.5rem !important;
  }
 .PointerMouse{
   cursor: pointer;
 }
-.CenterThenEnd {
-    display: flex;
-  }
-.CenterThenEnd > div:first-child {
-    margin-right: auto;
-    visibility: hidden;
-  }
-.CenterThenEnd > div:last-child {
-    margin-left: auto;
-  }

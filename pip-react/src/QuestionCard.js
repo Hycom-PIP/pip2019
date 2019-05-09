@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { MDBIcon, MDBBtn, MDBInput, MDBCardGroup, MDBCard, MDBRow, MDBContainer, MDBCol, MDBListGroup, MDBListGroupItem } from "mdbreact";
+import { MDBIcon, MDBBtn, MDBInput, MDBCard, MDBRow, MDBContainer, MDBCol, MDBListGroup, MDBListGroupItem } from "mdbreact";
 import DropdownButton from 'react-bootstrap/DropdownButton'
 import Dropdown from 'react-bootstrap/Dropdown'
 import Form from 'react-bootstrap/Form'
@@ -24,34 +24,34 @@ class MultipleAnswer extends Component {
     this.props.func(old, this.props.index, "Multi")
     this.forceUpdate();
   }
-  handleChange(event) {
-    let index = event.target.id.replace('AnswerTextInput', '');
+  handleChange(index, event) {
     let textChange = event.target.value;
     let AllAnwsers = this.props.answers;
     AllAnwsers[index] = { answer: textChange };
     this.props.func(AllAnwsers, this.props.index, "Multi")
     this.forceUpdate();
   }
+
   render() {
     return (
       <MDBContainer fluid id="MultiChoice" >
         {(this.props.answers || []).map((values, index) =>
           (
-            <React.Fragment key={'.' + this.props.parentKey + '.' + index}>
+            <React.Fragment key={this.props.parentKey + '.' + index}>
               <MDBRow className="pt-0">
                 <MDBCol size="auto" className="pr-0">
-                  <div className="custom-control custom-checkbox ">
-                    <input type="checkbox" className="custom-control-input" id={"IsRequiredCheckbox" + index} />
-                    <label className="custom-control-label" style={{ color: "#757575" }} for={"IsRequiredCheckbox" + index}></label>
-                  </div>
+                  <Form>
+                    <Form.Check custom type='checkbox' id={`CheckBox-${this.props.parentKey + '.' + index}`} label={``} />
+                  </Form>
                 </MDBCol>
                 <MDBCol size="6" className="m-0 p-0" >
-                  <MDBInput id={"AnswerTextInput" + index} onChange={this.handleChange} hint="Przykładowe pytanie" value={values.answer} className="m-0 p-0 MinusMarginTop" />
+                  <MDBInput onChange={(event) => (this.handleChange(index, event))} hint="Przykładowe pytanie" value={values.answer} className="m-0 p-0 MinusMarginTop" />
                 </MDBCol>
                 <MDBCol size="auto" >
                   <MDBIcon className="PointerMouse" icon="trash-alt" onClick={() => this.DeleteMultiQuestion(index)} />
                 </MDBCol>
               </MDBRow>
+              <br />
             </React.Fragment>
           ))}
         <MDBBtn onClick={this.AddNewQuestion} color="primary">Dodaj nową odpowiedź</MDBBtn>
@@ -75,6 +75,7 @@ class QuestionCard extends Component {
     this.DltMultiAndUpadte = this.DltMultiAndUpadte.bind(this);
     this.GetQuestionRender = this.GetQuestionRender.bind(this);
   }
+
   MoveUp() {
     this.props.moveFunc(this.props.index, "up");
   }
@@ -157,7 +158,7 @@ class QuestionCard extends Component {
             </DropdownButton>
           </div>
         </div>
-        <MDBContainer id="AnswerHolder" className="block-example border">
+        <MDBContainer id="AnswerHolder" className="block-example border pt-4">
           {
             this.GetQuestionRender()
           }
