@@ -6,11 +6,13 @@ import org.springframework.data.annotation.Id;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.UUID;
 
 public class Survey {
 
     @Id
     private ObjectId id;
+    private String uuid;
     private String oldVersionToken;
     @NotBlank(message = "Survey Name cannot be null.")
     private String surveyName;
@@ -56,5 +58,13 @@ public class Survey {
 
     public void setId(ObjectId id) {
         this.id = id;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 }
