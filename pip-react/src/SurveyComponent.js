@@ -245,7 +245,7 @@ class SurveyComponent extends Component {
         {
             var oldQuestion=prevState.survey.pageList[prevState.currentPage-1].questionList[result.source.index];
             prevState.survey.pageList[prevState.currentPage-1].questionList.splice(result.source.index,1);
-            prevState.survey.pageList[prevState.currentPage-1].questionList.splice(result.index,0,oldQuestion);
+            prevState.survey.pageList[prevState.currentPage-1].questionList.splice(result.destination.index,0,oldQuestion);
             return {state: prevState}
             
         })
@@ -283,10 +283,9 @@ class SurveyComponent extends Component {
                     <MDBRow>
                         <MDBCol>
                             <DragDropContext onDragEnd={this.OnDragEnd}>
-                                <Droppable droppableId={"dupa"}>
+                                <Droppable droppableId={"LOTR>GOT"}>
                                     {(provided) =>
-                                        (
-                                            // <div class="pb-0 pt-0 mt-2 border-bottom-5 border-top-0 rounded list-group-item" />
+                                        (                                            
                                             <div {...provided.droppableProps} ref={provided.innerRef}>
                                                 {(this.state.survey.pageList[this.state.currentPage - 1].questionList || []).map(
                                                     (question, value) => (
@@ -294,6 +293,7 @@ class SurveyComponent extends Component {
                                                             <div >
                                                                 <QuestionCard parentKey={this.state.currentPage + '.' + value} data={question} index={value} func={this.questionDataChange} dltFunc={this.deleteQuestion} multiDltfunc={this.deleteMultiQuestion} moveFunc={this.moveQuestion} />
                                                             </div>
+                                                            <div className="pb-0 pt-0 mt-2 border-bottom-5 border-top-0 rounded list-group-item" />
                                                         </React.Fragment>
                                                     )
                                                 )}
@@ -301,7 +301,6 @@ class SurveyComponent extends Component {
                                             </div>
                                         )
                                     }
-
                                 </Droppable>
                             </DragDropContext>
                             <MDBInput value={this.state.survey.pageList[this.state.currentPage - 1].pageDescription} onChange={this.pageDescriptionChange} type="textarea" label="Opis strony" rows="2" />
@@ -345,7 +344,6 @@ class SurveyComponent extends Component {
 
                 </MDBRow>
             </MDBContainer>)
-
     }
 }
 
