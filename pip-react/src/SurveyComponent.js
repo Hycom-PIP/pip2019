@@ -120,10 +120,10 @@ class SurveyComponent extends Component {
         xhttp.onreadystatechange = () => {
             if (xhttp.readyState == 4) {
                 if (xhttp.status == 200) {
-                    alert("Serwis przyjął dane, kod http: " + xhttp.status);
+                    console.log("Serwis przyjął dane, kod http: " + xhttp.status);
                 }
                 else {
-                    alert("Serwis zwrócił kod błędu http: " + xhttp.status);
+                    console.log("Serwis zwrócił kod błędu http: " + xhttp.status);
                 }
             }
         }
