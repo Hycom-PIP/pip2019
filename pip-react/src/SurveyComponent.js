@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Component } from 'react';
 import QuestionCard from './QuestionCard.js';
@@ -38,8 +37,8 @@ class SurveyComponent extends Component {
             }
 
         };
-        if (props.survey != undefined) {
-            this.state.survey = JSON.parse(props.survey);
+        if (props.surveyJson != undefined) {
+            this.state.survey = JSON.parse(props.surveyJson);
         }
         if (props.token != undefined) {
             this.state.oldVersionToken = props.token;
@@ -115,21 +114,21 @@ class SurveyComponent extends Component {
     }
 
     generateJson() {
-        console.log(JSON.stringify(this.state.survey))
-        // var xhttp = new XMLHttpRequest()
-        // xhttp.open("POST", "http://localhost:8083/", true)
-        // xhttp.onreadystatechange = () => {
-        //     if (xhttp.readyState == 4) {
-        //         if (xhttp.status == 200) {
-        //             alert("Serwis przyjął dane, kod http: " + xhttp.status);
-        //         }
-        //         else {
-        //             alert("Serwis zwrócił kod błędu http: " + xhttp.status);
-        //         }
-        //     }
-        // }
-        // xhttp.setRequestHeader("Content-type", "application/json")
-        // xhttp.send(JSON.stringify(this.state.survey))
+        // console.log(JSON.stringify(this.state.survey))
+        var xhttp = new XMLHttpRequest()
+        xhttp.open("POST", "http://localhost:8083/", true)
+        xhttp.onreadystatechange = () => {
+            if (xhttp.readyState == 4) {
+                if (xhttp.status == 200) {
+                    alert("Serwis przyjął dane, kod http: " + xhttp.status);
+                }
+                else {
+                    alert("Serwis zwrócił kod błędu http: " + xhttp.status);
+                }
+            }
+        }
+        xhttp.setRequestHeader("Content-type", "application/json")
+        xhttp.send(JSON.stringify(this.state.survey))
 
     }
     surveyTitleChange(e) {
@@ -233,13 +232,11 @@ class SurveyComponent extends Component {
         this.forceUpdate();
     }
     OnDragEnd(result) {
-        console.log(result);
         if(!result.destination)
         {return;}
 
         if(result.destination.droppableId === result.source.droppableId && result.index === result.source.index)
-        {return;}
-    
+        {return;}    
         
         this.setState((prevState)=>
         {
@@ -253,8 +250,8 @@ class SurveyComponent extends Component {
     render() {
         return (
             <MDBContainer>
-                <MDBInput onChange={this.surveyTitleChange} type="textarea" label="Tytuł" rows="2" />
-                <MDBInput onChange={this.surveyDescritpionChange} type="textarea" label="Opis" rows="2" />
+                <MDBInput onChange={this.surveyTitleChange} value={this.state.survey.surveyName} type="textarea" label="Tytuł" rows="2" />
+                <MDBInput onChange={this.surveyDescritpionChange} value={this.state.survey.surveyDescription} type="textarea" label="Opis" rows="2" />
                 <br />
                 <MDBRow center>
                     <MDBPagination className="d-flex justify-content-center" size="lg">
@@ -271,7 +268,6 @@ class SurveyComponent extends Component {
                                     </MDBPageNav>
                                 </MDBPageItem>))
                         }
-
                         <MDBPageItem onClick={() => (this.setPage("Next"))} disabled={this.state.survey.pageList.length <= 1}>
                             <MDBPageNav aria-label="Next">
                                 <span aria-hidden="true">Next</span>
@@ -337,11 +333,9 @@ class SurveyComponent extends Component {
                     <MDBCol className="text-center">
                         <MDBBtn onClick={this.addPage} color="primary">Dodaj stronę</MDBBtn>
                     </MDBCol>
-
                     <MDBCol className="text-right">
                         <MDBBtn onClick={this.generateJson} color="primary">Zakończ</MDBBtn>
                     </MDBCol>
-
                 </MDBRow>
             </MDBContainer>)
     }
