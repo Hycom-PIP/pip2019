@@ -1,6 +1,7 @@
 package pl.hycom.surveyservice.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +10,7 @@ import pl.hycom.surveyservice.repository.SurveyRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -19,6 +21,12 @@ public class SurveyListViewController {
     @RequestMapping(value = "/{surveyId}", method = RequestMethod.GET)
     public ResponseEntity<Optional<Survey>> getSurveyById(@PathVariable String surveyId) {
         return new ResponseEntity<>(surveyRepository.findById(surveyId), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/getSurveys/{pageNumber}", method = RequestMethod.GET)
+    public ResponseEntity<List<Survey>> getSurveysByPage(@PathVariable int pageNumber) {
+        List<Survey> surveyList = surveyRepository.findAll(PageRequest.of(pageNumber, 10)).getContent();
+        return new ResponseEntity<>(surveyList, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{surveyId}", method = RequestMethod.DELETE)
