@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Survey from './Survey.js';
 import { Droppable, Draggable, DragDropContext } from 'react-beautiful-dnd';
 import { MDBBtn, MDBContainer, MDBInput, MDBPagination, MDBPageItem, MDBPageNav, MDBCol, MDBRow } from "mdbreact";
 
@@ -38,7 +37,7 @@ class SurveyList extends Component{
             surveyList:{
                 pages:[
                     {
-                        currentPage: 1,
+                    currentPage: 1,
                         surveys:[
                             {
                                 name:'test name',
@@ -54,8 +53,18 @@ class SurveyList extends Component{
             }
 
         };
+
+        if (props.surveyJson != undefined) {
+            this.state.surveyList = JSON.parse(props.surveyJson);
+        }
+        this.yourSurveys = this.yourSurveys.bind(this);
+        this.makeSurvey = this.makeSurvey.bind(this);
+        this.share = this.share.bind(this);
+        this.edit = this.edit.bind(this);
+        this.trash = this.trash.bind(this);
     
 
+        {/*Survey list table structure*/}
             this.columns = [
             {
                 Header: 'Name',
@@ -92,7 +101,7 @@ class SurveyList extends Component{
                 Cell: row => (
                 <div>
                    <MDBBtn color="white" style={{ flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
-                        <Edit onClick={() => this.share()} fontSize="20px" color="#000000"/>
+                        <Edit onClick={() => this.edit()} fontSize="20px" color="#000000"/>
                     </MDBBtn>
                 </div>
                 )
@@ -102,7 +111,7 @@ class SurveyList extends Component{
                 Cell: row => (
                 <div>
                    <MDBBtn color="white" style={{ flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
-                        <Trash onClick={() => this.share()}  fontSize="20px" color="#000000" />
+                        <Trash onClick={() => this.trash(this) }  fontSize="20px" color="#000000" />
                     </MDBBtn>
                 </div>
                 )
@@ -110,6 +119,7 @@ class SurveyList extends Component{
             ]
         }
 
+        
         yourSurveys(direction) {
            
         }
@@ -117,7 +127,15 @@ class SurveyList extends Component{
            
         }
         share(direction){
+            
+        }
+        edit(direction){
 
+        }
+        trash(token){
+            var contacts = [...this.state.surveyList.pages.surveys];
+            contacts.splice(token, 1);
+            this.setState({contacts});
         }
         
     
