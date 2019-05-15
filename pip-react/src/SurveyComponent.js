@@ -37,10 +37,10 @@ class SurveyComponent extends Component {
             }
 
         };
-        if (props.surveyJson != undefined) {
+        if (props.surveyJson != undefined && props.surveyJson != null) {
             this.state.survey = JSON.parse(props.surveyJson);
         }
-        if (props.token != undefined) {
+        if (props.token != undefined && props.token != null) {
             this.state.token = props.token;
         }
         this.addQuestionCard = this.addQuestionCard.bind(this);

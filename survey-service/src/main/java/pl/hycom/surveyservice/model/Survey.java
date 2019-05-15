@@ -19,11 +19,11 @@ public class Survey {
     @NotNull(message = "Page cannot be null.")
     private @Valid Page[] pageList;
 
-    public String getOldVersionToken() {
+    public String getToken() {
         return token;
     }
 
-    public void setOldVersionToken(String oldVersionToken) {
+    public void setToken(String oldVersionToken) {
         this.token = oldVersionToken;
     }
 
