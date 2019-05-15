@@ -24,35 +24,12 @@ class SurveyList extends Component{
         super(props);
         this.state = {
             currentPage: 1,
-            stats: {
-                statistics:[
-                    {
-                        surveyAmount: null,
-                        pagesAmount: null
-                    }
-                ]
-
-            },
-            
-            surveyList:{
-                pages:[
-                    {
-                    currentPage: 1,
-                        surveys:[
-                            {
-                                name:'test name',
-                                version: 'vesrion1',
-                                creationDate: '14-05-2019',
-                                numberOfCompletedSyrveys: '20',
-                                token: 'string'
-                            }
-                        ]
-                    }
-                ]
-
+            surveys: {
+             pages: []
             }
-
-        };
+            
+    };
+     this.getSurveysJson()
 
         if (props.surveyJson != undefined) {
             this.state.surveyList = JSON.parse(props.surveyJson);
@@ -62,7 +39,6 @@ class SurveyList extends Component{
         this.share = this.share.bind(this);
         this.edit = this.edit.bind(this);
         this.trash = this.trash.bind(this);
-    
 
         {/*Survey list table structure*/}
             this.columns = [
@@ -91,7 +67,7 @@ class SurveyList extends Component{
                 Cell: row => (
                 <div>
                     <MDBBtn color="white" style={{ flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
-                        <Share onClick={() => this.share()} fontSize="20px" color="#000000" />
+                        <Share onClick={() => this.share(this)} fontSize="20px" color="#000000" />
                     </MDBBtn>
                 </div>
                 )
@@ -121,13 +97,12 @@ class SurveyList extends Component{
 
         
         yourSurveys(direction) {
-           
         }
         makeSurvey(direction) {
            
         }
         share(direction){
-            
+            this.copyToClipboard(direction.data.token);
         }
         edit(direction){
 
@@ -137,17 +112,47 @@ class SurveyList extends Component{
             contacts.splice(token, 1);
             this.setState({contacts});
         }
-        
+
+        getSurveysJson() {
+            var xhttp = new XMLHttpRequest();
+            var obj;
+            xhttp.open("GET", "http://localhost:8080/survey-service/getSurveys/" + (this.setState.currentPage), true)
+            xhttp.send();
+            xhttp.onreadystatechange = () => {
+                    if (xhttp.readyState == 4) {
+                        if (xhttp.status == 200) {
+                            obj = JSON.parse(xhttp.responseText);
+                            this.setState({surveys : obj});
+                        }
+                        else {
+                            console.log("Serwis zwrócił kod błędu http: " + xhttp.status);
+                        }
+                    }
+            }
+            return obj;
+        }
     
+        copyToClipboard(str){
+            const el = document.createElement('textarea');
+            el.value = str;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+          };
+
         render() {
 
-            const data = [{
-                name: 'name',
-                version: 'version',
-                creationDate: '15-05-2019',
-                numberOfCompletedSyrveys: 2,
-                token:'ankieta.pl/ankieta',
-            }]
+            const data = [];
+            for (let survey of this.state.surveys.pages) {
+                data.push({
+                    name:survey.name,
+                    version:survey.version,
+                    creationDate: survey.creationDate,
+                    numberOfCompletedSyrveys: survey.numberOfCompletedSurveys,
+                    token: survey.token
+                })
+            }
         
         return (
             
@@ -155,7 +160,7 @@ class SurveyList extends Component{
                 <MDBRow center>
                     <div style={toolbarStyle}>
                     <MDBBtn onClick={this.yourSurveys} color="black">Twoje Ankiety</MDBBtn>
-                    <MDBBtn onClick={this.makeSurvey} color="black">Utwórz Ankiete</MDBBtn >
+                    <MDBBtn onClick={this.makeSurvey} color="black">Utwórz Ankiete</MDBBtn>
                    
                     </div>
                 </MDBRow>
@@ -166,6 +171,8 @@ class SurveyList extends Component{
                             data={data}
                             pageSize={10}
                             columns={this.columns}
+                            showPageSizeOptions={false}
+                            pages={2}
                         />
                       
                 </MDBContainer>
