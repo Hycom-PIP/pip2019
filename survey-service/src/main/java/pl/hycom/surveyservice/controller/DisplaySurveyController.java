@@ -12,6 +12,7 @@ import pl.hycom.surveyservice.repository.SurveyRepository;
 import javax.validation.Valid;
 import java.util.Optional;
 
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 public class DisplaySurveyController {
     @Autowired
