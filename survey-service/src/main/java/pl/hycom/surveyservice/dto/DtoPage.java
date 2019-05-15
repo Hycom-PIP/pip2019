@@ -1,12 +1,12 @@
-package pl.hycom.surveyservice.model;
+package pl.hycom.surveyservice.dto;
 
 import java.util.List;
 
-public class ViewPage {
+public class DtoPage {
     private Statistics statistics;
-    private List<Survey> pages;
+    private List<DtoSurvey> pages;
 
-    public ViewPage(int surveysAmount, int pagesAmount, List<Survey> pages) {
+    public DtoPage(int surveysAmount, int pagesAmount, List<DtoSurvey> pages) {
         this.statistics = new Statistics(surveysAmount, pagesAmount);
         this.pages = pages;
     }
@@ -19,11 +19,11 @@ public class ViewPage {
         this.statistics = statistics;
     }
 
-    public List<Survey> getPages() {
+    public List<DtoSurvey> getPages() {
         return pages;
     }
 
-    public void setPages(List<Survey> pages) {
+    public void setPages(List<DtoSurvey> pages) {
         this.pages = pages;
     }
 

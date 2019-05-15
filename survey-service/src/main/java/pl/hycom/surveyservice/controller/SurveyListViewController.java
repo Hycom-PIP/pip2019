@@ -6,11 +6,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.hycom.surveyservice.model.Survey;
-import pl.hycom.surveyservice.model.ViewPage;
+import pl.hycom.surveyservice.dto.DtoPage;
+import pl.hycom.surveyservice.dto.DtoSurvey;
 import pl.hycom.surveyservice.repository.SurveyRepository;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -20,10 +21,15 @@ public class SurveyListViewController {
     SurveyRepository surveyRepository;
 
     @RequestMapping(value = "/getSurveys/{pageNumber}", method = RequestMethod.GET)
-    public ResponseEntity<ViewPage> getSurveysByPage(@PathVariable int pageNumber) {
+    public ResponseEntity<DtoPage> getSurveysByPage(@PathVariable int pageNumber) {
         List<Survey> surveyList = surveyRepository.findAll(PageRequest.of(pageNumber, 10)).getContent();
         long surveyAmount = surveyRepository.countAllByIdIsNotNull();
-        return new ResponseEntity<>(new ViewPage((int) surveyAmount, (int) Math.ceil(surveyAmount / 10.0), surveyList), HttpStatus.OK);
+
+        List<DtoSurvey> dtoSurveys = surveyList.stream()
+                .map(survey -> new DtoSurvey(survey.getSurveyName(), "1.0", survey.getId().getDate(), 4, survey.getToken()))
+                .collect(Collectors.toList());
+
+        return new ResponseEntity<>(new DtoPage((int) surveyAmount, (int) Math.ceil(surveyAmount / 10.0), dtoSurveys), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{surveyId}", method = RequestMethod.DELETE)
