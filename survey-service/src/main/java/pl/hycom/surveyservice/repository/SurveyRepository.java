@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface SurveyRepository extends MongoRepository<Survey, String> {
     List<Survey> findByUuid (String uuid);
+    Long countAllByIdIsNotNull();
 }

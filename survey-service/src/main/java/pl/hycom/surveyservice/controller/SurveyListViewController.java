@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.hycom.surveyservice.model.Survey;
+import pl.hycom.surveyservice.model.ViewPage;
 import pl.hycom.surveyservice.repository.SurveyRepository;
 
 import java.util.List;
@@ -24,9 +25,10 @@ public class SurveyListViewController {
     }
 
     @RequestMapping(value = "/getSurveys/{pageNumber}", method = RequestMethod.GET)
-    public ResponseEntity<List<Survey>> getSurveysByPage(@PathVariable int pageNumber) {
+    public ResponseEntity<ViewPage> getSurveysByPage(@PathVariable int pageNumber) {
         List<Survey> surveyList = surveyRepository.findAll(PageRequest.of(pageNumber, 10)).getContent();
-        return new ResponseEntity<>(surveyList, HttpStatus.OK);
+        long surveyAmount = surveyRepository.countAllByIdIsNotNull();
+        return new ResponseEntity<>(new ViewPage((int) surveyAmount, (int)Math.ceil(surveyAmount/10.0), surveyList), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{surveyId}", method = RequestMethod.DELETE)
