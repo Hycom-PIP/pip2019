@@ -116,7 +116,7 @@ class SurveyList extends Component{
         getSurveysJson() {
             var xhttp = new XMLHttpRequest();
             var obj;
-            xhttp.open("GET", "http://localhost:8080/survey-service/getSurveys/" + (this.setState.currentPage), true)
+            xhttp.open("GET", "http://localhost:8080/survey-service/getSurveys/0", true)
             xhttp.send();
             xhttp.onreadystatechange = () => {
                     if (xhttp.readyState == 4) {
@@ -172,7 +172,6 @@ class SurveyList extends Component{
                             pageSize={10}
                             columns={this.columns}
                             showPageSizeOptions={false}
-                            pages={2}
                         />
                       
                 </MDBContainer>
