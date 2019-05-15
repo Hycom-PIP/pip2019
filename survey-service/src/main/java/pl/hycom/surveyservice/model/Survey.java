@@ -3,8 +3,10 @@ package pl.hycom.surveyservice.model;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.UUID;
 
 public class Survey {
 
@@ -15,7 +17,7 @@ public class Survey {
     private String surveyName;
     private String surveyDescription;
     @NotNull(message = "Page cannot be null.")
-    private Page[] pageList;
+    private @Valid Page[] pageList;
 
     public String getOldVersionToken() {
         return token;
