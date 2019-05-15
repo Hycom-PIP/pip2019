@@ -14,6 +14,7 @@ import pl.hycom.surveyservice.repository.SurveyRepository;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -26,6 +27,8 @@ public class NewSurveyController {
         if (!areQuestionTypesCorrect(survey))
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
+        survey.setToken(UUID.randomUUID().toString());
+        survey.setVersion(1);
         surveyRepository.insert(survey);
         return new ResponseEntity<>(survey, HttpStatus.OK);
     }

@@ -4,12 +4,12 @@ import java.util.Date;
 
 public class DtoSurvey {
     private String name;
-    private String version;
+    private int version;
     private Date creationDate;
     private int numberOfCompletedSurveys;
     private String token;
 
-    public DtoSurvey(String name, String version, Date creationDate, int numberOfCompletedSurveys, String token) {
+    public DtoSurvey(String name, int version, Date creationDate, int numberOfCompletedSurveys, String token) {
         this.name = name;
         this.version = version;
         this.creationDate = creationDate;
@@ -25,11 +25,11 @@ public class DtoSurvey {
         this.name = name;
     }
 
-    public String getVersion() {
+    public int getVersion() {
         return version;
     }
 
-    public void setVersion(String version) {
+    public void setVersion(int version) {
         this.version = version;
     }
 

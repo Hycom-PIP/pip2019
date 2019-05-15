@@ -9,4 +9,6 @@ import java.util.Optional;
 public interface SurveyRepository extends MongoRepository<Survey, String> {
     Long countAllByIdIsNotNull();
     Optional<Survey> findByToken(String token);
+    void deleteByToken(String token);
+    boolean existsByToken(String token);
 }

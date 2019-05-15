@@ -12,19 +12,20 @@ public class Survey {
 
     @Id
     private ObjectId id;
-    private String oldVersionToken;
+    private String token;
+    private int version = 1;
     @NotBlank(message = "Survey Name cannot be null.")
     private String surveyName;
     private String surveyDescription;
     @NotNull(message = "Page cannot be null.")
     private @Valid Page[] pageList;
 
-    public String getOldVersionToken() {
-        return oldVersionToken;
+    public String getToken() {
+        return token;
     }
 
-    public void setOldVersionToken(String oldVersionToken) {
-        this.oldVersionToken = oldVersionToken;
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public String getSurveyName() {
@@ -57,5 +58,13 @@ public class Survey {
 
     public void setId(ObjectId id) {
         this.id = id;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
     }
 }
