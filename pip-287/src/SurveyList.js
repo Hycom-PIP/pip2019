@@ -66,8 +66,8 @@ class SurveyList extends Component{
                 Header: '',
                 Cell: row => (
                 <div>
-                    <MDBBtn color="white" style={{ flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
-                        <Share onClick={() => this.share(this)} fontSize="20px" color="#000000" />
+                    <MDBBtn onClick={() => this.share(row)} color="white" style={{ flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
+                        <Share  fontSize="20px" color="#000000" />
                     </MDBBtn>
                 </div>
                 )
@@ -76,8 +76,8 @@ class SurveyList extends Component{
                 Header: '',
                 Cell: row => (
                 <div>
-                   <MDBBtn color="white" style={{ flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
-                        <Edit onClick={() => this.edit()} fontSize="20px" color="#000000"/>
+                   <MDBBtn onClick={() => this.edit()}  color="white" style={{ flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
+                        <Edit fontSize="20px" color="#000000"/>
                     </MDBBtn>
                 </div>
                 )
@@ -86,8 +86,8 @@ class SurveyList extends Component{
                 Header: '',
                 Cell: row => (
                 <div>
-                   <MDBBtn color="white" style={{ flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
-                        <Trash onClick={() => this.trash(this) }  fontSize="20px" color="#000000" />
+                   <MDBBtn onClick={() => this.trash(row) } color="white" style={{ flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
+                        <Trash   fontSize="20px" color="#000000" />
                     </MDBBtn>
                 </div>
                 )
@@ -102,7 +102,8 @@ class SurveyList extends Component{
            
         }
         share(direction){
-            this.copyToClipboard(direction.data.token);
+            console.log(direction.index);
+            this.copyToClipboard(direction.index);
         }
         edit(direction){
 
@@ -133,17 +134,17 @@ class SurveyList extends Component{
         }
     
         copyToClipboard(str){
-            const el = document.createElement('textarea');
-            el.value = str;
-            document.body.appendChild(el);
-            el.select();
-            document.execCommand('copy');
-            document.body.removeChild(el);
+            // const el = document.createElement('textarea');
+            // el.value = str;
+            // document.body.appendChild(el);
+            // el.select();
+            // document.execCommand('copy');
+            // document.body.removeChild(el);
           };
 
         render() {
 
-            const data = [];
+            let data = [];
             for (let survey of this.state.surveys.pages) {
                 data.push({
                     name:survey.name,
