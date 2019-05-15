@@ -10,7 +10,7 @@ public class Survey {
 
     @Id
     private ObjectId id;
-    private String oldVersionToken;
+    private String token;
     @NotBlank(message = "Survey Name cannot be null.")
     private String surveyName;
     private String surveyDescription;
@@ -18,11 +18,11 @@ public class Survey {
     private Page[] pageList;
 
     public String getOldVersionToken() {
-        return oldVersionToken;
+        return token;
     }
 
     public void setOldVersionToken(String oldVersionToken) {
-        this.oldVersionToken = oldVersionToken;
+        this.token = oldVersionToken;
     }
 
     public String getSurveyName() {
