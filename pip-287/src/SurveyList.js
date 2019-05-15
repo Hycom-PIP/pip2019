@@ -6,6 +6,8 @@ import { MDBBtn, MDBContainer, MDBInput, MDBPagination, MDBPageItem, MDBPageNav,
 import Share from 'react-icons/lib/io/android-share';
 import Trash from 'react-icons/lib/io/trash-a';
 import Edit from 'react-icons/lib/io/edit';
+import ReactTable from 'react-table';
+import 'react-table/react-table.css';
 
 
 
@@ -14,6 +16,8 @@ import 'bootstrap-css-only/css/bootstrap.min.css';
 import 'mdbreact/dist/css/mdb.css';
 import Toolbar from '@material-ui/core/Toolbar';
 import './css/style.css';
+
+
 
 class SurveyList extends Component{
   
@@ -30,6 +34,7 @@ class SurveyList extends Component{
                 ]
 
             },
+            
             surveyList:{
                 pages:[
                     {
@@ -49,7 +54,61 @@ class SurveyList extends Component{
             }
 
         };
-    }
+    
+
+            this.columns = [
+            {
+                Header: 'Name',
+                accessor: 'name'
+            }, 
+            {
+                Header: 'Version',
+                accessor: 'version',
+            }, 
+            {
+                Header: 'CreationDate',
+                accessor: 'creationDate',
+            },
+            {
+                Header: 'Number of completed surveys',
+                accessor: 'numberOfCompletedSyrveys',
+            },
+            {
+                Header: 'Link',
+                accessor: 'token',
+            },
+            {
+                Header: '',
+                Cell: row => (
+                <div>
+                    <MDBBtn color="white" style={{ flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
+                        <Share onClick={() => this.share()} fontSize="20px" color="#000000" />
+                    </MDBBtn>
+                </div>
+                )
+            },
+            {
+                Header: '',
+                Cell: row => (
+                <div>
+                   <MDBBtn color="white" style={{ flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
+                        <Edit onClick={() => this.share()} fontSize="20px" color="#000000"/>
+                    </MDBBtn>
+                </div>
+                )
+            },
+            {
+                Header: '',
+                Cell: row => (
+                <div>
+                   <MDBBtn color="white" style={{ flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
+                        <Trash onClick={() => this.share()}  fontSize="20px" color="#000000" />
+                    </MDBBtn>
+                </div>
+                )
+            }
+            ]
+        }
 
         yourSurveys(direction) {
            
@@ -63,30 +122,34 @@ class SurveyList extends Component{
         
     
         render() {
+
+            const data = [{
+                name: 'name',
+                version: 'version',
+                creationDate: '15-05-2019',
+                numberOfCompletedSyrveys: 2,
+                token:'ankieta.pl/ankieta',
+            }]
         
         return (
+            
             <MDBContainer>
                 <MDBRow center>
                     <div style={toolbarStyle}>
                     <MDBBtn onClick={this.yourSurveys} color="black">Twoje Ankiety</MDBBtn>
                     <MDBBtn onClick={this.makeSurvey} color="black">Utwórz Ankiete</MDBBtn >
-                    <MDBBtn color="black">
-                        <Share onClick={() => this.share()} fontSize="30px" color="#ffffff" />
-                    </MDBBtn>
-                    <MDBBtn color="black">
-                        <Edit onClick={() => this.share()} fontSize="30px" color="#ffffff" />
-                    </MDBBtn>
-                    <MDBBtn color="black">
-                        <Trash onClick={() => this.share()} fontSize="30px" color="#ffffff" />
-                    </MDBBtn>
                    
                     </div>
                 </MDBRow>
 
                 <MDBContainer>
-                    <MDBRow>
-                        
-                    </MDBRow>
+                
+                        <ReactTable
+                            data={data}
+                            pageSize={10}
+                            columns={this.columns}
+                        />
+                      
                 </MDBContainer>
 
             </MDBContainer>
