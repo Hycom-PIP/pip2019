@@ -12,6 +12,7 @@ import pl.hycom.surveyservice.repository.SurveyRepository;
 import javax.validation.Valid;
 import java.util.Optional;
 
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 public class DisplaySurveyController {
     @Autowired
@@ -27,11 +28,12 @@ public class DisplaySurveyController {
 
     @RequestMapping(value = "/ankieta", method=RequestMethod.POST)
     public ResponseEntity answerSurvey(@Valid @RequestBody AnsweredSurvey answeredSurvey) {
-        if(answeredSurvey.validateAnsweredSurvey()) {
-            answeredSurveyRepository.insert(answeredSurvey);
-            return new ResponseEntity(HttpStatus.OK);
-        } else {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        if(surveyRepository.findById(answeredSurvey.token.toString()).isPresent()) {
+            if (answeredSurvey.validateAnsweredSurvey()) {
+                answeredSurveyRepository.insert(answeredSurvey);
+                return new ResponseEntity(HttpStatus.OK);
+            }
         }
+        return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
 }
