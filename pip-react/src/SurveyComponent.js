@@ -132,7 +132,7 @@ class SurveyComponent extends Component {
 
     }
     surveyTitleChange(e) {
-        let textChange = e.target.value
+        let textChange = e.target.value;
         this.setState((preState) => {
             let old = preState.survey;
             old.surveyName = textChange;
