@@ -19,16 +19,11 @@ public class SurveyListViewController {
     @Autowired
     SurveyRepository surveyRepository;
 
-    @RequestMapping(value = "/{surveyId}", method = RequestMethod.GET)
-    public ResponseEntity<Optional<Survey>> getSurveyById(@PathVariable String surveyId) {
-        return new ResponseEntity<>(surveyRepository.findById(surveyId), HttpStatus.OK);
-    }
-
     @RequestMapping(value = "/getSurveys/{pageNumber}", method = RequestMethod.GET)
     public ResponseEntity<ViewPage> getSurveysByPage(@PathVariable int pageNumber) {
         List<Survey> surveyList = surveyRepository.findAll(PageRequest.of(pageNumber, 10)).getContent();
         long surveyAmount = surveyRepository.countAllByIdIsNotNull();
-        return new ResponseEntity<>(new ViewPage((int) surveyAmount, (int)Math.ceil(surveyAmount/10.0), surveyList), HttpStatus.OK);
+        return new ResponseEntity<>(new ViewPage((int) surveyAmount, (int) Math.ceil(surveyAmount / 10.0), surveyList), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{surveyId}", method = RequestMethod.DELETE)
@@ -49,24 +44,5 @@ public class SurveyListViewController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
         return new ResponseEntity<>(survey, HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "/UUID/{surveyId}", method = RequestMethod.GET)
-    public ResponseEntity<String> getUUID(@PathVariable String surveyId) {
-        return new ResponseEntity<>(surveyRepository.findById(surveyId).get().getUuid(), HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "/UUID", method = RequestMethod.PUT)
-    public ResponseEntity<String> generateUUID(@RequestBody Survey survey) {
-        if (survey.getUuid() == null) {
-            survey.setUuid(java.util.UUID.randomUUID().toString());
-            return new ResponseEntity<>(survey.getUuid(), HttpStatus.OK);
-        } else
-            return new ResponseEntity<>("UUID already exists", HttpStatus.BAD_REQUEST);
-    }
-
-    @RequestMapping(value = "/getByUUID/{uuid}", method = RequestMethod.GET)
-    public ResponseEntity<Survey> getSurveyByUUID(@PathVariable String uuid) {
-        return new ResponseEntity<>(surveyRepository.findByUuid(uuid).get(0), HttpStatus.OK);
     }
 }
