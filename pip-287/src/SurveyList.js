@@ -41,7 +41,7 @@ class SurveyList extends Component {
         this.share = this.share.bind(this);
         this.edit = this.edit.bind(this);
         this.trash = this.trash.bind(this);
-        this.GetView= this.GetView.bind(this);
+        this.GetView = this.GetView.bind(this);
         this.copyTextToClipboard = this.copyTextToClipboard.bind(this);
         this.deleteSurvey = this.deleteSurvey.bind(this);
         this.ChangeActiveState = this.ChangeActiveState.bind(this);
@@ -102,58 +102,75 @@ class SurveyList extends Component {
 
     copyTextToClipboard(text) {
         var textArea = document.createElement("textarea");
-      
+
         textArea.style.position = 'fixed';
         textArea.style.top = 0;
         textArea.style.left = 0;
-      
+
         // Ensure it has a small width and height. Setting to 1px / 1em
         // doesn't work as this gives a negative w/h on some browsers.
         textArea.style.width = '2em';
         textArea.style.height = '2em';
-      
+
         // We don't need padding, reducing the size if it does flash render.
         textArea.style.padding = 0;
-      
+
         // Clean up any borders.
         textArea.style.border = 'none';
         textArea.style.outline = 'none';
         textArea.style.boxShadow = 'none';
-      
+
         // Avoid flash of white box if rendered for any reason.
         textArea.style.background = 'transparent';
-      
-      
+
+
         textArea.value = text;
-      
+
         document.body.appendChild(textArea);
         textArea.focus();
         textArea.select();
-      
+
         try {
-          var successful = document.execCommand('copy');
-          var msg = successful ? 'successful' : 'unsuccessful';
-          console.log('Copying text command was ' + msg);
+            var successful = document.execCommand('copy');
+            var msg = successful ? 'successful' : 'unsuccessful';
+            console.log('Copying text command was ' + msg);
         } catch (err) {
-          console.log('Oops, unable to copy');
+            console.log('Oops, unable to copy');
         }
-      
+
         document.body.removeChild(textArea);
-      }
+    }
     yourSurveys(direction) {
     }
     makeSurvey(direction) {
 
     }
-    share(direction){
+    share(direction) {
         this.copyTextToClipboard("localhost:3001/ankieta/" + this.state.surveys.pages[direction.index].token);
     }
 
     edit(direction) {
         var token = this.state.surveys.pages[direction.index].token;
-console.log(token);
+         var xhttp = new XMLHttpRequest();
+        var obj;
+        xhttp.open("GET", "http://localhost:8080/survey-service/"+token, true)
+        xhttp.send();
+        xhttp.onreadystatechange = () => {
+            if (xhttp.readyState == 4) {
+                if (xhttp.status == 200) {
+                    obj = JSON.parse(xhttp.responseText);
+                    this.setState({json: obj,
+                        activeState: "edit"      
+                    });
+                }
+                else {
+                    console.log("Serwis zwrócił kod błędu http: " + xhttp.status);
+                }
+            }
+        }
+        
     }
-    trash(direction){
+    trash(direction) {
         var token = this.state.surveys.pages[direction.index].token;
         this.deleteSurvey(token);
 
@@ -193,11 +210,10 @@ console.log(token);
         }
         return obj;
     }
-    ChangeActiveState(nameOfState)
-    {
-        this.setState({activeState: nameOfState});
+    ChangeActiveState(nameOfState) {
+        this.setState({ activeState: nameOfState });
     }
-    GetView () {
+    GetView() {
         if (this.state.activeState === "show") {
             let data = [];
             for (let survey of this.state.surveys.pages) {
@@ -211,7 +227,7 @@ console.log(token);
             }
             return (
                 <MDBContainer>
-                    <ReactTable 
+                    <ReactTable
                         data={data}
                         pageSize={10}
                         columns={this.columns}
@@ -219,29 +235,26 @@ console.log(token);
                     />
                 </MDBContainer>)
         }
-        else if(this.state.activeState ==="creation")
-        {
+        else if (this.state.activeState === "creation") {
             return <SurveyComponent />
         }
+        else if(this.state.activeState === "edit")
+        {
+            return <SurveyComponent surveyJson={this.state.json}/>
 
-
-
+        }
     }
     render() {
-
-
-
         return (
 
             <MDBContainer>
                 <MDBRow center>
                     <div style={toolbarStyle}>
-                        <MDBBtn onClick={()=>(this.ChangeActiveState("show"))}  color="black">Twoje Ankiety</MDBBtn>
-                        <MDBBtn onClick={()=>(this.ChangeActiveState("creation"))} color="black">Utwórz Ankiete</MDBBtn>
+                        <MDBBtn onClick={() => (this.ChangeActiveState("show"))} color="black">Twoje Ankiety</MDBBtn>
+                        <MDBBtn onClick={() => (this.ChangeActiveState("creation"))} color="black">Utwórz Ankiete</MDBBtn>
 
                     </div>
                 </MDBRow>
-
                 {this.GetView()}
             </MDBContainer>
         )
