@@ -81,7 +81,7 @@ class MultipleAnswer extends Component {
     }
     formChanged(e) {
         console.log("BUTTON", e.target.value);
-        this.props.func(e.target.value, this.props.pageindex, this.props.questionindex, "checkbox")
+        this.props.func(e, this.props.pageindex, this.props.questionindex, "checkbox")
     }
 
 
