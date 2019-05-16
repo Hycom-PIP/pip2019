@@ -36,6 +36,7 @@ class SurveyList extends Component {
         if (props.surveyJson != undefined) {
             this.state.surveyList = JSON.parse(props.surveyJson);
         }
+        this.getSurveysJson = this.getSurveysJson.bind(this);
         this.yourSurveys = this.yourSurveys.bind(this);
         this.makeSurvey = this.makeSurvey.bind(this);
         this.share = this.share.bind(this);
@@ -146,21 +147,20 @@ class SurveyList extends Component {
 
     }
     share(direction) {
-        this.copyTextToClipboard("localhost:3001/ankieta/" + this.state.surveys.pages[direction.index].token);
+        this.copyTextToClipboard("localhost:3000/ankieta/" + this.state.surveys.pages[direction.index].token);
     }
 
     edit(direction) {
         var token = this.state.surveys.pages[direction.index].token;
-         var xhttp = new XMLHttpRequest();
-        var obj;
-        xhttp.open("GET", "http://localhost:8080/survey-service/"+token, true)
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("GET", "http://localhost:8080/survey-service/" + token, true)
         xhttp.send();
         xhttp.onreadystatechange = () => {
             if (xhttp.readyState == 4) {
                 if (xhttp.status == 200) {
-                    obj = JSON.parse(xhttp.responseText);
-                    this.setState({json: obj,
-                        activeState: "edit"      
+                    this.setState({
+                        json: xhttp.responseText,
+                        activeState: "edit"
                     });
                 }
                 else {
@@ -168,7 +168,7 @@ class SurveyList extends Component {
                 }
             }
         }
-        
+
     }
     trash(direction) {
         var token = this.state.surveys.pages[direction.index].token;
@@ -179,12 +179,11 @@ class SurveyList extends Component {
     deleteSurvey(token) {
         var url = "http://localhost:8080/survey-service/" + token;
         var xhr = new XMLHttpRequest();
-        var component = this;
         xhr.open("DELETE", url, true);
-        xhr.onload = function () {
+        xhr.onload =  ()=> {
             if (xhr.readyState == 4 && xhr.status == "200") {
                 console.log("Usunięto: " + token);
-                component.getSurveysJson();
+                this.getSurveysJson();
             } else {
                 console.error("Błąd");
             }
@@ -208,13 +207,13 @@ class SurveyList extends Component {
                 }
             }
         }
-        return obj;
     }
     ChangeActiveState(nameOfState) {
         this.setState({ activeState: nameOfState });
     }
     GetView() {
         if (this.state.activeState === "show") {
+            this.getSurveysJson(); //If front end will be too slow remove this line
             let data = [];
             for (let survey of this.state.surveys.pages) {
                 data.push({
@@ -238,9 +237,8 @@ class SurveyList extends Component {
         else if (this.state.activeState === "creation") {
             return <SurveyComponent />
         }
-        else if(this.state.activeState === "edit")
-        {
-            return <SurveyComponent surveyJson={this.state.json}/>
+        else if (this.state.activeState === "edit") {
+            return <SurveyComponent surveyJson={this.state.json} />
 
         }
     }
