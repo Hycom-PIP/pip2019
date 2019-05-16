@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class EditSurveyController {
     @Autowired
     SurveyRepository surveyRepository;
@@ -35,7 +36,7 @@ public class EditSurveyController {
     public ResponseEntity<Survey> addNewVersion(@RequestBody Survey survey) {
         survey.setCurrentVersion(false);
         surveyRepository.save(survey);
-
+        survey.setId(new ObjectId());
         survey.setCurrentVersion(true);
         int version = survey.getVersion();
         survey.setVersion(++version);
