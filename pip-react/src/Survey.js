@@ -93,7 +93,6 @@ class SurveyComponent extends Component {
     }
     answerDataChange(e, pageIndex, questionIndex, type) {
         console.log("TEST", this.state.answers, pageIndex);
-        console.log(e.target.checked);
         this.setState((prevState) => {
                 let old = prevState.answers;
                 // let question = old.pages[pageIndex - 1].questionList[questionIndex];
@@ -105,22 +104,22 @@ class SurveyComponent extends Component {
                         this.state.answers.pages[pageIndex - 1].questionList[questionIndex].answers[0] = e;
                         break;
                     case "checkbox":
-                        if (e.target) {
-                            alert("target");
-                            if (e.target.checked) {
-                                if (!this.state.answers.pages[pageIndex - 1].questionList[questionIndex].answers.includes(e.target.value)) {
-                                    this.state.answers.pages[pageIndex - 1].questionList[questionIndex].answers.push(e.target.value);
-                                    alert("DODANO");
-                                }
-                            } else {
-                                if (this.state.answers.pages[pageIndex - 1].questionList[questionIndex].answers.includes(e.target.value)) {
-                                    var ind = this.state.answers.pages[pageIndex - 1].questionList[questionIndex].answers.indexOf(e.target.value);
-                                    this.state.answers.pages[pageIndex - 1].questionList[questionIndex].answers.splice(ind, 1);
-                                    alert("USUNIETO");
-                                }
-                            }
-                        }
-                        break;
+                        // if (e.target) {
+                        //     alert("target");
+                        //     if (e.target.checked) {
+                        //         if (!this.state.answers.pages[pageIndex - 1].questionList[questionIndex].answers.includes(e.target.value)) {
+                        //             this.state.answers.pages[pageIndex - 1].questionList[questionIndex].answers.push(e.target.value);
+                        //             alert("DODANO");
+                        //         }
+                        //     } else {
+                        //         if (this.state.answers.pages[pageIndex - 1].questionList[questionIndex].answers.includes(e.target.value)) {
+                        //             var ind = this.state.answers.pages[pageIndex - 1].questionList[questionIndex].answers.indexOf(e.target.value);
+                        //             this.state.answers.pages[pageIndex - 1].questionList[questionIndex].answers.splice(ind, 1);
+                        //             alert("USUNIETO");
+                        //         }
+                        //     }
+                        // }
+                        // break;
                     default:
                         break;
                 }
