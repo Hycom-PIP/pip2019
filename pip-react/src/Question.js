@@ -1,9 +1,55 @@
 import React, { Component } from 'react';
 import { MDBIcon, MDBBtn, MDBInput, MDBCard, MDBRow, MDBContainer, MDBCol, MDBListGroup, MDBListGroupItem } from "mdbreact";
-import DropdownButton from 'react-bootstrap/DropdownButton';
-import Dropdown from 'react-bootstrap/Dropdown';
+// import DropdownButton from 'react-bootstrap/DropdownButton';
+// import Dropdown from 'react-bootstrap/Dropdown';
 import Form from 'react-bootstrap/Form';
+// import InputGroup from 'react-bootstrap/InputGroup'
 // import { Droppable, Draggable, DragDropContext } from 'react-beautiful-dnd';
+
+class SingleAnswer extends Component {
+    constructor(props) {
+        super(props);
+
+        this.handleChange = this.handleChange.bind(this);
+        this.formChanged = this.formChanged.bind(this);
+        console.log("CONSTR", this.props)
+    }
+    handleChange(index, event) {
+        let textChange = event.target.value;
+        let AllAnwsers = this.props.answers;
+        AllAnwsers[index] = { answer: textChange };
+        this.props.func(AllAnwsers, this.props.index, "multiQuestions")
+        this.forceUpdate();
+    }
+    formChanged(e) {
+        console.log("SHORT", this.props.pageindex, this.props.questionindex);
+        this.props.func(e.target.value, this.props.pageindex, this.props.questionindex, "radio")
+    }
+
+    render() {
+        return (
+            <MDBContainer fluid id="SingleChoice" >
+
+                <Form.Group>
+                {(this.props.answers || []).map((values, index) =>
+                    (
+                        <React.Fragment key={this.props.parentKey + '.' + index}>
+                            <MDBRow className="pt-0">
+                                <MDBCol size="auto" className="pr-0">
+                                    <Form.Check value={values.answer} onChange={this.formChanged.bind(this)} type='radio' id={`Radio-${this.props.parentKey + '.' + index}`} name={"Radio"+this.props.parentKey} label={``} />
+                                </MDBCol>
+                                <MDBCol size="6" className="m-0 p-0" >
+                                    <p>{values.answer}</p>
+                                </MDBCol>
+                            </MDBRow>
+                            <br />
+                        </React.Fragment>
+                    ))}
+                </Form.Group>
+            </MDBContainer>
+        )
+    }
+}
 
 class MultipleAnswer extends Component {
     constructor(props) {
@@ -19,7 +65,7 @@ class MultipleAnswer extends Component {
     }
     AddNewQuestion() {
         let old = this.props.answers
-        if (old == undefined) {
+        if (old === undefined) {
             old = []
         }
         old.push({ answer: "" })
@@ -33,30 +79,31 @@ class MultipleAnswer extends Component {
         this.props.func(AllAnwsers, this.props.index, "multiQuestions")
         this.forceUpdate();
     }
+    formChanged(e) {
+        console.log("BUTTON", e.target.value);
+        this.props.func(e.target.value, this.props.pageindex, this.props.questionindex, "checkbox")
+    }
+
 
     render() {
         return (
             <MDBContainer fluid id="MultiChoice" >
-                {(this.props.answers || []).map((values, index) =>
-                    (
-                        <React.Fragment key={this.props.parentKey + '.' + index}>
-                            <MDBRow className="pt-0">
-                                <MDBCol size="auto" className="pr-0">
-                                    <Form>
-                                        <Form.Check custom type='checkbox' id={`CheckBox-${this.props.parentKey + '.' + index}`} label={``} />
-                                    </Form>
-                                </MDBCol>
-                                <MDBCol size="6" className="m-0 p-0" >
-                                    <MDBInput onChange={(event) => (this.handleChange(index, event))} hint="Przykładowe pytanie" value={values.answer} className="m-0 p-0 MinusMarginTop" />
-                                </MDBCol>
-                                <MDBCol size="auto" >
-                                    <MDBIcon className="PointerMouse" icon="trash-alt" onClick={() => this.DeleteMultiQuestion(index)} />
-                                </MDBCol>
-                            </MDBRow>
-                            <br />
-                        </React.Fragment>
-                    ))}
-                <MDBBtn onClick={this.AddNewQuestion} color="primary">Dodaj nową odpowiedź</MDBBtn>
+                <Form.Group onChange={this.formChanged.bind(this)}>
+                    {(this.props.answers || []).map((values, index) =>
+                        (
+                            <React.Fragment key={this.props.parentKey + '.' + index}>
+                                <MDBRow className="pt-0">
+                                    <MDBCol size="auto" className="pr-0">
+                                        <Form.Check value={values.answer} onChange={this.formChanged.bind(this)} type='checkbox' id={`CheckBox-${this.props.parentKey + '.' + index}`} name={"CheckBox"+this.props.parentKey} label={``} />
+                                    </MDBCol>
+                                    <MDBCol size="6" className="m-0 p-0" >
+                                        <p>{values.answer}</p>
+                                    </MDBCol>
+                                </MDBRow>
+                                <br />
+                            </React.Fragment>
+                        ))}
+                </Form.Group>
             </MDBContainer>
         )
     }
@@ -71,8 +118,6 @@ class QuestionCard extends Component {
         this.isRequieredChange = this.isRequieredChange.bind(this);
         this.questionTypeChange = this.questionTypeChange.bind(this);
         this.addAnswers = this.addAnswers.bind(this);
-        this.MoveUp = this.MoveUp.bind(this);
-        this.MoveDown = this.MoveDown.bind(this);
         this.DeleteAnswer = this.DeleteAnswer.bind(this);
         this.DltMultiAndUpadte = this.DltMultiAndUpadte.bind(this);
         this.GetQuestionRender = this.GetQuestionRender.bind(this);
@@ -88,14 +133,8 @@ class QuestionCard extends Component {
         if (questionType === "singleOption")
             return "Radio"
     }
-    MoveUp() {
-        this.props.moveFunc(this.props.index, "up");
-    }
-    MoveDown() {
-        this.props.moveFunc(this.props.index, "down");
-    }
     questionTextChange(e) {
-        this.props.func(e.target.value, this.props.index, "questionText")
+        this.props.func(e.target.value, this.props.pageIndex, this.props.questionIndex, "Text")
     }
     questionDescriptionChange(e) {
         this.props.func(e.target.value, this.props.index, "questionDescription");
@@ -121,54 +160,34 @@ class QuestionCard extends Component {
         if (this.props.data.questionType === "longText" || this.props.data.questionType === "shortText") {
             return (
                 <MDBContainer>
-                    <MDBInput value="Przykładowa odpowiedź" className="p-0" type="textarea" rows="1" />
+                    <MDBInput label="Przykładowa odpowiedź" className="p-0" onChange={this.questionTextChange} type="text" rows="1" />
                 </MDBContainer>)
         }
         else {
-            return (<MultipleAnswer key={this.props.parentKey + '.' + this.props.index} parentKey={this.props.parentKey} index={this.props.index} func={this.props.func} answers={this.props.data.answers} multiDltfunc={this.DltMultiAndUpadte} />)
+            if(this.props.data.questionType === "multipleOptions")
+                return (<MultipleAnswer key={this.props.parentKey + '.' + this.props.index} pageindex={this.props.pageIndex} questionindex={this.props.questionIndex} parentKey={this.props.parentKey} index={this.props.index} func={this.props.func} answers={this.props.data.answers} multiDltfunc={this.DltMultiAndUpadte} />)
+            else
+                return (<SingleAnswer key={this.props.parentKey + '.' + this.props.index} pageindex={this.props.pageIndex} questionindex={this.props.questionIndex} parentKey={this.props.parentKey} index={this.props.index} func={this.props.func} answers={this.props.data.answers} multiDltfunc={this.DltMultiAndUpadte} />)
         }
     }
+
     render() {
 
         return (
+            <MDBContainer className="block-example border pt-4">
                     <div>
                         <div className="row">
-                            {/*<div className="col-2 align-self-center">*/}
-                            {/*    <MDBCard className="text-center " >*/}
-                            {/*        <MDBListGroup className="h-100 PointerMouse">*/}
-                            {/*            <MDBListGroupItem onClick={this.MoveUp}>*/}
-                            {/*                <MDBIcon icon="angle-up " />*/}
-                            {/*            </MDBListGroupItem>*/}
-                            {/*            <MDBListGroupItem>*/}
-                            {/*                <MDBIcon icon="ellipsis-h" />*/}
-                            {/*            </MDBListGroupItem>*/}
-                            {/*            <MDBListGroupItem onClick={this.DeleteAnswer}>*/}
-                            {/*                <MDBIcon icon="trash-alt" />*/}
-                            {/*            </MDBListGroupItem>*/}
-                            {/*            <MDBListGroupItem onClick={this.MoveDown} >*/}
-                            {/*                <MDBIcon icon="angle-down" />*/}
-                            {/*            </MDBListGroupItem>*/}
-                            {/*        </MDBListGroup>*/}
-                            {/*    </MDBCard>*/}
-                            {/*</div>*/}
                             <div className="col">
-                                <MDBInput type="textarea" value={this.props.data.questionText} onChange={this.questionTextChange} label="Pytanie" rows="2" />
+                                <p>{this.props.data.questionText}</p>
                                 <div>
-                                    <MDBInput type="textarea" value={this.props.data.questionDescription} onChange={this.questionDescriptionChange} label="Opis pytania" rows="2" />
+                                    <p>{this.props.data.questionDescription}</p>
                                 </div>
                             </div>
                         </div>
                         <br />
                         <div className="d-flex justify-content-between align-items-end">
                             <p className="d-flex " style={{ color: "#757575" }}>Odpowiedź</p>
-                            {/*<div className="d-flex align-items-end">*/}
-                            {/*    <DropdownButton id="dropdown-basic-button" onSelect={this.questionTypeChange} title={this.MapQuestionType(this.props.data.questionType)}  >*/}
-                            {/*        <Dropdown.Item eventKey='shortText'>Short</Dropdown.Item>*/}
-                            {/*        <Dropdown.Item eventKey='longText'>Long</Dropdown.Item>*/}
-                            {/*        <Dropdown.Item eventKey='singleOption'>Radio</Dropdown.Item>*/}
-                            {/*        <Dropdown.Item eventKey='multipleOptions'>Check</Dropdown.Item>*/}
-                            {/*    </DropdownButton>*/}
-                            {/*</div>*/}
+
                         </div>
                         <MDBContainer id="AnswerHolder" className="block-example border pt-4">
                             {
@@ -177,8 +196,6 @@ class QuestionCard extends Component {
                         </MDBContainer>
                         <div className="d-flex flex-row-reverse mt-3">
                             <div className="custom-control custom-checkbox ">
-                                {/* <input checked={this.state.isRequiered} onChange={this.isRequieredChange} type="checkbox" class="custom-control-input" id="IsRequiredCheckbox" />
-      <label class="custom-control-label" style={{ color: "#757575" }} for="IsRequiredCheckbox">Wymagane</label> */}
                                 <Form>
                                     <Form.Check
                                         onChange={this.isRequieredChange}
@@ -192,6 +209,7 @@ class QuestionCard extends Component {
                             </div>
                         </div>
                     </div>
+            </MDBContainer>
                 )
 
     }
