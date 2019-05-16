@@ -29,6 +29,7 @@ public class NewSurveyController {
 
         survey.setToken(UUID.randomUUID().toString());
         survey.setVersion(1);
+        survey.setCurrentVersion(true);
         surveyRepository.insert(survey);
         return new ResponseEntity<>(survey, HttpStatus.OK);
     }

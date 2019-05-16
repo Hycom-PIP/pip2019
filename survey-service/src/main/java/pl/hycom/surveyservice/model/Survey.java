@@ -13,6 +13,7 @@ public class Survey {
     @Id
     private ObjectId id;
     private String token;
+    private boolean isCurrentVersion;
     private int version = 1;
     @NotBlank(message = "Survey Name cannot be null.")
     private String surveyName;
@@ -26,6 +27,14 @@ public class Survey {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public boolean getIsCurrentVersion() {
+        return isCurrentVersion;
+    }
+
+    public void setCurrentVersion(boolean currentVersion) {
+        isCurrentVersion = currentVersion;
     }
 
     public String getSurveyName() {

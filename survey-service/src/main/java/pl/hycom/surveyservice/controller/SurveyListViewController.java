@@ -22,7 +22,7 @@ public class SurveyListViewController {
 
     @RequestMapping(value = "/getSurveys/{pageNumber}", method = RequestMethod.GET)
     public ResponseEntity<DtoPage> getSurveysByPage(@PathVariable int pageNumber) {
-        List<Survey> surveyList = surveyRepository.findAll(PageRequest.of(pageNumber, 10)).getContent();
+        List<Survey> surveyList = surveyRepository.findAllByIsCurrentVersion(true, PageRequest.of(pageNumber, 10));
         long surveyAmount = surveyRepository.countAllByIdIsNotNull();
 
         List<DtoSurvey> dtoSurveys = surveyList.stream()
