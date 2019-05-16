@@ -153,7 +153,7 @@ class SurveyList extends Component {
     edit(direction) {
         var token = this.state.surveys.pages[direction.index].token;
         var xhttp = new XMLHttpRequest();
-        xhttp.open("GET", "http://localhost:8080/survey-service/" + token, true)
+        xhttp.open("GET", "http://localhost:8080/survey-service/getSurvey/" + token, true)
         xhttp.send();
         xhttp.onreadystatechange = () => {
             if (xhttp.readyState == 4) {

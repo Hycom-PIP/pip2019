@@ -114,7 +114,7 @@ class SurveyComponent extends Component {
     }
 
     generateJson() {
-        // console.log(JSON.stringify(this.state.survey))
+        console.log(JSON.stringify(this.state.survey))
         var xhttp = new XMLHttpRequest()
         if(this.state.survey.token==null)
         {
@@ -128,6 +128,7 @@ class SurveyComponent extends Component {
             if (xhttp.readyState == 4) {
                 if (xhttp.status == 200) {
                     console.log("Serwis przyjął dane, kod http: " + xhttp.status);
+                    window.location.reload();
                 }
                 else {
                     console.log("Serwis zwrócił kod błędu http: " + xhttp.status);
