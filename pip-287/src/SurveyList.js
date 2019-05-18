@@ -10,13 +10,11 @@ import ReactTable from 'react-table';
 import 'react-table/react-table.css';
 
 
-
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'bootstrap-css-only/css/bootstrap.min.css';
 import 'mdbreact/dist/css/mdb.css';
 import Toolbar from '@material-ui/core/Toolbar';
 import './css/style.css';
-
 
 
 class SurveyList extends Component {
@@ -25,7 +23,7 @@ class SurveyList extends Component {
         super(props);
         this.state = {
             activeState: "show",
-            currentPage: 1,
+            currentPage: 0,
             surveys: {
                 pages: []
             }
@@ -37,8 +35,6 @@ class SurveyList extends Component {
             this.state.surveyList = JSON.parse(props.surveyJson);
         }
         this.getSurveysJson = this.getSurveysJson.bind(this);
-        this.yourSurveys = this.yourSurveys.bind(this);
-        this.makeSurvey = this.makeSurvey.bind(this);
         this.share = this.share.bind(this);
         this.edit = this.edit.bind(this);
         this.trash = this.trash.bind(this);
@@ -49,51 +45,73 @@ class SurveyList extends Component {
         {/*Survey list table structure*/ }
         this.columns = [
             {
-                Header: 'Name',
-                accessor: 'name'
+                Header: 'Nazwa',
+                accessor: 'name',
+                sortable: false,
+                width: 220,
+                height: 400,
             },
             {
-                Header: 'Version',
-                accessor: 'version',
-            },
-            {
-                Header: 'CreationDate',
+                Header: 'Utworzono',
                 accessor: 'creationDate',
+                sortable: false,
+                width: 193,
             },
             {
-                Header: 'Number of completed surveys',
+                Header: 'Wersja',
+                accessor: 'version',
+                sortable: false,
+                width: 70,
+                Cell: row => <div style={{ textAlign: "center"}}>{row.value}</div>
+            },
+            {
+                Header: 'Wypełnienia',
                 accessor: 'numberOfCompletedSyrveys',
+                sortable: false,
+                width: 100,
+                Cell: row => <div style={{ textAlign: "center" }}>{row.value}</div>
             },
             {
                 Header: 'Link',
                 accessor: 'token',
+                sortable: false,
+                width: 200,
             },
             {
-                Header: '',
+                Header: 'Kopiuj',
+                sortable: false,
+                width: 80,
+                resizable: false,
                 Cell: row => (
                     <div>
-                        <MDBBtn onClick={() => this.share(row)} color="white" style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                            <Share fontSize="20px" color="#000000" />
+                        <MDBBtn onClick={() => this.share(row)} color="primary" size="sm" style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                            <Share fontSize="20px" color="white" />
                         </MDBBtn>
                     </div>
                 )
             },
             {
-                Header: '',
+                Header: 'Edytuj',
+                sortable: false,
+                width: 80,
+                resizable: false,
                 Cell: row => (
                     <div>
-                        <MDBBtn onClick={() => this.edit(row)} color="white" style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                            <Edit fontSize="20px" color="#000000" />
+                        <MDBBtn onClick={() => this.edit(row)} color="primary" size="sm" style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                            <Edit fontSize="20px" color="white" />
                         </MDBBtn>
                     </div>
                 )
             },
             {
-                Header: '',
+                Header: 'Usuń',
+                sortable: false,
+                width: 80,
+                resizable: false,
                 Cell: row => (
                     <div>
-                        <MDBBtn onClick={() => this.trash(row)} color="white" style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                            <Trash fontSize="20px" color="#000000" />
+                        <MDBBtn onClick={() => this.trash(row)} color="primary" size="sm" style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                            <Trash fontSize="20px" color="white" />
                         </MDBBtn>
                     </div>
                 )
@@ -107,26 +125,14 @@ class SurveyList extends Component {
         textArea.style.position = 'fixed';
         textArea.style.top = 0;
         textArea.style.left = 0;
-
-        // Ensure it has a small width and height. Setting to 1px / 1em
-        // doesn't work as this gives a negative w/h on some browsers.
         textArea.style.width = '2em';
         textArea.style.height = '2em';
-
-        // We don't need padding, reducing the size if it does flash render.
         textArea.style.padding = 0;
-
-        // Clean up any borders.
         textArea.style.border = 'none';
         textArea.style.outline = 'none';
         textArea.style.boxShadow = 'none';
-
-        // Avoid flash of white box if rendered for any reason.
         textArea.style.background = 'transparent';
-
-
         textArea.value = text;
-
         document.body.appendChild(textArea);
         textArea.focus();
         textArea.select();
@@ -140,11 +146,6 @@ class SurveyList extends Component {
         }
 
         document.body.removeChild(textArea);
-    }
-    yourSurveys(direction) {
-    }
-    makeSurvey(direction) {
-
     }
     share(direction) {
         this.copyTextToClipboard("localhost:3000/ankieta/" + this.state.surveys.pages[direction.index].token);
@@ -191,10 +192,11 @@ class SurveyList extends Component {
         xhr.send(null);
     }
 
+
     getSurveysJson() {
         var xhttp = new XMLHttpRequest();
         var obj;
-        xhttp.open("GET", "http://localhost:8080/survey-service/getSurveys/0", true)
+        xhttp.open("GET", "http://localhost:8080/survey-service/getSurveys/" + this.state.currentPage, true)
         xhttp.send();
         xhttp.onreadystatechange = () => {
             if (xhttp.readyState == 4) {
@@ -213,17 +215,22 @@ class SurveyList extends Component {
     }
     GetView() {
         if (this.state.activeState === "show") {
-            this.getSurveysJson(); //If front end will be too slow remove this line
+            //this.getSurveysJson(); //If front end will be too slow remove this line
             let data = [];
+            let CurrentPage = this.state.currentPage;
             for (let survey of this.state.surveys.pages) {
+                let dateTime = new Date(survey.creationDate);
                 data.push({
                     name: survey.name,
                     version: survey.version,
-                    creationDate: survey.creationDate,
+                    creationDate: dateTime.toDateString() + " " + dateTime.toTimeString(),
                     numberOfCompletedSyrveys: survey.numberOfCompletedSurveys,
                     token: survey.token
                 })
             }
+            let pagesAmount = 1;
+            if (typeof this.state.surveys.statistics !== "undefined")
+                pagesAmount = this.state.surveys.statistics.pagesAmount;
             return (
                 <MDBContainer>
                     <ReactTable
@@ -231,6 +238,26 @@ class SurveyList extends Component {
                         pageSize={10}
                         columns={this.columns}
                         showPageSizeOptions={false}
+                        getTdProps={() => ({
+                            style: {
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'center'
+                            }
+                        })}
+                        manual // this would indicate that server side pagination has been enabled 
+                        pages={pagesAmount}
+                        onPageChange={(pageIndex) => {
+                            console.log(pageIndex)
+                            this.state.currentPage = pageIndex;
+                            this.getSurveysJson()
+                          }}
+                        nextText="Następna strona"
+                        previousText="Poprzednia strona"
+                        pageText="Strona"
+                        ofText="z"
+                        PreviousComponent={pagitationButton}
+                        NextComponent={pagitationButton}
                     />
                 </MDBContainer>)
         }
@@ -246,10 +273,10 @@ class SurveyList extends Component {
         return (
 
             <MDBContainer>
-                <MDBRow center>
+                <MDBRow>
                     <div style={toolbarStyle}>
-                        <MDBBtn onClick={() => (this.ChangeActiveState("show"))} color="black">Twoje Ankiety</MDBBtn>
-                        <MDBBtn onClick={() => (this.ChangeActiveState("creation"))} color="black">Utwórz Ankiete</MDBBtn>
+                        <MDBBtn onClick={() => (this.ChangeActiveState("show"))} color="primary">Twoje Ankiety</MDBBtn>
+                        <MDBBtn onClick={() => (this.ChangeActiveState("creation"))} color="primary">Utwórz Ankietę</MDBBtn>
 
                     </div>
                 </MDBRow>
@@ -261,10 +288,16 @@ class SurveyList extends Component {
 
 const toolbarStyle = {
     display: 'flex',
-    width: '1900px',
-    backgroundColor: '#000000',
-    padding: '6px 8px'
+    width: '1200px',
+    backgroundColor: '#2979FF',
+    padding: '6px 8px',
+    boxShadow: "0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)",
 };
 
+const pagitationButton = props => (
+    <MDBBtn {...props} color="primary">
+      {props.children}
+    </MDBBtn>
+  )
 
 export default SurveyList;
