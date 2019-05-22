@@ -7,7 +7,6 @@ import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 public class AnsweredSurvey {
-    @Id
     public ObjectId token;
     public List<AnsweredPage> pages;
 
