@@ -1,10 +1,10 @@
 import React from 'react';
 import { Component } from 'react';
-// import QuestionCard from './QuestionCard.js';
 import Question from './Question.js';
-// import { Droppable, Draggable, DragDropContext } from 'react-beautiful-dnd';
+import Finish from './Finish';
+import { ToastContainer, toast } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 import { MDBBtn, MDBContainer, MDBInput, MDBPagination, MDBPageItem, MDBPageNav, MDBCol, MDBRow } from "mdbreact";
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'bootstrap-css-only/css/bootstrap.min.css';
@@ -15,6 +15,7 @@ class SurveyComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            finished: false,
             tempToken: "",
             currentPage: 1,
             surveyjson: undefined,
@@ -38,7 +39,7 @@ class SurveyComponent extends Component {
                 ]
             },
             answers: {
-                token: "5cdc5af6925aaa37793c99b0",
+                token: "",
                 pages: []
             }
         };
@@ -55,20 +56,14 @@ class SurveyComponent extends Component {
         this.generateJson = this.generateJson.bind(this);
         this.answerDataChange = this.answerDataChange.bind(this);
         this.setPage = this.setPage.bind(this);
-        this.fetchSurvey = this.fetchSurvey.bind(this)
+        // this.fetchSurvey = this.fetchSurvey.bind(this)
     }
     componentDidMount() {
-        if(this.state.surveyjson !== undefined) {
-        }
-    }
-
-    fetchSurvey({match}) {
-        fetch("http://localhost:8080/survey-service/ankieta/" + match.params.surveyID)
+        let surveyID = window.location.pathname.split('/');
+        fetch("http://localhost:8080/survey-service/ankieta/" + surveyID[surveyID.length - 1])
             .then(response => response.json())
             .then(data => this.setState({surveyjson: data}));
-        // this.setState({temptoken: match.params.surveyID});
-        this.state.answers.token = match.params.surveyID;
-        return null
+        this.setState({answers: {token: surveyID[surveyID.length - 1], pages: []}})
     }
 
     setPage(direction) {
@@ -92,38 +87,27 @@ class SurveyComponent extends Component {
 
     }
     answerDataChange(e, pageIndex, questionIndex, type) {
-        console.log("TEST", this.state.answers, pageIndex);
+        console.log("Zmieniono na stronie", pageIndex, "pytanie", questionIndex, "na", e);
         this.setState((prevState) => {
                 let old = prevState.answers;
-                // let question = old.pages[pageIndex - 1].questionList[questionIndex];
                 switch (type) {
                     case "Text":
-                        this.state.answers.pages[pageIndex - 1].questionList[questionIndex].answers[0] = e;
-                        break;
                     case "radio":
                         this.state.answers.pages[pageIndex - 1].questionList[questionIndex].answers[0] = e;
                         break;
                     case "checkbox":
-                        // if (e.target) {
-                        //     alert("target");
-                        //     if (e.target.checked) {
-                        //         if (!this.state.answers.pages[pageIndex - 1].questionList[questionIndex].answers.includes(e.target.value)) {
-                        //             this.state.answers.pages[pageIndex - 1].questionList[questionIndex].answers.push(e.target.value);
-                        //             alert("DODANO");
-                        //         }
-                        //     } else {
-                        //         if (this.state.answers.pages[pageIndex - 1].questionList[questionIndex].answers.includes(e.target.value)) {
-                        //             var ind = this.state.answers.pages[pageIndex - 1].questionList[questionIndex].answers.indexOf(e.target.value);
-                        //             this.state.answers.pages[pageIndex - 1].questionList[questionIndex].answers.splice(ind, 1);
-                        //             alert("USUNIETO");
-                        //         }
-                        //     }
-                        // }
-                        // break;
+                        if (!this.state.answers.pages[pageIndex - 1].questionList[questionIndex].answers.includes(e)) {
+                            this.state.answers.pages[pageIndex - 1].questionList[questionIndex].answers.push(e);
+                        } else
+                            if (this.state.answers.pages[pageIndex - 1].questionList[questionIndex].answers.includes(e)) {
+                                var ind = this.state.answers.pages[pageIndex - 1].questionList[questionIndex].answers.indexOf(e);
+                                this.state.answers.pages[pageIndex - 1].questionList[questionIndex].answers.splice(ind, 1);
+                            }
+
+                        break;
                     default:
                         break;
                 }
-                // old.pages[pageIndex - 1].questionList[questionIndex] = question;
                 console.log("Po zmianie", old);
                 return { answers: old }
             }
@@ -131,48 +115,60 @@ class SurveyComponent extends Component {
     }
     //
     generateJson() {
-        // console.log(JSON.stringify(this.state.survey))
-        // this.setState({this.state.answers.token: "5cdc5af6925aaa37793c99b0"});
-        //TODO: HERE
+        //tu chyba wsio okej
+        console.log("Json do wyslania:", this.state.answers);
         var xhttp = new XMLHttpRequest();
         xhttp.open("POST", "http://localhost:8080/survey-service/ankieta", true)
         xhttp.onreadystatechange = () => {
             if (xhttp.readyState === 4) {
                 if (xhttp.status === 200) {
                     console.log("Serwis przyjął dane, kod http: " + xhttp.status);
+                    toast.success("OKAY, YOU GOT IT")
+                    this.setState({finished: true});
                 } else {
                     console.log("Serwis zwrócił kod błędu http: " + xhttp.status);
+                    toast.error("Some answers might be wrong or there is problem with survey server\nTry again :)")
+
                 }
             }
         }
         xhttp.setRequestHeader("Content-type", "application/json");
-        // console.log("WYSYLAM:", this.state.answers);
         xhttp.send(JSON.stringify(this.state.answers));
     }
 
     changePage(index) {
-        this.setState((prevState) => {
-            return { currentPage: index }
-        });
+        this.setState({currentPage: index })
     }
     render() {
+        if(this.state.finished) {
+            return (
+                <div className="border justify-content-center align-items-center">
+                    <Finish/>
+                </div>
+            )
+        }
         if(this.state.surveyjson !== undefined) {
-            console.log("ROZMIAR", this.state.surveyjson.pageList.length);
             if(this.state.answers.pages.length === 0) {
+                let pageIndex = 0;
                 this.state.surveyjson.pageList.forEach((element) => {
-                    let page = {pageId: 0, questionList: []}; //TODO: Ustawic PageID
+                    let page = {pageId: pageIndex, questionList: []}; //TODO: Ustawic PageID - zrobione
+                    pageIndex++;
+                    let questionIndex = 0;
                     element.questionList.forEach((elem2) => {
                         page.questionList.push(
-                            {questionId: 0, //TODO: ustawic QuestionID
+                            {questionId: questionIndex, //TODO: ustawic QuestionID - zrobione
                                 answers: []}
                         )
+                        questionIndex++;
                     });
                     this.state.answers.pages.push(page)
                 });
-                console.log("TAK", this.state);
             }
             return (
                 <MDBContainer className="block-example border pt-4">
+                    <ToastContainer position={toast.POSITION.TOP_CENTER}
+                                    autoClose={4000}
+                    />
                     <p>{this.state.surveyjson.surveyName}</p>
                     <p>{this.state.surveyjson.surveyDescription}</p>
                     <br />
@@ -206,9 +202,14 @@ class SurveyComponent extends Component {
                                     (question, value) => (
                                         <React.Fragment key={this.state.currentPage + '.' + value}>
                                             <div >
-                                                <Question parentKey={this.state.currentPage + '.' + value} data={question} pageIndex={this.state.currentPage} questionIndex={value} func={this.answerDataChange} />
+                                                <Question parentKey={this.state.currentPage + '.' + value}
+                                                          data={question}
+                                                          pageIndex={this.state.currentPage}
+                                                          questionIndex={value}
+                                                          func={this.answerDataChange}
+                                                          answered={this.state.answers.pages[this.state.currentPage-1].questionList[value]}
+                                                />
                                             </div>
-                                            <div className="pb-0 pt-0 mt-2 border-bottom-5 border-top-0 rounded list-group-item" />
                                         </React.Fragment>
                                     )
                                 )}
@@ -243,14 +244,10 @@ class SurveyComponent extends Component {
                         <MDBBtn color="primary" onClick={this.generateJson}>Zakoncz</MDBBtn>
                     </MDBRow>
                 </MDBContainer>)
-        } else
+        }
+        else
         {
-            return (
-                <Router>
-                    <div className="container">
-                        <Route path="/ankieta/:surveyID" component={this.fetchSurvey} />
-                    </div>
-                </Router>);
+            return null
         }
 
     }
