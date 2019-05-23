@@ -3,12 +3,15 @@ import { Component } from 'react';
 import QuestionCard from './QuestionCard.js';
 import { Droppable, Draggable, DragDropContext } from 'react-beautiful-dnd';
 import { MDBBtn, MDBContainer, MDBInput, MDBPagination, MDBPageItem, MDBPageNav, MDBCol, MDBRow } from "mdbreact";
+import { toast } from 'react-toastify';
 
+import 'react-toastify/dist/ReactToastify.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'bootstrap-css-only/css/bootstrap.min.css';
 import 'mdbreact/dist/css/mdb.css';
 import './css/style.css';
 
+toast.configure();
 class SurveyComponent extends Component {
     constructor(props) {
         super(props);
@@ -56,6 +59,21 @@ class SurveyComponent extends Component {
         this.pageDescriptionChange = this.pageDescriptionChange.bind(this);
         this.setPage = this.setPage.bind(this);
         this.OnDragEnd = this.OnDragEnd.bind(this);
+        this.deletePage = this.deletePage.bind(this);
+    }
+    deletePage() {
+        if (this.state.survey.pageList.length > 1) {
+            this.setState((prevState) => {
+                prevState.survey.pageList.splice(prevState.currentPage - 1, 1);
+                if (prevState.currentPage !== 1) {
+                    prevState.currentPage = prevState.currentPage - 1;
+                }
+                return {
+                    survey: prevState.survey,
+                    currentPage: prevState.currentPage
+                };
+            });
+        }
     }
     setPage(direction) {
         this.setState((prevState) => {
@@ -114,7 +132,8 @@ class SurveyComponent extends Component {
     }
 
     generateJson() {
-        console.log(JSON.stringify(this.state.survey))
+        
+        //console.log(JSON.stringify(this.state.survey));
         var xhttp = new XMLHttpRequest()
         if(this.state.survey.token==null)
         {
@@ -132,12 +151,12 @@ class SurveyComponent extends Component {
                 }
                 else {
                     console.log("Serwis zwrócił kod błędu http: " + xhttp.status);
+                    toast.error("HTTP STATUS " + xhttp.status);
                 }
             }
         }
-        xhttp.setRequestHeader("Content-type", "application/json")
-        xhttp.send(JSON.stringify(this.state.survey))
-
+        xhttp.setRequestHeader("Content-type", "application/json");
+        xhttp.send(JSON.stringify(this.state.survey));
     }
     surveyTitleChange(e) {
         let textChange = e.target.value
@@ -185,7 +204,9 @@ class SurveyComponent extends Component {
                     }
                 ]
             });
-            return { survey: old }
+            return {
+                survey: old, currentPage: old.pageList.length
+            }
         }
         );
     }
@@ -240,23 +261,21 @@ class SurveyComponent extends Component {
         this.forceUpdate();
     }
     OnDragEnd(result) {
-        if(!result.destination)
-        {return;}
+        if (!result.destination) { return; }
 
-        if(result.destination.droppableId === result.source.droppableId && result.index === result.source.index)
-        {return;}    
-        
-        this.setState((prevState)=>
-        {
-            var oldQuestion=prevState.survey.pageList[prevState.currentPage-1].questionList[result.source.index];
-            prevState.survey.pageList[prevState.currentPage-1].questionList.splice(result.source.index,1);
-            prevState.survey.pageList[prevState.currentPage-1].questionList.splice(result.destination.index,0,oldQuestion);
-            return {state: prevState}
-            
+        if (result.destination.droppableId === result.source.droppableId && result.index === result.source.index) { return; }
+
+        this.setState((prevState) => {
+            var oldQuestion = prevState.survey.pageList[prevState.currentPage - 1].questionList[result.source.index];
+            prevState.survey.pageList[prevState.currentPage - 1].questionList.splice(result.source.index, 1);
+            prevState.survey.pageList[prevState.currentPage - 1].questionList.splice(result.destination.index, 0, oldQuestion);
+            return { state: prevState }
+
         })
     }
     render() {
         return (
+            
             <MDBContainer>
                 <MDBInput onChange={this.surveyTitleChange} value={this.state.survey.surveyName} type="textarea" label="Tytuł" rows="2" />
                 <MDBInput onChange={this.surveyDescritpionChange} value={this.state.survey.surveyDescription} type="textarea" label="Opis" rows="2" />
@@ -285,19 +304,19 @@ class SurveyComponent extends Component {
                 </MDBRow>
                 <MDBContainer id="QuestionList">
                     <MDBRow>
-                        <MDBCol>
-                            <DragDropContext onDragEnd={this.OnDragEnd}>
-                                <Droppable droppableId={"LOTR>GOT"}>
+                        <MDBCol className="pl-0 pr-0">
+                            <DragDropContext onDragEnd={this.OnDragEnd} >
+                                <Droppable droppableId={"LOTR>GOT"} >
                                     {(provided) =>
-                                        (                                            
+                                        (
                                             <div {...provided.droppableProps} ref={provided.innerRef}>
                                                 {(this.state.survey.pageList[this.state.currentPage - 1].questionList || []).map(
                                                     (question, value) => (
                                                         <React.Fragment key={this.state.currentPage + '.' + value}>
-                                                            <div >
-                                                                <QuestionCard parentKey={this.state.currentPage + '.' + value} data={question} index={value} func={this.questionDataChange} dltFunc={this.deleteQuestion} multiDltfunc={this.deleteMultiQuestion} moveFunc={this.moveQuestion} />
-                                                            </div>
-                                                            <div className="pb-0 pt-0 mt-2 border-bottom-5 border-top-0 rounded list-group-item" />
+                                                            {/* <MDBContainer className="block-example border pt-4 pb-2 mt-2"> */}
+                                                            <QuestionCard parentKey={this.state.currentPage + '.' + value} data={question} index={value} func={this.questionDataChange} dltFunc={this.deleteQuestion} multiDltfunc={this.deleteMultiQuestion} moveFunc={this.moveQuestion} />
+                                                            {/* </MDBContainer> */}
+                                                            {/* <div className="pb-0 pt-0 mt-2 border-bottom-5 border-top-0 rounded list-group-item" /> */}
                                                         </React.Fragment>
                                                     )
                                                 )}
@@ -337,6 +356,7 @@ class SurveyComponent extends Component {
                 <MDBBtn onClick={this.addQuestionCard} color="primary">Dodaj nowe pytanie</MDBBtn>
                 <MDBRow end>
                     <MDBCol>
+                        <MDBBtn onClick={this.deletePage} color="primary">Usuń stronę</MDBBtn>
                     </MDBCol>
                     <MDBCol className="text-center">
                         <MDBBtn onClick={this.addPage} color="primary">Dodaj stronę</MDBBtn>
