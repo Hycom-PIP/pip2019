@@ -17,6 +17,7 @@ public class NewSurveyController {
     @Autowired
     SurveyRepository surveyRepository;
 
+    @CrossOrigin
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public ResponseEntity<Survey> addNewSurvey(@Valid @RequestBody Survey survey) {
         if (!areQuestionTypesCorrect(survey))
