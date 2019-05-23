@@ -20,7 +20,7 @@ class SurveyComponent extends Component {
             currentPage: 1,
             surveyjson: undefined,
             survey: {
-                oldVersionToken: null,
+                token: null,
                 surveyName: null,
                 surveyDescription: null,
                 pageList: [
@@ -47,7 +47,7 @@ class SurveyComponent extends Component {
             this.state.survey = JSON.parse(props.surveyJson);
         }
         if (props.token !== undefined) {
-            this.state.oldVersionToken = props.token;
+            this.state.token = props.token;
         }
         //5cdc5af6925aaa37793c99b0
 
