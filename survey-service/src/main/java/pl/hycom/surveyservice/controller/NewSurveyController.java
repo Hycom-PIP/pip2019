@@ -15,6 +15,7 @@ import pl.hycom.surveyservice.model.Survey;
 import pl.hycom.surveyservice.repository.SurveyRepository;
 
 import javax.validation.Valid;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -38,15 +39,10 @@ public class NewSurveyController {
     }
 
     private boolean areQuestionTypesCorrect(Survey survey) {
-        for (Page page : survey.getPageList()) {
-            for (Question question : page.getQuestionList()) {
-                if ("longText".equals(question.getQuestionType()) || "shortText".equals(question.getQuestionType())) {
-                    if (question.getAnswers().length > 0) {
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
+        return Arrays.stream(survey.getPageList())
+                .noneMatch(page -> Arrays.stream(page.getQuestionList())
+                        .filter(question -> "longText".equals(question.getQuestionType())
+                                || "shortText".equals(question.getQuestionType()))
+                        .anyMatch(question -> question.getAnswers().length > 0));
     }
 }
