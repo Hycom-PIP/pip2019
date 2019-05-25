@@ -4,6 +4,7 @@ import QuestionCard from './QuestionCard.js';
 import { Droppable, Draggable, DragDropContext } from 'react-beautiful-dnd';
 import { MDBBtn, MDBContainer, MDBInput, MDBPagination, MDBPageItem, MDBPageNav, MDBCol, MDBRow } from "mdbreact";
 import { toast } from 'react-toastify';
+import { Redirect } from "react-router-dom";
 
 import 'react-toastify/dist/ReactToastify.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
@@ -126,28 +127,26 @@ class SurveyComponent extends Component {
                     break;
             }
             old.pageList[this.state.currentPage - 1].questionList[index] = question;
-            return { questionList: old }
+            return { survey: old }
         }
         )
     }
 
     generateJson() {
-        
+
         //console.log(JSON.stringify(this.state.survey));
         var xhttp = new XMLHttpRequest()
-        if(this.state.survey.token==null)
-        {
+        if (this.state.survey.token == null) {
             xhttp.open("POST", "http://localhost:8080/survey-service/", true);
         }
-        else 
-        {
+        else {
             xhttp.open("PUT", "http://localhost:8080/survey-service/addNewVersion", true);
         }
         xhttp.onreadystatechange = () => {
             if (xhttp.readyState == 4) {
                 if (xhttp.status == 200) {
                     console.log("Serwis przyjął dane, kod http: " + xhttp.status);
-                    window.location.reload();
+                    this.setState({redirected: true});
                 }
                 else {
                     console.log("Serwis zwrócił kod błędu http: " + xhttp.status);
@@ -274,8 +273,12 @@ class SurveyComponent extends Component {
         })
     }
     render() {
-        return (
-            
+        if(this.state.redirected)
+        {
+            return <Redirect push to={"/"} />;
+        }
+        else return (
+
             <MDBContainer>
                 <MDBInput onChange={this.surveyTitleChange} value={this.state.survey.surveyName} type="textarea" label="Tytuł" rows="2" />
                 <MDBInput onChange={this.surveyDescritpionChange} value={this.state.survey.surveyDescription} type="textarea" label="Opis" rows="2" />
