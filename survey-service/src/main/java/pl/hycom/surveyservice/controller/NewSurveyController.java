@@ -5,10 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pl.hycom.surveyservice.model.Page;
 import pl.hycom.surveyservice.model.Question;
 import pl.hycom.surveyservice.model.Survey;
@@ -17,8 +14,11 @@ import pl.hycom.surveyservice.repository.SurveyRepository;
 import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @RestController
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class NewSurveyController {
     @Autowired
     SurveyRepository surveyRepository;
@@ -28,14 +28,20 @@ public class NewSurveyController {
         if (!areQuestionTypesCorrect(survey))
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
+        survey.setToken(UUID.randomUUID().toString());
+        survey.setVersion(1);
+        survey.setCurrentVersion(true);
         surveyRepository.insert(survey);
         return new ResponseEntity<>(survey, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
-    public ResponseEntity<List<Survey>> getAllSurveys() {
-        List<Survey> surveyList = surveyRepository.findAll();
-        return new ResponseEntity<>(surveyList, HttpStatus.OK);
+    @RequestMapping(value = "/{token}", method = RequestMethod.GET)
+    public ResponseEntity<Survey> getAllSurveys(@PathVariable String token) {
+        Optional<Survey> survey = surveyRepository.findByToken(token);
+        if (survey.isPresent())
+            return new ResponseEntity<>(survey.get(), HttpStatus.OK);
+        else
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     private boolean areQuestionTypesCorrect(Survey survey) {
