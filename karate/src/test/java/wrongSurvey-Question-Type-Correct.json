@@ -1,0 +1,26 @@
+{
+  "token": "9303JF1209F1092D2SE290(421D213#532F", 
+  "surveyName": "AAAAAAAAAAAAAAAA",
+  "version" : 1,
+  "surveyDescription": "SurveyDescription",
+  "pageList": [
+    {
+      "pageDescription": "PageDescription",
+      "questionList": [
+        {
+          "questionText": "Do you like checkbox questions?",
+          "questionDescription": "This is a checkbox question",
+          "isRequiered": false,
+          "questionType": "longText",
+          "answers":
+          [
+            {"id": "0", "answer": "Tak"},
+            {"id": "1", "answer": "Nie"},
+            {"id": "2", "answer": "Może"}
+          ],
+          "answered": ["0", "1"]
+        }
+      ]
+    }
+  ]
+}
