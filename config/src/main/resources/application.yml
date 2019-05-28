@@ -8,7 +8,7 @@ spring:
     config:
       server:
         git:
-          uri: https://github.com/Mesysz/temp
+          uri: https://github.com/Hycom-PIP/pip2019-configs
 eureka:
   client:
     region: default
