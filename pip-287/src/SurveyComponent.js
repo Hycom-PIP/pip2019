@@ -135,7 +135,7 @@ class SurveyComponent extends Component {
     generateJson() {
 
         //console.log(JSON.stringify(this.state.survey));
-        var xhttp = new XMLHttpRequest()
+        var xhttp = new XMLHttpRequest();
         if (this.state.survey.token == null) {
             xhttp.open("POST", "http://localhost:8080/survey-service/", true);
         }

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Droppable, Draggable, DragDropContext } from 'react-beautiful-dnd';
 import { MDBBtn, MDBContainer, MDBInput, MDBPagination, MDBPageItem, MDBPageNav, MDBCol, MDBRow } from "mdbreact";
 import SurveyComponent from './SurveyComponent.js'
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Route, Link, Redirect } from "react-router-dom";
 
 import Share from 'react-icons/lib/io/android-share';
 import Trash from 'react-icons/lib/io/trash-a';
@@ -22,12 +22,11 @@ class SurveyList extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            activeState: "show",
+            errorState: false,
             currentPage: 0,
             surveys: {
                 pages: []
             }
-
         };
         this.getSurveysJson()
 
@@ -38,10 +37,8 @@ class SurveyList extends Component {
         this.share = this.share.bind(this);
         this.edit = this.edit.bind(this);
         this.trash = this.trash.bind(this);
-        this.GetView = this.GetView.bind(this);
         this.copyTextToClipboard = this.copyTextToClipboard.bind(this);
         this.deleteSurvey = this.deleteSurvey.bind(this);
-        this.ChangeActiveState = this.ChangeActiveState.bind(this);
         {/*Survey list table structure*/ }
         this.columns = [
             {
@@ -117,6 +114,9 @@ class SurveyList extends Component {
                 )
             }
         ]
+        this.showErrorPage = (bool) => {
+            this.setState({ errorState: bool });
+        };
     }
 
     copyTextToClipboard(text) {
@@ -161,11 +161,11 @@ class SurveyList extends Component {
                 if (xhttp.status == 200) {
                     this.setState({
                         json: xhttp.responseText,
-                        activeState: "edit"
                     });
                 }
                 else {
                     console.log("Serwis zwrócił kod błędu http: " + xhttp.status);
+                    this.showErrorPage(true);
                 }
             }
         }
@@ -187,6 +187,7 @@ class SurveyList extends Component {
                 this.getSurveysJson();
             } else {
                 console.error("Błąd");
+                this.showErrorPage(true);
             }
         }
         xhr.send(null);
@@ -206,21 +207,10 @@ class SurveyList extends Component {
                 }
                 else {
                     console.log("Serwis zwrócił kod błędu http: " + xhttp.status);
+                    this.showErrorPage(true);
+
                 }
             }
-        }
-    }
-    ChangeActiveState(nameOfState) {
-        this.setState({ activeState: nameOfState });
-    }
-    GetView() {
-        if (this.state.activeState === "show") { }
-        else if (this.state.activeState === "creation") {
-            return <SurveyComponent />
-        }
-        else if (this.state.activeState === "edit") {
-            return <SurveyComponent surveyJson={this.state.json} />
-
         }
     }
     render() {
@@ -238,37 +228,40 @@ class SurveyList extends Component {
             })
         }
         let pagesAmount = 1;
-        if (typeof this.state.surveys.statistics !== "undefined")
-            pagesAmount = this.state.surveys.statistics.pagesAmount;
-        return (
-            <MDBContainer>
-                <ReactTable
-                    data={data}
-                    pageSize={10}
-                    columns={this.columns}
-                    showPageSizeOptions={false}
-                    getTdProps={() => ({
-                        style: {
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'center'
-                        }
-                    })}
-                    manual // this would indicate that server side pagination has been enabled 
-                    pages={pagesAmount}
-                    onPageChange={(pageIndex) => {
-                        console.log(pageIndex)
-                        this.state.currentPage = pageIndex;
-                        this.getSurveysJson()
-                    }}
-                    nextText="Następna strona"
-                    previousText="Poprzednia strona"
-                    pageText="Strona"
-                    ofText="z"
-                    PreviousComponent={pagitationButton}
-                    NextComponent={pagitationButton}
-                />
-            </MDBContainer>)
+        if (typeof this.state.surveys.statistics !== "undefined") { pagesAmount = this.state.surveys.statistics.pagesAmount; }
+        if (this.state.errorState) {
+            return <Redirect push to={"/error"} />;
+        }
+        else
+            return (
+                <MDBContainer>
+                    <ReactTable
+                        data={data}
+                        pageSize={10}
+                        columns={this.columns}
+                        showPageSizeOptions={false}
+                        getTdProps={() => ({
+                            style: {
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'center'
+                            }
+                        })}
+                        manual // this would indicate that server side pagination has been enabled 
+                        pages={pagesAmount}
+                        onPageChange={(pageIndex) => {
+                            console.log(pageIndex)
+                            this.state.currentPage = pageIndex;
+                            this.getSurveysJson()
+                        }}
+                        nextText="Następna strona"
+                        previousText="Poprzednia strona"
+                        pageText="Strona"
+                        ofText="z"
+                        PreviousComponent={pagitationButton}
+                        NextComponent={pagitationButton}
+                    />
+                </MDBContainer>)
     }
 }
 
@@ -293,21 +286,22 @@ const ErrorPage = (errorData) =>
             <div className="verticallFillObject">AAAAAA</div>
         </div>
     )
-const MainView = (props) => (
 
-    <MDBContainer className="verticallFill">
-        <Router>
-            <MDBRow>
-                <CustomToolbar>
-                    <Link to="/">  <MDBBtn color="primary">Twoje Ankiety</MDBBtn> </Link>
-                    <Link to="/CreateSurvey"><MDBBtn color="primary"> Utwórz Ankietę</MDBBtn></Link>
-                </CustomToolbar>
-            </MDBRow>
-            <Route exact path="/" component={SurveyList} />
-            <Route path="/CreateSurvey" component={SurveyComponent} />
-            <Route path="/Error" component={ErrorPage} />
-
-        </Router>
-    </MDBContainer>
-)
+class MainView extends Component {
+    render() {
+        return (<MDBContainer className="verticallFill" >
+            <Router>
+                <MDBRow>
+                    <CustomToolbar>
+                        <Link to="/">  <MDBBtn color="primary">Twoje Ankiety</MDBBtn> </Link>
+                        <Link to="/CreateSurvey"><MDBBtn color="primary"> Utwórz Ankietę</MDBBtn></Link>
+                    </CustomToolbar>
+                </MDBRow>
+                <Route exact path="/" component={SurveyList} />
+                <Route path="/CreateSurvey" component={SurveyComponent} />
+                <Route path="/Error" component={ErrorPage} />
+            </Router>
+        </MDBContainer>)
+    }
+}
 export default MainView;
