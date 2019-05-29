@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Droppable, Draggable, DragDropContext } from 'react-beautiful-dnd';
-import { MDBBtn, MDBContainer, MDBInput, MDBPagination, MDBPageItem, MDBPageNav, MDBCol, MDBRow } from "mdbreact";
+import { MDBBtn, MDBContainer, MDBInput, MDBPagination, MDBPageItem, MDBPageNav, MDBCol, MDBRow, Container, Row, Col } from "mdbreact";
 import SurveyComponent from './SurveyComponent.js'
 import { BrowserRouter as Router, Route, Link, Redirect } from "react-router-dom";
 
@@ -282,9 +282,15 @@ const pagitationButton = props => (
 )
 const ErrorPage = (errorData) =>
     (
-        <div className="verticallFill">
-            <div className="verticallFillObject">AAAAAA</div>
-        </div>
+        <Container className="pt-5">
+            <Row className="text-center">
+                <Col>
+                    <a class="display-1 d-block">Coś poszło nie tak</a>
+                    <Link to="/">  <div class="mb-4 lead">Spróbuj ponownie</div></Link>
+                </Col>
+            </Row>
+        </Container>
+
     )
 
 class MainView extends Component {
