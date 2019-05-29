@@ -6,25 +6,35 @@ import org.springframework.data.annotation.Id;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.UUID;
 
 public class Survey {
     
     @Id
     private ObjectId id;
     private String token;
-    private int version;
+    private boolean isCurrentVersion;
+    private int version = 1;
     @NotBlank(message = "Survey Name cannot be null.")
     private String surveyName;
     private String surveyDescription;
     @NotNull(message = "Page cannot be null.")
     private @Valid Page[] pageList;
-    
-    public String getToken () {
+
+    public String getToken() {
         return token;
     }
-    
-    public void setToken ( String token ) {
+
+    public void setToken(String token) {
         this.token = token;
+    }
+
+    public boolean getIsCurrentVersion() {
+        return isCurrentVersion;
+    }
+
+    public void setCurrentVersion(boolean currentVersion) {
+        isCurrentVersion = currentVersion;
     }
     
     public int getVersion ()    {

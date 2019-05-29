@@ -10,9 +10,13 @@ import pl.hycom.surveyservice.model.Survey;
 import pl.hycom.surveyservice.repository.SurveyRepository;
 
 import javax.validation.Valid;
+import java.util.Arrays;
 import java.util.List;
-@CrossOrigin(origins = "*", allowedHeaders = "*")
+import java.util.Optional;
+import java.util.UUID;
+
 @RestController
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class NewSurveyController {
     @Autowired
     SurveyRepository surveyRepository;
@@ -23,26 +27,27 @@ public class NewSurveyController {
         if (!areQuestionTypesCorrect(survey))
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
+        survey.setToken(UUID.randomUUID().toString());
+        survey.setVersion(1);
+        survey.setCurrentVersion(true);
         surveyRepository.insert(survey);
         return new ResponseEntity<>(survey, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
-    public ResponseEntity<List<Survey>> getAllSurveys() {
-        List<Survey> surveyList = surveyRepository.findAll();
-        return new ResponseEntity<>(surveyList, HttpStatus.OK);
+    @RequestMapping(value = "/{token}", method = RequestMethod.GET)
+    public ResponseEntity<Survey> getAllSurveys(@PathVariable String token) {
+        Optional<Survey> survey = surveyRepository.findByToken(token);
+        if (survey.isPresent())
+            return new ResponseEntity<>(survey.get(), HttpStatus.OK);
+        else
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     private boolean areQuestionTypesCorrect(Survey survey) {
-        for (Page page : survey.getPageList()) {
-            for (Question question : page.getQuestionList()) {
-                if ("longText".equals(question.getQuestionType()) || "shortText".equals(question.getQuestionType())) {
-                    if (question.getAnswers().length > 0) {
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
+        return Arrays.stream(survey.getPageList())
+                .noneMatch(page -> Arrays.stream(page.getQuestionList())
+                        .filter(question -> "longText".equals(question.getQuestionType())
+                                || "shortText".equals(question.getQuestionType()))
+                        .anyMatch(question -> question.getAnswers().length > 0));
     }
 }
