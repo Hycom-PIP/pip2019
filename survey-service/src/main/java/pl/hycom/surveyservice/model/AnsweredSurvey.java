@@ -10,15 +10,18 @@ public class AnsweredSurvey {
     public ObjectId token;
     public List<AnsweredPage> pages;
 
-    public boolean validateAnsweredSurvey()
-    {
-        if(pages.isEmpty())
+    public boolean validateAnsweredSurvey() {
+        if (pages.isEmpty()) {
             return false;
-        else
-            for (AnsweredPage page:pages) {
-                if(!page.validatePage())
-                    return false;
+        }
+
+        for(AnsweredPage page : pages)
+        {
+            if(!page.validatePage())
+            {
+                return false;
             }
+        }
         return true;
     }
 }
