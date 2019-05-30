@@ -9,7 +9,7 @@
     "react-scripts": "2.1.8"
   },
   "scripts": {
-	"start": "http-server -a localhost -p 8180"
+    "start": "http-server -a localhost -p 8180",
     "dev": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
