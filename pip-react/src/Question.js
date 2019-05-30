@@ -172,21 +172,6 @@ class QuestionCard extends Component {
                             }
                         </MDBContainer>
                         <br />
-                        {/*<div className="d-flex flex-row-reverse mt-3">*/}
-                        {/*    <div className="custom-control custom-checkbox ">*/}
-                        {/*        <Form>*/}
-                        {/*            <Form.Check*/}
-                        {/*                onChange={this.isRequieredChange}*/}
-                        {/*                checked={this.props.data.isRequiered}*/}
-                        {/*                custom*/}
-                        {/*                type='checkbox'*/}
-                        {/*                id={`CheckBox-${this.props.index}`}*/}
-                        {/*                label={`Wymagane`}*/}
-                        {/*            />*/}
-                        {/*        </Form>*/}
-                        {/*    </div>*/}
-                        {/*</div>*/}
-                        {/*<div className="pb-0 pt-0 mt-2 border-bottom-5 border-top-0 rounded list-group-item" />*/}
                     </div>
             </MDBContainer>
                 )

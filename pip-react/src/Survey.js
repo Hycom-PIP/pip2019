@@ -2,6 +2,7 @@ import React from 'react';
 import { Component } from 'react';
 import Question from './Question.js';
 import Finish from './Finish';
+import Error from './Error';
 import { ToastContainer, toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 import { MDBBtn, MDBContainer, MDBInput, MDBPagination, MDBPageItem, MDBPageNav, MDBCol, MDBRow } from "mdbreact";
@@ -127,7 +128,7 @@ class SurveyComponent extends Component {
                     this.setState({finished: true});
                 } else {
                     console.log("Serwis zwrócił kod błędu http: " + xhttp.status);
-                    toast.error("Some answers might be wrong or there is problem with survey server\nTry again :)")
+                    toast.error("Some answers might be wrong or there is problem with survey server\nTry again :)\nError code [" + xhttp.status + "]")
 
                 }
             }
@@ -150,6 +151,13 @@ class SurveyComponent extends Component {
         if(this.state.surveyjson !== undefined) {
             if(this.state.answers.pages.length === 0) {
                 let pageIndex = 0;
+                if(this.state.surveyjson.pageList === null) {
+                    return (
+                        <div className="border justify-content-center align-items-center">
+                            <Error/>
+                        </div>
+                    )
+                }
                 this.state.surveyjson.pageList.forEach((element) => {
                     let page = {pageId: pageIndex, questionList: []}; //TODO: Ustawic PageID - zrobione
                     pageIndex++;
