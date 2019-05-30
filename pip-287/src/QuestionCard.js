@@ -182,10 +182,8 @@ class QuestionCard extends Component {
               {
                 this.GetQuestionRender()
               }
-              <div className="d-flex flex-row-reverse mt-3">
-                <div className="custom-control custom-checkbox ">
-                  {/* <input checked={this.state.isRequiered} onChange={this.isRequieredChange} type="checkbox" class="custom-control-input" id="IsRequiredCheckbox" />
-      <label class="custom-control-label" style={{ color: "#757575" }} for="IsRequiredCheckbox">Wymagane</label> */}
+              <MDBRow end className="mb-2">
+                <MDBCol size="auto">
                   <Form>
                     <Form.Check
                       onChange={this.isRequieredChange}
@@ -196,8 +194,8 @@ class QuestionCard extends Component {
                       label={`Wymagane`}
                     />
                   </Form>
-                </div>
-              </div>
+                  </MDBCol>
+              </MDBRow>
             </MDBContainer>
           </div>
         )}
