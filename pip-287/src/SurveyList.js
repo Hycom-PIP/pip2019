@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Droppable, Draggable, DragDropContext } from 'react-beautiful-dnd';
 import { MDBBtn, MDBContainer, MDBInput, MDBPagination, MDBPageItem, MDBPageNav, MDBCol, MDBRow, Container, Row, Col } from "mdbreact";
 import SurveyComponent from './SurveyComponent.js'
-import { BrowserRouter as Router, Route, Link, Redirect } from "react-router-dom";
+import { BrowserRouter as Router, Route, Link, Redirect, Switch } from "react-router-dom";
 
 import Share from 'react-icons/lib/io/android-share';
 import Trash from 'react-icons/lib/io/trash-a';
@@ -303,9 +303,14 @@ class MainView extends Component {
                         <Link to="/CreateSurvey"><MDBBtn color="primary"> Utwórz Ankietę</MDBBtn></Link>
                     </CustomToolbar>
                 </MDBRow>
-                <Route exact path="/" component={SurveyList} />
-                <Route path="/CreateSurvey" component={SurveyComponent} />
-                <Route path="/Error" component={ErrorPage} />
+                <Switch>
+                    <Route exact path="/" component={SurveyList} />
+                    <Route exact path="/home" component={SurveyList} />
+                    <Route path="/CreateSurvey" component={SurveyComponent} />
+                    <Route path="/Error" component={ErrorPage} />
+                    <Route path="" component={ErrorPage} />
+                </Switch>
+
             </Router>
         </MDBContainer>)
     }
