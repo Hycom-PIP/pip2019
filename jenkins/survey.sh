@@ -7,17 +7,15 @@ kill -9 $(lsof -i:8083 -t)
 java -jar ./survey-service/target/*.jar &
 iteration=3
 IsDiscoveryRunning=$(wget --server-response localhost:8083/actuator/health 2>&1| grep -c 'HTTP/1.1 200')
-while [ $IsDiscoveryRunning -eq 0 -a $iteration -ge 0 ] ; do
+for i in $(seq 1 $iteration); do
 echo "Waiting 3 seconds for survey-service service to start"
-sleep 3
-((iteration--))
-IsDiscoveryRunning=$(wget --server-response localhost:8083/actuator/health 2>&1| grep -c 'HTTP/1.1 200')
-done
-if [ $iteration -ge 0 ] ; then
+if [ $IsDiscoveryRunning -eq 0 ] ; then
 echo "Survey service is up"
 exit 0
-else
+fi
+sleep 3
+IsDiscoveryRunning=$(wget --server-response localhost:8083/actuator/health 2>&1| grep -c 'HTTP/1.1 200')
+done
 echo "Survey service failed to start"
 exit 1
-fi
 #HELLO END

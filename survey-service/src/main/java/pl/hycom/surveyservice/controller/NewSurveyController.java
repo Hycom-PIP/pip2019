@@ -1,8 +1,6 @@
 package pl.hycom.surveyservice.controller;
 
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +21,7 @@ public class NewSurveyController {
     @Autowired
     SurveyRepository surveyRepository;
 
+    @CrossOrigin
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public ResponseEntity<Survey> addNewSurvey(@Valid @RequestBody Survey survey) {
         if (!areQuestionTypesCorrect(survey))
