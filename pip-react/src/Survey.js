@@ -50,14 +50,12 @@ class SurveyComponent extends Component {
         if (props.token !== undefined) {
             this.state.token = props.token;
         }
-        //5cdc5af6925aaa37793c99b0
 
 
         this.changePage = this.changePage.bind(this);
         this.generateJson = this.generateJson.bind(this);
         this.answerDataChange = this.answerDataChange.bind(this);
         this.setPage = this.setPage.bind(this);
-        // this.fetchSurvey = this.fetchSurvey.bind(this)
     }
     componentDidMount() {
         let surveyID = window.location.pathname.split('/');
@@ -88,7 +86,6 @@ class SurveyComponent extends Component {
 
     }
     answerDataChange(e, pageIndex, questionIndex, type) {
-        console.log("Zmieniono na stronie", pageIndex, "pytanie", questionIndex, "na", e);
         this.setState((prevState) => {
                 let old = prevState.answers;
                 switch (type) {
@@ -109,30 +106,25 @@ class SurveyComponent extends Component {
                     default:
                         break;
                 }
-                console.log("Po zmianie", old);
                 return { answers: old }
             }
         )
     }
     //
     generateJson() {
-        //tu chyba wsio okej
-        console.log("Json do wyslania:", this.state.answers);
         var xhttp = new XMLHttpRequest();
         xhttp.open("POST", "http://localhost:8080/survey-service/ankieta", true)
         xhttp.onreadystatechange = () => {
             if (xhttp.readyState === 4) {
                 if (xhttp.status === 200) {
-                    console.log("Serwis przyjął dane, kod http: " + xhttp.status);
                     toast.success("OKAY, YOU GOT IT")
                     this.setState({finished: true});
                 } else {
-                    console.log("Serwis zwrócił kod błędu http: " + xhttp.status);
                     toast.error("Some answers might be wrong or there is problem with survey server\nTry again :)\nError code [" + xhttp.status + "]")
 
                 }
             }
-        }
+        };
         xhttp.setRequestHeader("Content-type", "application/json");
         xhttp.send(JSON.stringify(this.state.answers));
     }

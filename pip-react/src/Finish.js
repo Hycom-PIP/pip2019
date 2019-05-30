@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
-// import { ToastContainer, toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 
 class Finish extends Component {
     constructor(props) {
-        super();
+        super(props);
 
     }
     render() {
