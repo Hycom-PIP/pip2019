@@ -41,6 +41,7 @@ class SurveyComponent extends Component {
             },
             answers: {
                 token: "",
+                version: "",
                 pages: []
             }
         };
@@ -106,7 +107,7 @@ class SurveyComponent extends Component {
                     default:
                         break;
                 }
-                return { answers: old }
+                return { answers: {version: this.state.surveyjson.version, pages: old.pages, token: old.token} }
             }
         )
     }

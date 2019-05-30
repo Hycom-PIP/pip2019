@@ -161,11 +161,11 @@ class SurveyList extends Component {
                 if (xhttp.status == 200) {
                     this.setState({
                         json: xhttp.responseText,
+                        activeState: "edit"
                     });
                 }
                 else {
                     console.log("Serwis zwrócił kod błędu http: " + xhttp.status);
-                    this.showErrorPage(true);
                 }
             }
         }
