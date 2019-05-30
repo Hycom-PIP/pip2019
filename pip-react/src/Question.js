@@ -115,7 +115,6 @@ class QuestionCard extends Component {
     }
     GetQuestionRender() {
         if (this.props.data.questionType === "longText" || this.props.data.questionType === "shortText") {
-            // console.log("ODPOWIEDZI", this.props.answered);
             return (
                 <MDBContainer>
                     <MDBInput label="Przykładowa odpowiedź" value={this.props.answered.answers[0]} onChange={this.answerTextChange} type="text" rows="1" />
@@ -149,7 +148,6 @@ class QuestionCard extends Component {
 
     render() {
 
-        console.log("Strona", this.props.pageIndex);
         return (
             <MDBContainer className="block-example border pt-4">
                     <div>
