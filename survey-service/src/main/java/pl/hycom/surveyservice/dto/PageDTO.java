@@ -2,11 +2,11 @@ package pl.hycom.surveyservice.dto;
 
 import java.util.List;
 
-public class PageDto {
+public class PageDTO {
     private Statistics statistics;
-    private List<SurveyDto> pages;
+    private List<SurveyDTO> pages;
 
-    public PageDto(int surveysAmount, int pagesAmount, List<SurveyDto> pages) {
+    public PageDTO(int surveysAmount, int pagesAmount, List<SurveyDTO> pages) {
         this.statistics = new Statistics(surveysAmount, pagesAmount);
         this.pages = pages;
     }
@@ -19,11 +19,11 @@ public class PageDto {
         this.statistics = statistics;
     }
 
-    public List<SurveyDto> getPages() {
+    public List<SurveyDTO> getPages() {
         return pages;
     }
 
-    public void setPages(List<SurveyDto> pages) {
+    public void setPages(List<SurveyDTO> pages) {
         this.pages = pages;
     }
 

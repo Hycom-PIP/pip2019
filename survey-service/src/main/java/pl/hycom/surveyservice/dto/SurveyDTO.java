@@ -2,14 +2,14 @@ package pl.hycom.surveyservice.dto;
 
 import java.util.Date;
 
-public class SurveyDto {
+public class SurveyDTO {
     private String name;
     private int version;
     private Date creationDate;
     private int numberOfCompletedSurveys;
     private String token;
 
-    public SurveyDto(String name, int version, Date creationDate, int numberOfCompletedSurveys, String token) {
+    public SurveyDTO(String name, int version, Date creationDate, int numberOfCompletedSurveys, String token) {
         this.name = name;
         this.version = version;
         this.creationDate = creationDate;

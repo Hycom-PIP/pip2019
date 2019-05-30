@@ -6,8 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.hycom.surveyservice.model.Survey;
-import pl.hycom.surveyservice.dto.PageDto;
-import pl.hycom.surveyservice.dto.SurveyDto;
+import pl.hycom.surveyservice.dto.PageDTO;
+import pl.hycom.surveyservice.dto.SurveyDTO;
 import pl.hycom.surveyservice.repository.SurveyRepository;
 
 import java.util.List;
@@ -20,15 +20,15 @@ public class SurveyListViewController {
     SurveyRepository surveyRepository;
 
     @RequestMapping(value = "/getSurveys/{pageNumber}", method = RequestMethod.GET)
-    public ResponseEntity<PageDto> getSurveysByPage(@PathVariable int pageNumber) {
+    public ResponseEntity<PageDTO> getSurveysByPage(@PathVariable int pageNumber) {
         List<Survey> surveyList = surveyRepository.findAllByIsCurrentVersion(true, PageRequest.of(pageNumber, 10));
         long surveyAmount = surveyRepository.countAllByIdIsNotNull();
 
-        List<SurveyDto> surveyDtos = surveyList.stream()
-                .map(survey -> new SurveyDto(survey.getSurveyName(), survey.getVersion(), survey.getId().getDate(), 4, survey.getToken()))
+        List<SurveyDTO> surveyDtos = surveyList.stream()
+                .map(survey -> new SurveyDTO(survey.getSurveyName(), survey.getVersion(), survey.getId().getDate(), 4, survey.getToken()))
                 .collect(Collectors.toList());
 
-        return new ResponseEntity<>(new PageDto((int) surveyAmount, (int) Math.ceil(surveyAmount / 10.0), surveyDtos), HttpStatus.OK);
+        return new ResponseEntity<>(new PageDTO((int) surveyAmount, (int) Math.ceil(surveyAmount / 10.0), surveyDtos), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{tokenId}", method = RequestMethod.DELETE)
