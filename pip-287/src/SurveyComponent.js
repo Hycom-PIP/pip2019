@@ -131,11 +131,8 @@ class SurveyComponent extends Component {
         }
         )
     }
-
     generateJson() {
-
-        //console.log(JSON.stringify(this.state.survey));
-        var xhttp = new XMLHttpRequest();
+        let xhttp = new XMLHttpRequest();
         if (this.state.survey.token == null) {
             xhttp.open("POST", "http://localhost:8080/survey-service/", true);
         }
@@ -265,7 +262,7 @@ class SurveyComponent extends Component {
         if (result.destination.droppableId === result.source.droppableId && result.index === result.source.index) { return; }
 
         this.setState((prevState) => {
-            var oldQuestion = prevState.survey.pageList[prevState.currentPage - 1].questionList[result.source.index];
+            let oldQuestion = prevState.survey.pageList[prevState.currentPage - 1].questionList[result.source.index];
             prevState.survey.pageList[prevState.currentPage - 1].questionList.splice(result.source.index, 1);
             prevState.survey.pageList[prevState.currentPage - 1].questionList.splice(result.destination.index, 0, oldQuestion);
             return { state: prevState }
@@ -316,10 +313,7 @@ class SurveyComponent extends Component {
                                                 {(this.state.survey.pageList[this.state.currentPage - 1].questionList || []).map(
                                                     (question, value) => (
                                                         <React.Fragment key={this.state.currentPage + '.' + value}>
-                                                            {/* <MDBContainer className="block-example border pt-4 pb-2 mt-2"> */}
                                                             <QuestionCard parentKey={this.state.currentPage + '.' + value} data={question} index={value} func={this.questionDataChange} dltFunc={this.deleteQuestion} multiDltfunc={this.deleteMultiQuestion} moveFunc={this.moveQuestion} />
-                                                            {/* </MDBContainer> */}
-                                                            {/* <div className="pb-0 pt-0 mt-2 border-bottom-5 border-top-0 rounded list-group-item" /> */}
                                                         </React.Fragment>
                                                     )
                                                 )}
