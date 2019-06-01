@@ -6,7 +6,7 @@ import Error from './Error';
 import { ToastContainer, toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 import { MDBBtn, MDBContainer, MDBInput, MDBPagination, MDBPageItem, MDBPageNav, MDBCol, MDBRow } from "mdbreact";
-
+import { BrowserRouter as Router, Route, Link, withRouter, Switch, Redirect } from "react-router-dom"
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'bootstrap-css-only/css/bootstrap.min.css';
 import 'mdbreact/dist/css/mdb.css';
@@ -52,20 +52,21 @@ class SurveyComponent extends Component {
             this.state.token = props.token;
         }
 
-
         this.changePage = this.changePage.bind(this);
         this.generateJson = this.generateJson.bind(this);
         this.answerDataChange = this.answerDataChange.bind(this);
         this.setPage = this.setPage.bind(this);
+        this.setUrl = this.setUrl.bind(this);
     }
     componentDidMount() {
-        let surveyID = window.location.pathname.split('/');
-        fetch("http://localhost:8080/survey-service/ankieta/" + surveyID[surveyID.length - 1])
+        let surveyID = this.props.match.params.id;
+        fetch("http://localhost:8080/survey-service/ankieta/" + surveyID)
             .then(response => response.json())
-            .then(data => this.setState({surveyjson: data}));
-        this.setState({answers: {token: surveyID[surveyID.length - 1], pages: []}})
+            .then(data => this.setState({ surveyjson: data, answers: { token: surveyID, pages: [] } }));
     }
-
+    setUrl(url) {
+        this.props.history.push(url);
+    }
     setPage(direction) {
         this.setState((prevState) => {
             switch (direction) {
@@ -88,27 +89,27 @@ class SurveyComponent extends Component {
     }
     answerDataChange(e, pageIndex, questionIndex, type) {
         this.setState((prevState) => {
-                let old = prevState.answers;
-                switch (type) {
-                    case "Text":
-                    case "radio":
-                        this.state.answers.pages[pageIndex - 1].questionList[questionIndex].answers[0] = e;
-                        break;
-                    case "checkbox":
-                        if (!this.state.answers.pages[pageIndex - 1].questionList[questionIndex].answers.includes(e)) {
-                            this.state.answers.pages[pageIndex - 1].questionList[questionIndex].answers.push(e);
-                        } else
-                            if (this.state.answers.pages[pageIndex - 1].questionList[questionIndex].answers.includes(e)) {
-                                var ind = this.state.answers.pages[pageIndex - 1].questionList[questionIndex].answers.indexOf(e);
-                                this.state.answers.pages[pageIndex - 1].questionList[questionIndex].answers.splice(ind, 1);
-                            }
+            let old = prevState.answers;
+            switch (type) {
+                case "Text":
+                case "radio":
+                    this.state.answers.pages[pageIndex - 1].questionList[questionIndex].answers[0] = e;
+                    break;
+                case "checkbox":
+                    if (!this.state.answers.pages[pageIndex - 1].questionList[questionIndex].answers.includes(e)) {
+                        this.state.answers.pages[pageIndex - 1].questionList[questionIndex].answers.push(e);
+                    } else
+                        if (this.state.answers.pages[pageIndex - 1].questionList[questionIndex].answers.includes(e)) {
+                            var ind = this.state.answers.pages[pageIndex - 1].questionList[questionIndex].answers.indexOf(e);
+                            this.state.answers.pages[pageIndex - 1].questionList[questionIndex].answers.splice(ind, 1);
+                        }
 
-                        break;
-                    default:
-                        break;
-                }
-                return { answers: {version: this.state.surveyjson.version, pages: old.pages, token: old.token} }
+                    break;
+                default:
+                    break;
             }
+            return { answers: { version: this.state.surveyjson.version, pages: old.pages, token: old.token } }
+        }
         )
     }
     //
@@ -119,10 +120,9 @@ class SurveyComponent extends Component {
             if (xhttp.readyState === 4) {
                 if (xhttp.status === 200) {
                     toast.success("OKAY, YOU GOT IT")
-                    this.setState({finished: true});
+                    this.setUrl('/finish')
                 } else {
                     toast.error("Some answers might be wrong or there is problem with survey server\nTry again :)\nError code [" + xhttp.status + "]")
-
                 }
             }
         };
@@ -131,34 +131,27 @@ class SurveyComponent extends Component {
     }
 
     changePage(index) {
-        this.setState({currentPage: index })
+        this.setState({ currentPage: index })
     }
     render() {
-        if(this.state.finished) {
-            return (
-                <div className="border justify-content-center align-items-center">
-                    <Finish/>
-                </div>
-            )
-        }
-        if(this.state.surveyjson !== undefined) {
-            if(this.state.answers.pages.length === 0) {
+        if (this.state.surveyjson !== undefined) {
+            if (this.state.answers.pages.length === 0) {
                 let pageIndex = 0;
-                if(this.state.surveyjson.pageList === null) {
+                if (this.state.surveyjson.pageList === null) {
                     return (
-                        <div className="border justify-content-center align-items-center">
-                            <Error/>
-                        </div>
+                        <Redirect to='/finish' />
                     )
                 }
                 this.state.surveyjson.pageList.forEach((element) => {
-                    let page = {pageId: pageIndex, questionList: []}; //TODO: Ustawic PageID - zrobione
+                    let page = { pageId: pageIndex, questionList: [] }; //TODO: Ustawic PageID - zrobione
                     pageIndex++;
                     let questionIndex = 0;
                     element.questionList.forEach((elem2) => {
                         page.questionList.push(
-                            {questionId: questionIndex, //TODO: ustawic QuestionID - zrobione
-                                answers: []}
+                            {
+                                questionId: questionIndex, //TODO: ustawic QuestionID - zrobione
+                                answers: []
+                            }
                         )
                         questionIndex++;
                     });
@@ -168,7 +161,7 @@ class SurveyComponent extends Component {
             return (
                 <MDBContainer className="block-example border pt-4">
                     <ToastContainer position={toast.POSITION.TOP_CENTER}
-                                    autoClose={4000}
+                        autoClose={4000}
                     />
                     <p>{this.state.surveyjson.surveyName}</p>
                     <p>{this.state.surveyjson.surveyDescription}</p>
@@ -183,7 +176,7 @@ class SurveyComponent extends Component {
                             {
                                 (this.state.surveyjson.pageList).map((value, index) =>
                                     (<MDBPageItem active={this.state.currentPage - 1 === index}
-                                                  onClick={() => (this.changePage(index + 1))} key={index + 1}>
+                                        onClick={() => (this.changePage(index + 1))} key={index + 1}>
                                         <MDBPageNav>
                                             {index + 1}
                                         </MDBPageNav>
@@ -204,11 +197,11 @@ class SurveyComponent extends Component {
                                         <React.Fragment key={this.state.currentPage + '.' + value}>
                                             <div >
                                                 <Question parentKey={this.state.currentPage + '.' + value}
-                                                          data={question}
-                                                          pageIndex={this.state.currentPage}
-                                                          questionIndex={value}
-                                                          func={this.answerDataChange}
-                                                          answered={this.state.answers.pages[this.state.currentPage-1].questionList[value]}
+                                                    data={question}
+                                                    pageIndex={this.state.currentPage}
+                                                    questionIndex={value}
+                                                    func={this.answerDataChange}
+                                                    answered={this.state.answers.pages[this.state.currentPage - 1].questionList[value]}
                                                 />
                                             </div>
                                         </React.Fragment>
@@ -228,7 +221,7 @@ class SurveyComponent extends Component {
                             {
                                 (this.state.surveyjson.pageList).map((value, index) =>
                                     (<MDBPageItem active={this.state.currentPage - 1 === index}
-                                                  onClick={() => (this.changePage(index + 1))} key={index + 1}>
+                                        onClick={() => (this.changePage(index + 1))} key={index + 1}>
                                         <MDBPageNav>
                                             {index + 1}
                                         </MDBPageNav>
@@ -246,12 +239,27 @@ class SurveyComponent extends Component {
                     </MDBRow>
                 </MDBContainer>)
         }
-        else
-        {
-            return null
+        else {
+            return (
+                null
+            )
         }
 
     }
 }
+const SurveyComponentWithRouter = withRouter(SurveyComponent);
 
-export default SurveyComponent;
+class RoutingAnswer extends Component {
+    render() {
+        return (<Router>
+            <Switch>
+                <Route path="/answer/:id" component={SurveyComponentWithRouter} />
+                <Route path="/finish" component={Finish} />
+                <Route path="/error" component={Error} />
+                <Redirect to='/error' />
+            </Switch>
+        </Router>);
+    }
+
+}
+export default withRouter(RoutingAnswer);

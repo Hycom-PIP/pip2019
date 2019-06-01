@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import "react-toastify/dist/ReactToastify.css";
+import { BrowserRouter as Router, Route, Link, Redirect, Switch ,withRouter} from "react-router-dom";
 
 class Finish extends Component {
     constructor(props) {

@@ -4,7 +4,7 @@ import QuestionCard from './QuestionCard.js';
 import { Droppable, Draggable, DragDropContext } from 'react-beautiful-dnd';
 import { MDBBtn, MDBContainer, MDBInput, MDBPagination, MDBPageItem, MDBPageNav, MDBCol, MDBRow } from "mdbreact";
 import { toast } from 'react-toastify';
-import { Redirect } from "react-router-dom";
+import { Redirect, withRouter } from "react-router-dom";
 
 import 'react-toastify/dist/ReactToastify.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
@@ -146,7 +146,8 @@ class SurveyComponent extends Component {
             if (xhttp.readyState == 4) {
                 if (xhttp.status == 200) {
                     console.log("Serwis przyjął dane, kod http: " + xhttp.status);
-                    this.setState({redirected: true});
+                  //  this.setState({redirected: true});
+                  this.props.history.push("/");
                 }
                 else {
                     console.log("Serwis zwrócił kod błędu http: " + xhttp.status);
@@ -372,4 +373,4 @@ class SurveyComponent extends Component {
     }
 }
 
-export default SurveyComponent;
+export default withRouter(SurveyComponent) ;

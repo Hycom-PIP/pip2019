@@ -1,4 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Survey from './Survey.js'
-ReactDOM.render((<Survey  />), (document.getElementById('root')));
+import { BrowserRouter } from 'react-router-dom';
+
+ReactDOM.render((<BrowserRouter><Survey  /></BrowserRouter>), (document.getElementById('root')));

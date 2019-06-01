@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { MDBInput, MDBRow, MDBContainer, MDBCol } from "mdbreact";
 import Form from 'react-bootstrap/Form';
+import { BrowserRouter as Router, Route, Link, Redirect, Switch ,withRouter} from "react-router-dom";
 
 class SingleAnswer extends Component {
     constructor(props) {
