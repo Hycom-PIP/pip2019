@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Droppable, Draggable, DragDropContext } from 'react-beautiful-dnd';
 import { MDBBtn, MDBContainer, MDBInput, MDBPagination, MDBPageItem, MDBPageNav, MDBCol, MDBRow, Container, Row, Col } from "mdbreact";
 import SurveyComponent from './SurveyComponent.js'
-import { BrowserRouter as Router, Route, Link, Redirect, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Route, Link, Redirect, Switch, withRouter } from "react-router-dom";
 
 import Share from 'react-icons/lib/io/android-share';
 import Trash from 'react-icons/lib/io/trash-a';
@@ -161,11 +161,11 @@ class SurveyList extends Component {
                 if (xhttp.status == 200) {
                     this.setState({
                         json: xhttp.responseText,
+                        activeState: "edit"
                     });
                 }
                 else {
                     console.log("Serwis zwrócił kod błędu http: " + xhttp.status);
-                    this.showErrorPage(true);
                 }
             }
         }
@@ -300,19 +300,17 @@ class MainView extends Component {
                 <MDBRow>
                     <CustomToolbar>
                         <Link to="/">  <MDBBtn color="primary">Twoje Ankiety</MDBBtn> </Link>
-                        <Link to="/CreateSurvey"><MDBBtn color="primary"> Utwórz Ankietę</MDBBtn></Link>
+                        <Link to="/createsurvey"><MDBBtn color="primary"> Utwórz Ankietę</MDBBtn></Link>
                     </CustomToolbar>
                 </MDBRow>
                 <Switch>
-                    <Route exact path="/" component={SurveyList} />
-                    <Route exact path="/home" component={SurveyList} />
-                    <Route path="/CreateSurvey" component={SurveyComponent} />
-                    <Route path="/Error" component={ErrorPage} />
+                    <Route path="/list" component={SurveyList} />
+                    <Route path="/createsurvey" component={SurveyComponent} />
+                    <Route path="/error" component={ErrorPage} />
                     <Route path="" component={ErrorPage} />
                 </Switch>
-
             </Router>
         </MDBContainer>)
     }
 }
-export default MainView;
+export default withRouter(MainView);

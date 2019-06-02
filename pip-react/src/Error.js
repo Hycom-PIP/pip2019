@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import "react-toastify/dist/ReactToastify.css";
+import { withRouter, Link } from "react-router-dom";
 
 class Error extends Component {
     constructor(props) {
@@ -12,7 +13,7 @@ class Error extends Component {
                 <div className="card-body card-body-cascade text-center">
 
                     <h4 className="card-title"><strong>Coś się zepsuło :(</strong></h4>
-                    <h6 className="font-weight-bold indigo-text py-2">Sprawdź link i spróbuj ponownie</h6>
+                    <Link to="/"> <h6 className="font-weight-bold indigo-text py-2">Sprawdź link i spróbuj ponownie</h6></Link>
                     <p className="card-text">Jeśli problem się powtarza - najpewniej już nad tym pracujemy :)</p>
                 </div>
 
@@ -22,4 +23,4 @@ class Error extends Component {
     }
 }
 
-export default Error;
+export default withRouter(Error);

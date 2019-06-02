@@ -20,15 +20,15 @@ public class DisplaySurveyController {
     @Autowired
     AnsweredSurveyRepository answeredSurveyRepository;
 
-    @RequestMapping(value = "/ankieta/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Survey> getSurvey(@PathVariable("id") String id) {
-        Optional<Survey> survey = surveyRepository.findById(id);
+    @RequestMapping(value = "/ankieta/{token}", method = RequestMethod.GET)
+    public ResponseEntity<Survey> getSurvey(@PathVariable("token") String token) {
+        Optional<Survey> survey = surveyRepository.findByIsCurrentVersionAndToken(true, token);
         return survey.map(value -> new ResponseEntity<>(value, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(new Survey(), HttpStatus.BAD_REQUEST));
     }
 
     @RequestMapping(value = "/ankieta", method=RequestMethod.POST)
     public ResponseEntity answerSurvey(@Valid @RequestBody AnsweredSurvey answeredSurvey) {
-        if(surveyRepository.findById(answeredSurvey.token.toString()).isPresent()) {
+        if(!surveyRepository.findAllByToken(answeredSurvey.token).isEmpty()) {
             if (answeredSurvey.validateAnsweredSurvey()) {
                 answeredSurveyRepository.insert(answeredSurvey);
                 return new ResponseEntity(HttpStatus.OK);
