@@ -1,0 +1,11 @@
+spring:
+  cloud:
+    config:
+      name: survey-service
+      discovery:
+        service-id: config
+        enabled: true
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8082/eureka/
