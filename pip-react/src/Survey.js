@@ -253,7 +253,7 @@ class RoutingAnswer extends Component {
     render() {
         return (<Router>
             <Switch>
-                <Route path="/answer/:id" component={SurveyComponentWithRouter} />
+                <Route exact path="/answer/:id" component={SurveyComponentWithRouter} />
                 <Route path="/finish" component={Finish} />
                 <Route path="/error" component={Error} />
                 <Redirect to='/error' />
