@@ -21,9 +21,10 @@ public class EditSurveyController {
     @Autowired
     SurveyRepository surveyRepository;
 
-    @RequestMapping(value = "/getSurvey/{surveyId}", method = RequestMethod.GET)
-    public ResponseEntity<Survey> getSurveyToEdit(@PathVariable String surveyId) {
+    @RequestMapping(value = "/editSurvey/{surveyId}", method = RequestMethod.GET)
+    public ResponseEntity<Survey> EditSurvey(@PathVariable String surveyId) {
         List<Survey> surveyList = surveyRepository.findAllByToken(surveyId);
+        
         for (Survey survey: surveyList) {
             if(survey.getIsCurrentVersion()) {
                 return new ResponseEntity<>(survey, HttpStatus.OK);
@@ -32,8 +33,8 @@ public class EditSurveyController {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    @RequestMapping(value = "/addNewVersion", method = RequestMethod.PUT)
-    public ResponseEntity<Survey> addNewVersion(@RequestBody Survey survey) {
+    @RequestMapping(value = "/editSurvey", method = RequestMethod.PUT)
+    public ResponseEntity<Survey> EditSurvey(@RequestBody Survey survey) {
         survey.setCurrentVersion(false);
         surveyRepository.save(survey);
         survey.setId(new ObjectId());
