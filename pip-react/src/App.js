@@ -1,7 +1,7 @@
 
 import React, { Component } from 'react';
-import SurveyList from './SurveyList';
-import Survey from './Survey.js'
+import ManageSurvey from './SurveyList';
+import AnswerSurvey from './Survey.js'
 import Error from "./Error.js"
 import { Droppable, Draggable, DragDropContext } from 'react-beautiful-dnd';
 import { MDBBtn, MDBContainer, MDBInput, MDBPagination, MDBPageItem, MDBPageNav, MDBCol, MDBRow } from "mdbreact";
@@ -16,9 +16,9 @@ class App extends Component {
     return (
       <Router>
         <Switch>
-          <Route exact path="/" component={SurveyList} />
-          <Route exact path="/list" component={SurveyList} />
-          <Route exact path="/answer/:id" component={Survey} />
+          <Route exact path="/" render={()=>(<Redirect to='/manage' />)} />
+          <Route path="/manage" component={ManageSurvey} />
+          <Route path="/answer" component={AnswerSurvey} />
           <Route path="/error" component={Error} />
           <Redirect to='/error' />
         </Switch>
