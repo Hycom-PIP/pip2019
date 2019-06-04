@@ -64,26 +64,39 @@ class SurveyComponent extends Component {
         this.deletePage = this.deletePage.bind(this);
     }
     componentDidMount() {
-        const token = this.props.match.params.id;
-        var xhttp = new XMLHttpRequest();
-        this.setState({ isLoading: true });
-        xhttp.open("GET", "http://localhost:8080/survey-service/getSurvey/" + token, true)
-        xhttp.send();
-        xhttp.onreadystatechange = () => {
-            if (xhttp.readyState == 4) {
-                if (xhttp.status == 200) {
-                    this.setState({
-                        isLoading: false,
-                        survey: JSON.parse(xhttp.responseText),
-                    });
-                }
-                else {
-                    this.setState({ isLoading: false });
-                    this.props.history.push(this.props.redirectFailure);
-                    console.log("Serwis zwrócił kod błędu http: " + xhttp.status);
+        const tokenUrl = this.props.match.params.id;
+        console.log(tokenUrl);
+
+        if(tokenUrl)
+        {
+            var xhttp = new XMLHttpRequest();
+            this.setState({ isLoading: true });
+            xhttp.open("GET", "http://localhost:8080/survey-service/getSurvey/" + tokenUrl, true)
+            xhttp.send();
+            xhttp.onreadystatechange = () => {
+                if (xhttp.readyState == 4) {
+                    if (xhttp.status == 200) {
+                        let parsedSurvey=JSON.parse(xhttp.responseText);
+                        parsedSurvey.token=tokenUrl;
+                        this.setState({
+                            isLoading: false,
+                            survey: parsedSurvey
+                        });
+                    }
+                    else {
+                        this.setState({ isLoading: false });
+                        this.props.history.push(this.props.redirectFailure);
+                        console.log("Serwis zwrócił kod błędu http: " + xhttp.status);
+                    }
                 }
             }
         }
+        else 
+        {
+            this.setState({ isLoading: false });
+
+        }
+       
     }
     deletePage() {
         if (this.state.survey.pageList.length > 1) {
@@ -155,6 +168,7 @@ class SurveyComponent extends Component {
         )
     }
     generateJson() {
+        console.log(JSON.stringify(this.state.survey));
         let xhttp = new XMLHttpRequest();
         if (this.state.survey.token == null) {
             xhttp.open("POST", "http://localhost:8080/survey-service/", true);

@@ -173,7 +173,7 @@ class SurveyList extends Component {
                 this.getSurveysJson();
             } else {
                 console.error("Błąd");
-                this.showErrorPage(true);
+                this.props.history.push(this.props.redirectError);
             }
         }
         xhr.send(null);
@@ -193,7 +193,7 @@ class SurveyList extends Component {
                 }
                 else {
                     console.log("Serwis zwrócił kod błędu http: " + xhttp.status);
-                    this.showErrorPage(true);
+                    this.props.history.push(this.props.redirectError);
 
                 }
             }
@@ -294,7 +294,7 @@ class MainView extends Component {
                 </MDBRow>
                 <Switch>
                     <Route exact path={path+"/"} render={()=>(<Redirect to={path+"/list"} />)} />
-                    <Route path={path+"/list"} component={()=>(<SurveyListWithRouter redirectEdit={path+"/modify"}/>)} />
+                    <Route path={path+"/list"} component={()=>(<SurveyListWithRouter redirectEdit={path+"/modify"} redirectError={path+"/error"}/>)} />
                     <Route path={path+"/create"} component={()=>(<SurveyComponent redirectSucces={path+"/"} />)} />
                     <Route path={path+"/modify/:id"} component={()=>(<SurveyComponent redirectSucces={path+"/"} redirectFailure={path+"/error"} />)} />
 
