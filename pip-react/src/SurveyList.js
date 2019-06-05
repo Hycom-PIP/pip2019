@@ -153,7 +153,7 @@ class SurveyList extends Component {
 
     edit(direction) {
         const token = this.state.surveys.pages[direction.index].token;
-        this.props.history.push(this.props.redirectEdit+"/"+token);
+        this.props.history.push(this.props.redirectEdit + "/" + token);
 
 
     }
@@ -193,7 +193,7 @@ class SurveyList extends Component {
                 }
                 else {
                     console.log("Serwis zwrócił kod błędu http: " + xhttp.status);
-                    this.props.history.push(this.props.redirectError);
+                    this.props.history.push(this.props.redirectError + "/" + xhttp.status);
 
                 }
             }
@@ -215,7 +215,7 @@ class SurveyList extends Component {
         let pagesAmount = 1;
         if (typeof this.state.surveys.statistics !== "undefined") { pagesAmount = this.state.surveys.statistics.pagesAmount; }
         if (this.state.errorState) {
-            return <Redirect push to={this.props.match.path+"/error"} />;
+            return <Redirect push to={this.props.match.path + "/error"} />;
         }
         else
             return (
@@ -249,7 +249,7 @@ class SurveyList extends Component {
                 </MDBContainer>)
     }
 }
-const SurveyListWithRouter=withRouter(SurveyList);
+const SurveyListWithRouter = withRouter(SurveyList);
 const CustomToolbar = (data) => (<div style={{
     display: 'flex',
     width: '1200px',
@@ -265,41 +265,62 @@ const pagitationButton = props => (
         {props.children}
     </MDBBtn>
 )
-const ErrorPage = (redirectUrl) =>
-    
-{   console.log(redirectUrl);
-    return(
+const ErrorPage = withRouter((props) => {
+    let isHandled = true;
+    let errorText;
+    const errorCode = props.match.params.id;
+
+    switch (errorCode) {
+        case "403":
+            errorText = "Brak uprawnien dostępu";
+            break;
+        case "404":
+            errorText = "Nie znaleziono danych, sprawdź url";
+            break;
+        case "500":
+            errorText = "Wewnętrzny błąd serwera";
+            break;
+        case "504":
+            errorText = "Przekroczono limit czasu połączenia";
+            break;
+        default:
+            isHandled = false;
+            errorText = "Coś poszło nie tak";
+            break;
+    }
+    return (
         <Container className="pt-5">
             <Row className="text-center">
                 <Col>
-                    <a class="display-1 d-block">Coś poszło nie tak</a>
-                    <Link to={redirectUrl}>  <div class="mb-4 lead">Spróbuj ponownie</div></Link>
+                    {isHandled ? (<h1 className="font-weight-bold  display-1 ">{errorCode}</h1>) : null}
+                    <h2 className=" h2-responsive font-weight-light ">{errorText}</h2>
+                    <Link to={props.redirectUrl}>  <div class="mb-4 lead">Spróbuj ponownie</div></Link>
                 </Col>
             </Row>
         </Container>
 
     )
-    }
+})
 
 class MainView extends Component {
     render() {
-        const path=this.props.match.path;
+        const path = this.props.match.path;
         return (<MDBContainer>
             <Router>
                 <MDBRow>
                     <CustomToolbar>
-                        <Link to={path+"/list"}>  <MDBBtn color="primary">Twoje Ankiety</MDBBtn> </Link>
-                        <Link to={path+"/create"}><MDBBtn color="primary"> Utwórz Ankietę</MDBBtn></Link>
+                        <Link to={path + "/list"}>  <MDBBtn color="primary">Twoje Ankiety</MDBBtn> </Link>
+                        <Link to={path + "/create"}><MDBBtn color="primary"> Utwórz Ankietę</MDBBtn></Link>
                     </CustomToolbar>
                 </MDBRow>
                 <Switch>
-                    <Route exact path={path+"/"} render={()=>(<Redirect to={path+"/list"} />)} />
-                    <Route path={path+"/list"} component={()=>(<SurveyListWithRouter redirectEdit={path+"/modify"} redirectError={path+"/error"}/>)} />
-                    <Route path={path+"/create"} component={()=>(<SurveyComponent redirectSucces={path+"/"} />)} />
-                    <Route path={path+"/modify/:id"} component={()=>(<SurveyComponent redirectSucces={path+"/"} redirectFailure={path+"/error"} />)} />
+                    <Route exact path={path + "/"} render={() => (<Redirect to={path + "/list"} />)} />
+                    <Route path={path + "/list"} component={() => (<SurveyListWithRouter redirectEdit={path + "/modify"} redirectError={path + "/error"} />)} />
+                    <Route path={path + "/create"} component={() => (<SurveyComponent redirectSucces={path + "/"} />)} />
+                    <Route path={path + "/modify/:id"} component={() => (<SurveyComponent redirectSucces={path + "/"} redirectFailure={path + "/error"} />)} />
 
-                    <Route path={path+"/error"} component={()=>(ErrorPage(path+"/error"))} />
-                    <Redirect to={path+"/error"}  />
+                    <Route path={path + "/error/:id"} render={() => (ErrorPage({ redirectUrl: path + "/list" }))} />
+                    <Redirect to={path + "/error"} />
                 </Switch>
             </Router>
         </MDBContainer>)
