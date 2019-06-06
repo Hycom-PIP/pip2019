@@ -8,14 +8,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import pl.hycom.surveyservice.model.*;
+import pl.hycom.surveyservice.model.AnsweredSurvey;
+import pl.hycom.surveyservice.model.MultipleChoiceResult;
 import pl.hycom.surveyservice.repository.AnsweredSurveyRepository;
 import pl.hycom.surveyservice.repository.SurveyRepository;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
@@ -25,54 +25,33 @@ public class AnsweredSurveyViewController {
     @Autowired
     AnsweredSurveyRepository answeredSurveyRepository;
 
-    @RequestMapping(value = "/survey/{token}/{version}/questions/multipleChoice/{page}/{questionNumber}", method = RequestMethod.GET)
-    public ResponseEntity<List<MultipleChoiceResult>> getMultipleChoiceResults(@PathVariable("token") String token, @PathVariable("version") int version,
-                                                                               @PathVariable("questionNumber") int questionNumber,
-                                                                               @PathVariable("page") int page) {
-        List<AnsweredSurvey> AnsweredSurveyList = answeredSurveyRepository.findAllByTokenAndVersion(token, version);
-        Optional<Survey> optionalSurvey = surveyRepository.findByTokenAndVersion(token, version);
-        if (!optionalSurvey.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        Survey survey = optionalSurvey.get();
+    @RequestMapping(value = "/survey/{token}/{version}/question/multipleChoice/{page}/{questionNumber}", method = RequestMethod.GET)
+    public ResponseEntity<MultipleChoiceResult> getMultipleChoiceResults(@PathVariable("token") String token, @PathVariable("version") int version,
+                                                                         @PathVariable("questionNumber") int questionNumber,
+                                                                         @PathVariable("page") int page) {
+        List<AnsweredSurvey> answeredSurveyList = answeredSurveyRepository.findAllByTokenAndVersion(token, version);
+        MultipleChoiceResult multipleChoiceResult = new MultipleChoiceResult();
 
-        MultipleChoiceResult multipleChoiceResults = new ArrayList<>();
-
-        if() {
-
-        }
-
-        for (Answer answer : survey.getPageList()[page].getQuestionList()[questionNumber].getAnswers()) {
-
-        }
-
-        return new ResponseEntity<>(multipleChoiceResults, HttpStatus.OK);
+        answeredSurveyList.stream().map(answeredSurvey -> answeredSurvey.pages.get(page)
+                .questionList.get(questionNumber))
+                .flatMap(answeredQuestion -> answeredQuestion.answers.stream())
+                .forEach(answer -> multipleChoiceResult.getChoiceList()
+                        .merge(answer, 1, Integer::sum));
+        return new ResponseEntity<>(multipleChoiceResult, HttpStatus.OK);
     }
 
-    public static boolean isChoicePresentInMultipleChoiceResult(MultipleChoiceResult multipleChoiceResult, String name) {
-        return multipleChoiceResult.getChoiceList().stream().anyMatch(choice -> name.equals(choice.getChoiceName()));
-    }
-
-    @RequestMapping(value = "/survey/{token}/{version}/questions/text/{page}/{questionNumber}/{questionPage}", method = RequestMethod.GET)
-    public ResponseEntity<Integer> getSurvey(@PathVariable("token") String token, @PathVariable("version") int version,
-                                             @PathVariable("questionNumber") int questionNumber, @PathVariable("page") int page,
-                                             @PathVariable("questionPage") int questionPage) {
-        return null;
-    }
-
-    @RequestMapping(value = "/survey/{token}/{version}/questions/amount", method = RequestMethod.GET)
-    public ResponseEntity<Integer> getQuestionAmount(@PathVariable("token") String token, @PathVariable("version") int version) {
-        int questionAmount = 0;
-        Optional<Survey> optionalSurvey = surveyRepository.findByTokenAndVersion(token, version);
-        if (!optionalSurvey.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        Survey survey = optionalSurvey.get();
-
-        for (Page page : survey.getPageList()) {
-            questionAmount += page.getQuestionList().length;
-        }
-        return new ResponseEntity<>(questionAmount, HttpStatus.OK);
+    @RequestMapping(value = "/survey/{token}/{version}/question/text/{page}/{questionNumber}/{stringsPage}", method = RequestMethod.GET)
+    public ResponseEntity<List<String>> getTextResults(@PathVariable("token") String token, @PathVariable("version") int version,
+                                                   @PathVariable("questionNumber") int questionNumber,
+                                                   @PathVariable("page") int page,
+                                                   @PathVariable("stringsPage") int stringsPage) {
+        List<AnsweredSurvey> answeredSurveyList = answeredSurveyRepository.findAllByTokenAndVersion(token, version);
+        List<String> results = new ArrayList<>();
+        answeredSurveyList.stream().map(answeredSurvey -> answeredSurvey.pages.get(page)
+                .questionList.get(questionNumber))
+                .map(answeredQuestion -> answeredQuestion.answers)
+                .forEach(results.subList(stringsPage * 50, (stringsPage + 1) * 50)::addAll);
+        return new ResponseEntity<>(results, HttpStatus.OK);
     }
 
 }

@@ -1,17 +1,17 @@
 package pl.hycom.surveyservice.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MultipleChoiceResult {
-    private List<ResultChoice> choiceList = new ArrayList<>();
+    private Map<String, Integer> choiceList = new HashMap<>();
     private String QuestionText;
 
-    public List<ResultChoice> getChoiceList() {
+    public Map<String, Integer> getChoiceList() {
         return choiceList;
     }
 
-    public void setChoiceList(List<ResultChoice> choiceList) {
+    public void setChoiceList(Map<String, Integer> choiceList) {
         this.choiceList = choiceList;
     }
 
