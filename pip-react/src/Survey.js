@@ -64,8 +64,16 @@ class SurveyComponent extends Component {
             .then(response => response.json())
             .then(data => this.setState({ surveyjson: data, answers: { token: surveyID, pages: [] } }));
     }
-    setUrl(url) {
-        this.props.history.push(url);
+    setUrl(url,isGlobal) {
+        if(isGlobal)
+        {
+            this.props.history.push(url);
+        }
+        else
+        {
+            this.props.history.push(this.props.match.path+url);
+
+        }
     }
     setPage(direction) {
         this.setState((prevState) => {
@@ -119,8 +127,8 @@ class SurveyComponent extends Component {
         xhttp.onreadystatechange = () => {
             if (xhttp.readyState === 4) {
                 if (xhttp.status === 200) {
-                    toast.success("OKAY, YOU GOT IT")
-                    this.setUrl('/finish')
+                    toast.success("OKAY, YOU GOT IT");
+                    this.setUrl(this.props.redirectSucces, true);
                 } else {
                     toast.error("Some answers might be wrong or there is problem with survey server\nTry again :)\nError code [" + xhttp.status + "]")
                 }
@@ -139,7 +147,7 @@ class SurveyComponent extends Component {
                 let pageIndex = 0;
                 if (this.state.surveyjson.pageList === null) {
                     return (
-                        <Redirect to='/finish' />
+                        <Redirect to={this.props.redirectError} />
                     )
                 }
                 this.state.surveyjson.pageList.forEach((element) => {
@@ -251,12 +259,13 @@ const SurveyComponentWithRouter = withRouter(SurveyComponent);
 
 class RoutingAnswer extends Component {
     render() {
+        const path =this.props.match.path;
         return (<Router>
             <Switch>
-                <Route path="/answer/:id" component={SurveyComponentWithRouter} />
-                <Route path="/finish" component={Finish} />
-                <Route path="/error" component={Error} />
-                <Redirect to='/error' />
+                <Route exact path={path+"/survey/:id"} component={()=>(<SurveyComponentWithRouter redirectError={path+"/error"} redirectSucces={path+"/finish"} />)} />
+                <Route path={path+"/finish"} component={Finish} />
+                <Route path={path+"/error"} component={()=>(<Error redirectError={path+"/error"}/>)} />
+                <Redirect to={path+"/error"} />
             </Switch>
         </Router>);
     }

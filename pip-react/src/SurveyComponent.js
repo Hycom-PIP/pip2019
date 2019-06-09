@@ -11,12 +11,13 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'bootstrap-css-only/css/bootstrap.min.css';
 import 'mdbreact/dist/css/mdb.css';
 import './css/style.css';
-
+import cat1 from './img/cat1.png'
 toast.configure();
 class SurveyComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            isLoading: true,
             currentPage: 1,
             survey: {
                 token: null,
@@ -61,6 +62,41 @@ class SurveyComponent extends Component {
         this.setPage = this.setPage.bind(this);
         this.OnDragEnd = this.OnDragEnd.bind(this);
         this.deletePage = this.deletePage.bind(this);
+    }
+    componentDidMount() {
+        const tokenUrl = this.props.match.params.id;
+        console.log(tokenUrl);
+
+        if(tokenUrl)
+        {
+            var xhttp = new XMLHttpRequest();
+            this.setState({ isLoading: true });
+            xhttp.open("GET", "http://localhost:8080/survey-service/getSurvey/" + tokenUrl, true)
+            xhttp.send();
+            xhttp.onreadystatechange = () => {
+                if (xhttp.readyState == 4) {
+                    if (xhttp.status == 200) {
+                        let parsedSurvey=JSON.parse(xhttp.responseText);
+                        parsedSurvey.token=tokenUrl;
+                        this.setState({
+                            isLoading: false,
+                            survey: parsedSurvey
+                        });
+                    }
+                    else {
+                        this.setState({ isLoading: false });
+                        this.props.history.push(this.props.redirectFailure);
+                        console.log("Serwis zwrócił kod błędu http: " + xhttp.status);
+                    }
+                }
+            }
+        }
+        else 
+        {
+            this.setState({ isLoading: false });
+
+        }
+       
     }
     deletePage() {
         if (this.state.survey.pageList.length > 1) {
@@ -132,6 +168,7 @@ class SurveyComponent extends Component {
         )
     }
     generateJson() {
+        console.log(JSON.stringify(this.state.survey));
         let xhttp = new XMLHttpRequest();
         if (this.state.survey.token == null) {
             xhttp.open("POST", "http://localhost:8080/survey-service/", true);
@@ -143,8 +180,11 @@ class SurveyComponent extends Component {
             if (xhttp.readyState == 4) {
                 if (xhttp.status == 200) {
                     console.log("Serwis przyjął dane, kod http: " + xhttp.status);
-                  //  this.setState({redirected: true});
-                  this.props.history.push("/");
+                    //  this.setState({redirected: true});
+                    console.log(this.props.redirectSucces);
+                    if (this.props.redirectSucces) {
+                        this.props.history.push(this.props.redirectSucces);
+                    }
                 }
                 else {
                     console.log("Serwis zwrócił kod błędu http: " + xhttp.status);
@@ -271,100 +311,102 @@ class SurveyComponent extends Component {
         })
     }
     render() {
-        if(this.state.redirected)
-        {
-            return <Redirect push to={"/"} />;
+        if (this.state.isLoading) {
+            return (<div className="text-center SpinMe">
+                <img src={cat1} alt="cat1" />
+            </div>)
         }
-        else return (
+        else
+            return (
 
-            <MDBContainer>
-                <MDBInput onChange={this.surveyTitleChange} value={this.state.survey.surveyName} type="textarea" label="Tytuł" rows="2" />
-                <MDBInput onChange={this.surveyDescritpionChange} value={this.state.survey.surveyDescription} type="textarea" label="Opis" rows="2" />
-                <br />
-                <MDBRow center>
-                    <MDBPagination className="d-flex justify-content-center" size="lg">
-                        <MDBPageItem onClick={() => (this.setPage("Previous"))} disabled={this.state.survey.pageList.length <= 1}>
-                            <MDBPageNav aria-label="Previous">
-                                <span aria-hidden="false">Previous</span>
-                            </MDBPageNav>
-                        </MDBPageItem>
-                        {
-                            (this.state.survey.pageList || []).map((vaule, index) =>
-                                (<MDBPageItem active={this.state.currentPage - 1 == index} onClick={() => (this.changePage(index + 1))} key={index + 1}>
-                                    <MDBPageNav>
-                                        {index + 1}
-                                    </MDBPageNav>
-                                </MDBPageItem>))
-                        }
-                        <MDBPageItem onClick={() => (this.setPage("Next"))} disabled={this.state.survey.pageList.length <= 1}>
-                            <MDBPageNav aria-label="Next">
-                                <span aria-hidden="true">Next</span>
-                            </MDBPageNav>
-                        </MDBPageItem>
-                    </MDBPagination>
-                </MDBRow>
-                <MDBContainer id="QuestionList">
-                    <MDBRow>
-                        <MDBCol className="pl-0 pr-0">
-                            <DragDropContext onDragEnd={this.OnDragEnd} >
-                                <Droppable droppableId={"LOTR>GOT"} >
-                                    {(provided) =>
-                                        (
-                                            <div {...provided.droppableProps} ref={provided.innerRef}>
-                                                {(this.state.survey.pageList[this.state.currentPage - 1].questionList || []).map(
-                                                    (question, value) => (
-                                                        <React.Fragment key={this.state.currentPage + '.' + value}>
-                                                            <QuestionCard parentKey={this.state.currentPage + '.' + value} data={question} index={value} func={this.questionDataChange} dltFunc={this.deleteQuestion} multiDltfunc={this.deleteMultiQuestion} moveFunc={this.moveQuestion} />
-                                                        </React.Fragment>
-                                                    )
-                                                )}
-                                                {provided.placeholder}
-                                            </div>
-                                        )
-                                    }
-                                </Droppable>
-                            </DragDropContext>
-                            <MDBInput value={this.state.survey.pageList[this.state.currentPage - 1].pageDescription} onChange={this.pageDescriptionChange} type="textarea" label="Opis strony" rows="2" />
+                <MDBContainer>
+                    <MDBInput onChange={this.surveyTitleChange} value={this.state.survey.surveyName} type="textarea" label="Tytuł" rows="2" />
+                    <MDBInput onChange={this.surveyDescritpionChange} value={this.state.survey.surveyDescription} type="textarea" label="Opis" rows="2" />
+                    <br />
+                    <MDBRow center>
+                        <MDBPagination className="d-flex justify-content-center" size="lg">
+                            <MDBPageItem onClick={() => (this.setPage("Previous"))} disabled={this.state.survey.pageList.length <= 1}>
+                                <MDBPageNav aria-label="Previous">
+                                    <span aria-hidden="false">Previous</span>
+                                </MDBPageNav>
+                            </MDBPageItem>
+                            {
+                                (this.state.survey.pageList || []).map((vaule, index) =>
+                                    (<MDBPageItem active={this.state.currentPage - 1 == index} onClick={() => (this.changePage(index + 1))} key={index + 1}>
+                                        <MDBPageNav>
+                                            {index + 1}
+                                        </MDBPageNav>
+                                    </MDBPageItem>))
+                            }
+                            <MDBPageItem onClick={() => (this.setPage("Next"))} disabled={this.state.survey.pageList.length <= 1}>
+                                <MDBPageNav aria-label="Next">
+                                    <span aria-hidden="true">Next</span>
+                                </MDBPageNav>
+                            </MDBPageItem>
+                        </MDBPagination>
+                    </MDBRow>
+                    <MDBContainer id="QuestionList">
+                        <MDBRow>
+                            <MDBCol className="pl-0 pr-0">
+                                <DragDropContext onDragEnd={this.OnDragEnd} >
+                                    <Droppable droppableId={"LOTR>GOT"} >
+                                        {(provided) =>
+                                            (
+                                                <div {...provided.droppableProps} ref={provided.innerRef}>
+                                                    {(this.state.survey.pageList[this.state.currentPage - 1].questionList || []).map(
+                                                        (question, value) => (
+                                                            <React.Fragment key={this.state.currentPage + '.' + value}>
+                                                                <QuestionCard parentKey={this.state.currentPage + '.' + value} data={question} index={value} func={this.questionDataChange} dltFunc={this.deleteQuestion} multiDltfunc={this.deleteMultiQuestion} moveFunc={this.moveQuestion} />
+                                                            </React.Fragment>
+                                                        )
+                                                    )}
+                                                    {provided.placeholder}
+                                                </div>
+                                            )
+                                        }
+                                    </Droppable>
+                                </DragDropContext>
+                                <MDBInput value={this.state.survey.pageList[this.state.currentPage - 1].pageDescription} onChange={this.pageDescriptionChange} type="textarea" label="Opis strony" rows="2" />
+                            </MDBCol>
+                        </MDBRow>
+                    </MDBContainer>
+                    <br />
+                    <MDBRow center>
+                        <MDBPagination className="d-flex justify-content-center" size="lg">
+                            <MDBPageItem onClick={() => (this.setPage("Previous"))} disabled={this.state.survey.pageList.length <= 1}>
+                                <MDBPageNav aria-label="Previous">
+                                    <span aria-hidden="true">Previous</span>
+                                </MDBPageNav>
+                            </MDBPageItem>
+                            {
+                                (this.state.survey.pageList || []).map((vaule, index) =>
+                                    (<MDBPageItem active={this.state.currentPage - 1 == index} onClick={() => (this.changePage(index + 1))} key={index + 1}>
+                                        <MDBPageNav>
+                                            {index + 1}
+                                        </MDBPageNav>
+                                    </MDBPageItem>))
+                            }
+                            <MDBPageItem onClick={() => (this.setPage("Next"))} disabled={this.state.survey.pageList.length <= 1}>
+                                <MDBPageNav aria-label="Next">
+                                    <span aria-hidden="true">Next</span>
+                                </MDBPageNav>
+                            </MDBPageItem>
+                        </MDBPagination>
+                    </MDBRow>
+                    <MDBBtn onClick={this.addQuestionCard} color="primary">Dodaj nowe pytanie</MDBBtn>
+                    <MDBRow end>
+                        <MDBCol>
+                            <MDBBtn onClick={this.deletePage} color="primary">Usuń stronę</MDBBtn>
+                        </MDBCol>
+                        <MDBCol className="text-center">
+                            <MDBBtn onClick={this.addPage} color="primary">Dodaj stronę</MDBBtn>
+                        </MDBCol>
+                        <MDBCol className="text-right">
+                            <MDBBtn onClick={this.generateJson} color="primary">Zakończ</MDBBtn>
                         </MDBCol>
                     </MDBRow>
-                </MDBContainer>
-                <br />
-                <MDBRow center>
-                    <MDBPagination className="d-flex justify-content-center" size="lg">
-                        <MDBPageItem onClick={() => (this.setPage("Previous"))} disabled={this.state.survey.pageList.length <= 1}>
-                            <MDBPageNav aria-label="Previous">
-                                <span aria-hidden="true">Previous</span>
-                            </MDBPageNav>
-                        </MDBPageItem>
-                        {
-                            (this.state.survey.pageList || []).map((vaule, index) =>
-                                (<MDBPageItem active={this.state.currentPage - 1 == index} onClick={() => (this.changePage(index + 1))} key={index + 1}>
-                                    <MDBPageNav>
-                                        {index + 1}
-                                    </MDBPageNav>
-                                </MDBPageItem>))
-                        }
-                        <MDBPageItem onClick={() => (this.setPage("Next"))} disabled={this.state.survey.pageList.length <= 1}>
-                            <MDBPageNav aria-label="Next">
-                                <span aria-hidden="true">Next</span>
-                            </MDBPageNav>
-                        </MDBPageItem>
-                    </MDBPagination>
-                </MDBRow>
-                <MDBBtn onClick={this.addQuestionCard} color="primary">Dodaj nowe pytanie</MDBBtn>
-                <MDBRow end>
-                    <MDBCol>
-                        <MDBBtn onClick={this.deletePage} color="primary">Usuń stronę</MDBBtn>
-                    </MDBCol>
-                    <MDBCol className="text-center">
-                        <MDBBtn onClick={this.addPage} color="primary">Dodaj stronę</MDBBtn>
-                    </MDBCol>
-                    <MDBCol className="text-right">
-                        <MDBBtn onClick={this.generateJson} color="primary">Zakończ</MDBBtn>
-                    </MDBCol>
-                </MDBRow>
-            </MDBContainer>)
+                </MDBContainer>)
     }
 }
 
-export default withRouter(SurveyComponent) ;
+export default withRouter(SurveyComponent);

@@ -1,15 +1,12 @@
 package pl.hycom.surveyservice.model;
 
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
 public class Question {
 
     @NotBlank(message = "Question Text cannot be null.")
     private String questionText;
-    private boolean isRequiered;
+    private boolean required;
     private String questionDescription;
     @NotBlank(message = "Question Type cannot be blank.")
     private String questionType;
@@ -30,15 +27,15 @@ public class Question {
     public void setQuestionDescription(String questionDescription) {
         this.questionDescription = questionDescription;
     }
-
-    public boolean isRequiered() {
-        return isRequiered;
+    
+    public boolean isRequired ()    {
+        return required;
     }
-
-    public void setIsRequiered(boolean isRequiered) {
-        this.isRequiered = isRequiered;
+    
+    public void setRequired ( boolean required )    {
+        this.required = required;
     }
-
+    
     public String getQuestionType() {
         return questionType;
     }

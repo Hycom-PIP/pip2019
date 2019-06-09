@@ -13,7 +13,7 @@ class Error extends Component {
                 <div className="card-body card-body-cascade text-center">
 
                     <h4 className="card-title"><strong>Coś się zepsuło :(</strong></h4>
-                    <Link to="/"> <h6 className="font-weight-bold indigo-text py-2">Sprawdź link i spróbuj ponownie</h6></Link>
+                    <Link to={this.props.redirectError}> <h6 className="font-weight-bold indigo-text py-2">Sprawdź link i spróbuj ponownie</h6></Link>
                     <p className="card-text">Jeśli problem się powtarza - najpewniej już nad tym pracujemy :)</p>
                 </div>
 
