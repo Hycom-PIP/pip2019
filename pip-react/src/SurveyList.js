@@ -27,6 +27,7 @@ import 'bootstrap-css-only/css/bootstrap.min.css';
 import 'mdbreact/dist/css/mdb.css';
 import Toolbar from '@material-ui/core/Toolbar';
 import './css/style.css';
+import { app } from './config';
 
 
 class SurveyList extends Component {
@@ -315,7 +316,7 @@ const ErrorPage = withRouter((props) => {
                     {isHandled ? (<h1 className="font-weight-bold  display-1 ">{errorCode}</h1>) : null}
                     <h2 className=" h2-responsive font-weight-light ">{errorText}</h2>
                     <Link to={props.redirectUrl}>
-                        <div class="mb-4 lead">Spróbuj ponownie</div>
+                        <div className="mb-4 lead">Spróbuj ponownie</div>
                     </Link>
                 </Col>
             </Row>
@@ -352,7 +353,8 @@ class MainView extends Component {
                         <CustomToolbar>
                             <Link to={path + "/list"}> <MDBBtn color="primary">Twoje Ankiety</MDBBtn> </Link>
                             <Link to={path + "/create"}><MDBBtn color="primary"> Utwórz Ankietę</MDBBtn></Link>
-                            ><MDBBtn color="primary" onClick={() => this.setState({logout: true})}> Wyloguj</MDBBtn>
+                            Witaj {app.auth().currentUser.email}
+                            <MDBBtn color="primary" onClick={() => this.setState({logout: true})}> Wyloguj</MDBBtn>
                         </CustomToolbar>
                     </MDBRow>
                     <Switch>
