@@ -158,6 +158,8 @@ class SurveyComponent extends Component {
                         page.questionList.push(
                             {
                                 questionId: questionIndex, //TODO: ustawic QuestionID - zrobione
+                                questionText: elem2.questionText,
+                                questionType: elem2.questionType,
                                 answers: []
                             }
                         )
