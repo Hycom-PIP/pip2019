@@ -1,8 +1,20 @@
-import React, { Component } from 'react';
-import { Droppable, Draggable, DragDropContext } from 'react-beautiful-dnd';
-import { MDBBtn, MDBContainer, MDBInput, MDBPagination, MDBPageItem, MDBPageNav, MDBCol, MDBRow, Container, Row, Col } from "mdbreact";
+import React, {Component} from 'react';
+import {Droppable, Draggable, DragDropContext} from 'react-beautiful-dnd';
+import {
+    MDBBtn,
+    MDBContainer,
+    MDBInput,
+    MDBPagination,
+    MDBPageItem,
+    MDBPageNav,
+    MDBCol,
+    MDBRow,
+    Container,
+    Row,
+    Col
+} from "mdbreact";
 import SurveyComponent from './SurveyComponent.js'
-import { BrowserRouter as Router, Route, Link, Redirect, Switch, withRouter } from "react-router-dom";
+import {BrowserRouter as Router, Route, Link, Redirect, Switch, withRouter} from "react-router-dom";
 
 import Share from 'react-icons/lib/io/android-share';
 import Trash from 'react-icons/lib/io/trash-a';
@@ -39,7 +51,8 @@ class SurveyList extends Component {
         this.trash = this.trash.bind(this);
         this.copyTextToClipboard = this.copyTextToClipboard.bind(this);
         this.deleteSurvey = this.deleteSurvey.bind(this);
-        {/*Survey list table structure*/ }
+        {/*Survey list table structure*/
+        }
         this.columns = [
             {
                 Header: 'Nazwa',
@@ -59,14 +72,14 @@ class SurveyList extends Component {
                 accessor: 'version',
                 sortable: false,
                 width: 70,
-                Cell: row => <div style={{ textAlign: "center" }}>{row.value}</div>
+                Cell: row => <div style={{textAlign: "center"}}>{row.value}</div>
             },
             {
                 Header: 'Wypełnienia',
                 accessor: 'numberOfCompletedSyrveys',
                 sortable: false,
                 width: 100,
-                Cell: row => <div style={{ textAlign: "center" }}>{row.value}</div>
+                Cell: row => <div style={{textAlign: "center"}}>{row.value}</div>
             },
             {
                 Header: 'Link',
@@ -81,8 +94,9 @@ class SurveyList extends Component {
                 resizable: false,
                 Cell: row => (
                     <div>
-                        <MDBBtn onClick={() => this.share(row)} color="primary" size="sm" style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                            <Share fontSize="20px" color="white" />
+                        <MDBBtn onClick={() => this.share(row)} color="primary" size="sm"
+                                style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                            <Share fontSize="20px" color="white"/>
                         </MDBBtn>
                     </div>
                 )
@@ -94,8 +108,9 @@ class SurveyList extends Component {
                 resizable: false,
                 Cell: row => (
                     <div>
-                        <MDBBtn onClick={() => this.edit(row)} color="primary" size="sm" style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                            <Edit fontSize="20px" color="white" />
+                        <MDBBtn onClick={() => this.edit(row)} color="primary" size="sm"
+                                style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                            <Edit fontSize="20px" color="white"/>
                         </MDBBtn>
                     </div>
                 )
@@ -107,15 +122,16 @@ class SurveyList extends Component {
                 resizable: false,
                 Cell: row => (
                     <div>
-                        <MDBBtn onClick={() => this.trash(row)} color="primary" size="sm" style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                            <Trash fontSize="20px" color="white" />
+                        <MDBBtn onClick={() => this.trash(row)} color="primary" size="sm"
+                                style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                            <Trash fontSize="20px" color="white"/>
                         </MDBBtn>
                     </div>
                 )
             }
         ]
         this.showErrorPage = (bool) => {
-            this.setState({ errorState: bool });
+            this.setState({errorState: bool});
         };
     }
 
@@ -147,6 +163,7 @@ class SurveyList extends Component {
 
         document.body.removeChild(textArea);
     }
+
     share(direction) {
         this.copyTextToClipboard("localhost:3000/answer/survey/" + this.state.surveys.pages[direction.index].token);
     }
@@ -157,6 +174,7 @@ class SurveyList extends Component {
 
 
     }
+
     trash(direction) {
         var token = this.state.surveys.pages[direction.index].token;
         this.deleteSurvey(token);
@@ -189,9 +207,8 @@ class SurveyList extends Component {
             if (xhttp.readyState == 4) {
                 if (xhttp.status == 200) {
                     obj = JSON.parse(xhttp.responseText);
-                    this.setState({ surveys: obj });
-                }
-                else {
+                    this.setState({surveys: obj});
+                } else {
                     console.log("Serwis zwrócił kod błędu http: " + xhttp.status);
                     this.props.history.push(this.props.redirectError + "/" + xhttp.status);
 
@@ -199,6 +216,7 @@ class SurveyList extends Component {
             }
         }
     }
+
     render() {
         let data = [];
         let CurrentPage = this.state.currentPage;
@@ -213,11 +231,12 @@ class SurveyList extends Component {
             })
         }
         let pagesAmount = 1;
-        if (typeof this.state.surveys.statistics !== "undefined") { pagesAmount = this.state.surveys.statistics.pagesAmount; }
-        if (this.state.errorState) {
-            return <Redirect push to={this.props.match.path + "/error"} />;
+        if (typeof this.state.surveys.statistics !== "undefined") {
+            pagesAmount = this.state.surveys.statistics.pagesAmount;
         }
-        else
+        if (this.state.errorState) {
+            return <Redirect push to={this.props.match.path + "/error"}/>;
+        } else
             return (
                 <MDBContainer>
                     <ReactTable
@@ -249,6 +268,7 @@ class SurveyList extends Component {
                 </MDBContainer>)
     }
 }
+
 const SurveyListWithRouter = withRouter(SurveyList);
 const CustomToolbar = (data) => (<div style={{
     display: 'flex',
@@ -256,7 +276,7 @@ const CustomToolbar = (data) => (<div style={{
     backgroundColor: '#2979FF',
     padding: '6px 8px',
     boxShadow: "0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)"
-}} >
+}}>
     {data.children}
 </div>);
 
@@ -294,7 +314,9 @@ const ErrorPage = withRouter((props) => {
                 <Col>
                     {isHandled ? (<h1 className="font-weight-bold  display-1 ">{errorCode}</h1>) : null}
                     <h2 className=" h2-responsive font-weight-light ">{errorText}</h2>
-                    <Link to={props.redirectUrl}>  <div class="mb-4 lead">Spróbuj ponownie</div></Link>
+                    <Link to={props.redirectUrl}>
+                        <div class="mb-4 lead">Spróbuj ponownie</div>
+                    </Link>
                 </Col>
             </Row>
         </Container>
@@ -303,27 +325,52 @@ const ErrorPage = withRouter((props) => {
 })
 
 class MainView extends Component {
+    constructor() {
+        super();
+        this.state = {
+            logout: false,
+        }
+    }
+
     render() {
         const path = this.props.match.path;
-        return (<MDBContainer>
-            <Router>
-                <MDBRow>
-                    <CustomToolbar>
-                        <Link to={path + "/list"}>  <MDBBtn color="primary">Twoje Ankiety</MDBBtn> </Link>
-                        <Link to={path + "/create"}><MDBBtn color="primary"> Utwórz Ankietę</MDBBtn></Link>
-                    </CustomToolbar>
-                </MDBRow>
-                <Switch>
-                    <Route exact path={path + "/"} render={() => (<Redirect to={path + "/list"} />)} />
-                    <Route path={path + "/list"} component={() => (<SurveyListWithRouter redirectEdit={path + "/modify"} redirectError={path + "/error"} />)} />
-                    <Route path={path + "/create"} component={() => (<SurveyComponent redirectSucces={path + "/"} />)} />
-                    <Route path={path + "/modify/:id"} component={() => (<SurveyComponent redirectSucces={path + "/"} redirectFailure={path + "/error"} />)} />
+        console.log(this.props.isAuthed);
+        if(this.state.logout === true) {
+            return (
+                <Redirect to={"/logout"}/>
+            )
+        }
+        if (!this.props.isAuthed) {
+            return (
+                <Redirect to={"/login"}/>
+            )
+        } else
+            {
+            return (<MDBContainer>
+                <Router>
+                    <MDBRow>
+                        <CustomToolbar>
+                            <Link to={path + "/list"}> <MDBBtn color="primary">Twoje Ankiety</MDBBtn> </Link>
+                            <Link to={path + "/create"}><MDBBtn color="primary"> Utwórz Ankietę</MDBBtn></Link>
+                            ><MDBBtn color="primary" onClick={() => this.setState({logout: true})}> Wyloguj</MDBBtn>
+                        </CustomToolbar>
+                    </MDBRow>
+                    <Switch>
+                        <Route exact path={path + "/"} render={() => (<Redirect to={path + "/list"}/>)}/>
+                        <Route path={path + "/list"} component={() => (
+                            <SurveyListWithRouter redirectEdit={path + "/modify"} redirectError={path + "/error"}/>)}/>
+                        <Route path={path + "/create"} component={() => (
+                            <SurveyComponent redirectSucces={path + "/"}/>)}/>
+                        <Route path={path + "/modify/:id"} component={() => (
+                            <SurveyComponent redirectSucces={path + "/"} redirectFailure={path + "/error"}/>)}/>
 
-                    <Route path={path + "/error/:id"} render={() => (ErrorPage({ redirectUrl: path + "/list" }))} />
-                    <Redirect to={path + "/error"} />
-                </Switch>
-            </Router>
-        </MDBContainer>)
+                        <Route path={path + "/error/:id"} render={() => (ErrorPage({redirectUrl: path + "/list"}))}/>
+                        <Redirect to={path + "/error"}/>
+                    </Switch>
+                </Router>
+            </MDBContainer>)
+        }
     }
 }
+
 export default withRouter(MainView);
