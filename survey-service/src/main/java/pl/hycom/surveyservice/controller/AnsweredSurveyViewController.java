@@ -1,6 +1,7 @@
 package pl.hycom.surveyservice.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -15,14 +16,18 @@ import pl.hycom.surveyservice.model.TextResult;
 import pl.hycom.surveyservice.repository.AnsweredSurveyRepository;
 import pl.hycom.surveyservice.repository.SurveyRepository;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 public class AnsweredSurveyViewController {
+
+    @Value("${answeredsurvey.itemsperlist}")
+    private int pageItemAmount;
+
     @Autowired
     SurveyRepository surveyRepository;
     @Autowired
@@ -83,7 +88,7 @@ public class AnsweredSurveyViewController {
                 .questionList.get(questionNumber))
                 .map(answeredQuestion -> answeredQuestion.answers)
                 .forEach(textResult.getAnswerList()::addAll);
-        textResult.setAnswerList(textResult.getAnswerList().subList(Math.min(stringsPage * 50, textResult.getAnswerList().size()), Math.min((stringsPage + 1) * 50, textResult.getAnswerList().size())));
+        textResult.setAnswerList(textResult.getAnswerList().subList(Math.min(stringsPage * pageItemAmount, textResult.getAnswerList().size()), Math.min((stringsPage + 1) * pageItemAmount, textResult.getAnswerList().size())));
         textResult.setQuestionText(survey.getPageList()[page].getQuestionList()[questionNumber].getQuestionText());
         return new ResponseEntity<>(textResult, HttpStatus.OK);
     }
