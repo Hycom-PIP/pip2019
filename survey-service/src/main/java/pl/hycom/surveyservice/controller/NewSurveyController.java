@@ -44,10 +44,7 @@ public class NewSurveyController {
     }
 
     private boolean areQuestionTypesCorrect(Survey survey) {
-        return Arrays.stream(survey.getPageList())
-                .noneMatch(page -> Arrays.stream(page.getQuestionList())
-                        .filter(question -> "longText".equals(question.getQuestionType())
-                                || "shortText".equals(question.getQuestionType()))
-                        .anyMatch(question -> question.getAnswers().length > 0));
+        return Arrays.stream(survey.getPageList()).flatMap(page -> Arrays.stream(page.getQuestionList())).filter(question -> "longText".equals(question.getQuestionType())
+                || "shortText".equals(question.getQuestionType())).filter(question -> question.getAnswers().length > 0).noneMatch(question -> question.getAnswers()[0].getAnswer() != null);
     }
 }
