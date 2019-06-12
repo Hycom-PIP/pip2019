@@ -15,4 +15,5 @@ public interface SurveyRepository extends MongoRepository<Survey, String> {
     List<Survey> findAllByToken(String token);
     List<Survey> findAllByIsCurrentVersion(boolean isCurrent, PageRequest page);
     Optional<Survey> findByIsCurrentVersionAndToken(boolean isCurrent, String token);
+    Optional<Survey> findByTokenAndVersion (String token, int version);
 }
