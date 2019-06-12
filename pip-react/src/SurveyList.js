@@ -353,8 +353,11 @@ class MainView extends Component {
                         <CustomToolbar>
                             <Link to={path + "/list"}> <MDBBtn color="primary">Twoje Ankiety</MDBBtn> </Link>
                             <Link to={path + "/create"}><MDBBtn color="primary"> Utwórz Ankietę</MDBBtn></Link>
-                            Witaj {app.auth().currentUser.email}
-                            <MDBBtn color="primary" onClick={() => this.setState({logout: true})}> Wyloguj</MDBBtn>
+                            <h5 class="white-text text-center py-2 ">
+                            <strong>Witaj {app.auth().currentUser.email}</strong>
+                            </h5>
+                            <MDBBtn color="primary" float="right" onClick={() => this.setState({logout: true})}> Wyloguj</MDBBtn>
+ 
                         </CustomToolbar>
                     </MDBRow>
                     <Switch>
