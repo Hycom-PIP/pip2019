@@ -336,12 +336,13 @@ class MainView extends Component {
     render() {
         const path = this.props.match.path;
         console.log(this.props.isAuthed);
+        console.log("USER", app.auth().currentUser);
         if(this.state.logout === true) {
             return (
                 <Redirect to={"/logout"}/>
             )
         }
-        if (!this.props.isAuthed) {
+        if (!this.props.isAuthed || app.auth().currentUser === null) {
             return (
                 <Redirect to={"/login"}/>
             )

@@ -27,7 +27,7 @@ class App extends Component {
   componentWillMount() {
     this.removeAuthListener = app.auth().onAuthStateChanged((user) => {
           if (user) {
-            // console.log("UZYTKOWNIK", app.auth().currentUser.email);
+            console.log("UZYTKOWNIK", app.auth().currentUser.email);
             this.setState({
               authenticated: true,
               loading: false,
@@ -50,6 +50,7 @@ class App extends Component {
   }
 
   render() {
+    console.log("STATUS", app.auth().currentUser)
     if(this.state.loading === true)
       return (
           <div style={{ textAlign: "center", position: "absolute", top: "25%", left: "50%"}}>

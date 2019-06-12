@@ -17,8 +17,9 @@ class Logout extends Component {
 
     render() {
         if ( this.state.redirect === true ) {
-            return <Redirect to="/" />
+            return <Redirect to="/login" />
         }
+        console.log("THIS SHIT HAPPENS");
         return (
             <div style={{ textAlign: "center", position: "absolute", top: "25%", left: "50%"}}>
                 <h3> Logging out </h3>
