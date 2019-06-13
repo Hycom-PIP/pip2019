@@ -71,7 +71,7 @@ class SurveyComponent extends Component {
         {
             let xhttp = new XMLHttpRequest();
             this.setState({ isLoading: true });
-            xhttp.open("GET", "http://localhost:8080/survey-service/getSurvey/" + tokenUrl, true);
+            xhttp.open("GET", "http://localhost:8280/survey-service/getSurvey/" + tokenUrl, true);
             xhttp.send();
             xhttp.onreadystatechange = () => {
                 if (xhttp.readyState === 4) {
@@ -174,10 +174,10 @@ class SurveyComponent extends Component {
         console.log(JSON.stringify(this.state.survey));
         let xhttp = new XMLHttpRequest();
         if (this.state.survey.token == null) {
-            xhttp.open("POST", "http://localhost:8080/survey-service/", true);
+            xhttp.open("POST", "http://localhost:8280/survey-service/", true);
         }
         else {
-            xhttp.open("PUT", "http://localhost:8080/survey-service/addNewVersion", true);
+            xhttp.open("PUT", "http://localhost:8280/survey-service/addNewVersion", true);
         }
         xhttp.onreadystatechange = () => {
             if (xhttp.readyState === 4) {

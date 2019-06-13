@@ -171,7 +171,7 @@ class SurveyList extends Component {
     }
 
     deleteSurvey(token) {
-        var url = "http://localhost:8080/survey-service/" + token;
+        var url = "http://localhost:8280/survey-service/" + token;
         var xhr = new XMLHttpRequest();
         xhr.open("DELETE", url, true);
         xhr.onload = () => {
@@ -190,7 +190,7 @@ class SurveyList extends Component {
     getSurveysJson() {
         let xhttp = new XMLHttpRequest();
         let obj;
-        xhttp.open("GET", "http://localhost:8080/survey-service/getSurveys/" + this.state.currentPage, true);
+        xhttp.open("GET", "http://localhost:8280/survey-service/getSurveys/" + this.state.currentPage, true);
         xhttp.send();
         xhttp.onreadystatechange = () => {
             if (xhttp.readyState === 4) {
