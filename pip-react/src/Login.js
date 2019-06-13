@@ -1,19 +1,8 @@
 import React, {Component} from 'react';
-import firebase from 'firebase';
-import {BrowserRouter as Router, Switch, Route, Redirect} from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import { facebookProvider, app, googleProvider } from './config.js';
 
 require("firebase/auth");
-
-
-const loginStyles = {
-    width: "90%",
-    maxWidth: "315px",
-    margin: "20px auto",
-    border: "1px solid #ddd",
-    borderRadius: "5px",
-    padding: "10px"
-};
 
 const INITIAL_STATE = {
     email: '',
@@ -43,10 +32,10 @@ class Login extends Component {
         app.auth().signInWithPopup(facebookProvider)
             .then((result, error) => {
                 if (error) {
-                    console.log("ERROR")
+                    // console.log("ERROR")
                     // this.toaster.show({ intent: Intent.DANGER, message: "Unable to sign in with Facebook" })
                 } else {
-                    this.setState({ redirect: true })
+                    // this.setState({ redirect: true })
                 }
             })
     }
@@ -58,7 +47,7 @@ class Login extends Component {
         const { email, password } = this.state;
         app.auth().signInWithEmailAndPassword(email, password)
             .then(() => {
-                this.setState({...INITIAL_STATE});
+                // this.setState({...INITIAL_STATE});
             })
             .catch(error => {
                 console.log(error) //to be deleted :D
@@ -70,19 +59,20 @@ class Login extends Component {
         app.auth().signInWithPopup(googleProvider)
             .then((result, error) => {
                 if (error) {
-                    console.log("ERROR")
+                    // console.log("ERROR")
                     // this.toaster.show({ intent: Intent.DANGER, message: "Unable to sign in with Facebook" })
                 } else {
-                    this.setState({ redirect: true })
+                    // this.setState({ redirect: true })
                 }
             })
     }
 
     render() {
-        const {from} = this.props.location.state || {from: {pathname: '/'}}
-        const {redirect} = this.state;
-        console.log(redirect, from, this.props.location.state);
-        if (redirect || this.props.isAuthed) {
+        const {from} = this.props.location.state || {from: {pathname: '/'}};
+        // const {redirect} = this.state;
+        // console.log(redirect, from, this.props.location.state);
+        // console.log("AUTHED?", this.props.isAuthed);
+        if (app.auth().currentUser !== null) {
             return (
                 <Redirect to={from}/>
 
@@ -93,10 +83,7 @@ class Login extends Component {
             <div className="row d-flex justify-content-center">
 
                 <form className="text-center border border-light p-5"
-                      onSubmit={(event) => this.authWithEmailPassword(event)}
-                      ref={(form) => {
-                          this.loginForm = form
-                      }}>
+                      onSubmit={(event) => this.authWithEmailPassword(event)}>
 
                     <p className="h4 mb-4">Sign in</p>
 
@@ -111,21 +98,18 @@ class Login extends Component {
                                     <label className="custom-control-label" form="defaultLoginFormRemember">Remember me</label>
                             </div>
                         </div>
-                        <div>
-                            <a href="">Forgot password?</a>
-                        </div>
                     </div>
 
                     <button className="btn btn-info btn-block my-4" type="submit">Sign in</button>
 
-                    <p>Not a member?
-                        <a href="/register">Register</a>
+                    <p>Not a member? <br/>
+                        <a href="/register"> Register</a>
                     </p>
 
                     <p>or sign in with:</p>
 
                     <button type="button" className="light-blue-text mx-2" onClick={() => this.authWithFacebook()}>
-                        <i className="fab fa-facebook-f"></i>
+                        <i className="fab fa-facebook-f"/>
                     </button>
                     {/*<button type="button" className="light-blue-text mx-2" onClick={() => this.authWithGoogle()}>*/}
                     {/*    <i className="fab fa-google"></i>*/}

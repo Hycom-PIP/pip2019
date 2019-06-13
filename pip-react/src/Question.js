@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { MDBInput, MDBRow, MDBContainer, MDBCol } from "mdbreact";
 import Form from 'react-bootstrap/Form';
-import { BrowserRouter as Router, Route, Link, Redirect, Switch ,withRouter} from "react-router-dom";
 
 class SingleAnswer extends Component {
     constructor(props) {
@@ -45,10 +44,6 @@ class SingleAnswer extends Component {
 }
 
 class MultipleAnswer extends Component {
-    constructor(props) {
-        super(props);
-
-    }
     formChanged(e) {
         this.props.func(e.target.value, this.props.pageindex, this.props.questionindex, "checkbox")
     }

@@ -3,7 +3,7 @@ import { MDBIcon, MDBBtn, MDBInput, MDBCard, MDBRow, MDBContainer, MDBCol, MDBLi
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Form from 'react-bootstrap/Form';
-import { Droppable, Draggable, DragDropContext } from 'react-beautiful-dnd';
+import { Draggable } from 'react-beautiful-dnd';
 
 class MultipleAnswer extends Component {
   constructor(props) {
@@ -14,15 +14,15 @@ class MultipleAnswer extends Component {
     this.DeleteMultiQuestion = this.DeleteMultiQuestion.bind(this);
   }
   DeleteMultiQuestion(e) {
-    this.props.multiDltfunc(this.props.index, e)
+    this.props.multiDltfunc(this.props.index, e);
     this.forceUpdate();
   }
   AddNewQuestion() {
-    let old = this.props.answers
-    if (old == undefined) {
+    let old = this.props.answers;
+    if (old === undefined) {
       old = []
     }
-    old.push({ answer: "" })
+    old.push({ answer: "" });
     this.props.func(old, this.props.index, "multiQuestions")
     this.forceUpdate();
   }

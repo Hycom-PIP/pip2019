@@ -1,10 +1,10 @@
 import React from 'react';
 import { Component } from 'react';
 import QuestionCard from './QuestionCard.js';
-import { Droppable, Draggable, DragDropContext } from 'react-beautiful-dnd';
+import { Droppable, DragDropContext } from 'react-beautiful-dnd';
 import { MDBBtn, MDBContainer, MDBInput, MDBPagination, MDBPageItem, MDBPageNav, MDBCol, MDBRow } from "mdbreact";
 import { toast } from 'react-toastify';
-import { Redirect, withRouter } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 
 import 'react-toastify/dist/ReactToastify.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
@@ -42,10 +42,10 @@ class SurveyComponent extends Component {
             }
 
         };
-        if (props.surveyJson != undefined && props.surveyJson != null) {
+        if (props.surveyJson !== undefined && props.surveyJson !== null) {
             this.state.survey = JSON.parse(props.surveyJson);
         }
-        if (props.token != undefined && props.token != null) {
+        if (props.token !== undefined && props.token !== null) {
             this.state.token = props.token;
         }
         this.addQuestionCard = this.addQuestionCard.bind(this);
@@ -69,13 +69,13 @@ class SurveyComponent extends Component {
 
         if(tokenUrl)
         {
-            var xhttp = new XMLHttpRequest();
+            let xhttp = new XMLHttpRequest();
             this.setState({ isLoading: true });
-            xhttp.open("GET", "http://localhost:8080/survey-service/getSurvey/" + tokenUrl, true)
+            xhttp.open("GET", "http://localhost:8080/survey-service/getSurvey/" + tokenUrl, true);
             xhttp.send();
             xhttp.onreadystatechange = () => {
-                if (xhttp.readyState == 4) {
-                    if (xhttp.status == 200) {
+                if (xhttp.readyState === 4) {
+                    if (xhttp.status === 200) {
                         let parsedSurvey=JSON.parse(xhttp.responseText);
                         parsedSurvey.token=tokenUrl;
                         this.setState({
@@ -125,6 +125,8 @@ class SurveyComponent extends Component {
                         return { currentPage: prevState.currentPage + 1 }
                     }
                     break;
+                default:
+                    break;
             }
 
         })
@@ -161,6 +163,7 @@ class SurveyComponent extends Component {
                         })
                     }
                     break;
+                default:break;
             }
             old.pageList[this.state.currentPage - 1].questionList[index] = question;
             return { survey: old }
@@ -177,8 +180,8 @@ class SurveyComponent extends Component {
             xhttp.open("PUT", "http://localhost:8080/survey-service/addNewVersion", true);
         }
         xhttp.onreadystatechange = () => {
-            if (xhttp.readyState == 4) {
-                if (xhttp.status == 200) {
+            if (xhttp.readyState === 4) {
+                if (xhttp.status === 200) {
                     console.log("Serwis przyjął dane, kod http: " + xhttp.status);
                     //  this.setState({redirected: true});
                     console.log(this.props.redirectSucces);
@@ -191,12 +194,12 @@ class SurveyComponent extends Component {
                     toast.error("HTTP STATUS " + xhttp.status);
                 }
             }
-        }
+        };
         xhttp.setRequestHeader("Content-type", "application/json");
         xhttp.send(JSON.stringify(this.state.survey));
     }
     surveyTitleChange(e) {
-        let textChange = e.target.value
+        let textChange = e.target.value;
         this.setState((preState) => {
             let old = preState.survey;
             old.surveyName = textChange;
@@ -204,8 +207,8 @@ class SurveyComponent extends Component {
         });
     }
     surveyDescritpionChange(e) {
-        let textChange = e.target.value
-        this.setState((preState) => {
+        let textChange = e.target.value;
+        this.setState(() => {
             let old = this.state.survey;
             old.surveyDescription = textChange;
             return { survey: old }
@@ -248,12 +251,12 @@ class SurveyComponent extends Component {
         );
     }
     changePage(index) {
-        this.setState((prevState) => {
+        this.setState(() => {
             return { currentPage: index }
         });
     }
     moveQuestion(index, direction) {
-        if (direction == "up" && index > 0) {
+        if (direction === "up" && index > 0) {
 
             this.setState((prevState) => {
                 let old = prevState.survey;
@@ -266,7 +269,7 @@ class SurveyComponent extends Component {
             })
 
         }
-        if (direction == "down" && this.state.survey.pageList[this.state.currentPage - 1].questionList.length - 1 > index) {
+        if (direction === "down" && this.state.survey.pageList[this.state.currentPage - 1].questionList.length - 1 > index) {
             this.setState((prevState) => {
                 let old = prevState.survey;
                 let up = prevState.survey.pageList[this.state.currentPage - 1].questionList;
@@ -280,7 +283,7 @@ class SurveyComponent extends Component {
     }
     deleteQuestion(index) {
         this.setState((prevState) => {
-            let old = prevState.survey
+            let old = prevState.survey;
             let newState = old.pageList[this.state.currentPage - 1].questionList;
             newState.splice(index, 1);
             old.pageList[this.state.currentPage - 1].questionList = newState;
@@ -289,7 +292,7 @@ class SurveyComponent extends Component {
     }
     deleteMultiQuestion(parentIndex, childIndex) {
         this.setState((prevState) => {
-            let old = prevState.survey
+            let old = prevState.survey;
             let newState = old.pageList[this.state.currentPage - 1].questionList[parentIndex].answers;
             newState.splice(childIndex, 1);
             old.pageList[this.state.currentPage - 1].questionList[parentIndex].answers = newState;
@@ -332,7 +335,7 @@ class SurveyComponent extends Component {
                             </MDBPageItem>
                             {
                                 (this.state.survey.pageList || []).map((vaule, index) =>
-                                    (<MDBPageItem active={this.state.currentPage - 1 == index} onClick={() => (this.changePage(index + 1))} key={index + 1}>
+                                    (<MDBPageItem active={this.state.currentPage - 1 === index} onClick={() => (this.changePage(index + 1))} key={index + 1}>
                                         <MDBPageNav>
                                             {index + 1}
                                         </MDBPageNav>
@@ -379,8 +382,8 @@ class SurveyComponent extends Component {
                                 </MDBPageNav>
                             </MDBPageItem>
                             {
-                                (this.state.survey.pageList || []).map((vaule, index) =>
-                                    (<MDBPageItem active={this.state.currentPage - 1 == index} onClick={() => (this.changePage(index + 1))} key={index + 1}>
+                                (this.state.survey.pageList || []).map((value, index) =>
+                                    (<MDBPageItem active={this.state.currentPage - 1 === index} onClick={() => (this.changePage(index + 1))} key={index + 1}>
                                         <MDBPageNav>
                                             {index + 1}
                                         </MDBPageNav>

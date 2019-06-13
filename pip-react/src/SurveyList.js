@@ -1,13 +1,7 @@
 import React, {Component} from 'react';
-import {Droppable, Draggable, DragDropContext} from 'react-beautiful-dnd';
 import {
     MDBBtn,
     MDBContainer,
-    MDBInput,
-    MDBPagination,
-    MDBPageItem,
-    MDBPageNav,
-    MDBCol,
     MDBRow,
     Container,
     Row,
@@ -25,7 +19,6 @@ import 'react-table/react-table.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'bootstrap-css-only/css/bootstrap.min.css';
 import 'mdbreact/dist/css/mdb.css';
-import Toolbar from '@material-ui/core/Toolbar';
 import './css/style.css';
 import { app } from './config';
 
@@ -41,9 +34,9 @@ class SurveyList extends Component {
                 pages: []
             }
         };
-        this.getSurveysJson()
+        this.getSurveysJson();
 
-        if (props.surveyJson != undefined) {
+        if (props.surveyJson !== undefined) {
             this.state.surveyList = JSON.parse(props.surveyJson);
         }
         this.getSurveysJson = this.getSurveysJson.bind(this);
@@ -52,8 +45,6 @@ class SurveyList extends Component {
         this.trash = this.trash.bind(this);
         this.copyTextToClipboard = this.copyTextToClipboard.bind(this);
         this.deleteSurvey = this.deleteSurvey.bind(this);
-        {/*Survey list table structure*/
-        }
         this.columns = [
             {
                 Header: 'Nazwa',
@@ -131,13 +122,10 @@ class SurveyList extends Component {
                 )
             }
         ]
-        this.showErrorPage = (bool) => {
-            this.setState({errorState: bool});
-        };
     }
 
     copyTextToClipboard(text) {
-        var textArea = document.createElement("textarea");
+        let textArea = document.createElement("textarea");
 
         textArea.style.position = 'fixed';
         textArea.style.top = 0;
@@ -155,8 +143,8 @@ class SurveyList extends Component {
         textArea.select();
 
         try {
-            var successful = document.execCommand('copy');
-            var msg = successful ? 'successful' : 'unsuccessful';
+            let successful = document.execCommand('copy');
+            let msg = successful ? 'successful' : 'unsuccessful';
             console.log('Copying text command was ' + msg);
         } catch (err) {
             console.log('Oops, unable to copy');
@@ -187,26 +175,26 @@ class SurveyList extends Component {
         var xhr = new XMLHttpRequest();
         xhr.open("DELETE", url, true);
         xhr.onload = () => {
-            if (xhr.readyState == 4 && xhr.status == "200") {
+            if (xhr.readyState === 4 && xhr.status === "200") {
                 console.log("Usunięto: " + token);
                 this.getSurveysJson();
             } else {
                 console.error("Błąd");
                 this.props.history.push(this.props.redirectError);
             }
-        }
+        };
         xhr.send(null);
     }
 
 
     getSurveysJson() {
-        var xhttp = new XMLHttpRequest();
-        var obj;
-        xhttp.open("GET", "http://localhost:8080/survey-service/getSurveys/" + this.state.currentPage, true)
+        let xhttp = new XMLHttpRequest();
+        let obj;
+        xhttp.open("GET", "http://localhost:8080/survey-service/getSurveys/" + this.state.currentPage, true);
         xhttp.send();
         xhttp.onreadystatechange = () => {
-            if (xhttp.readyState == 4) {
-                if (xhttp.status == 200) {
+            if (xhttp.readyState === 4) {
+                if (xhttp.status === 200) {
                     obj = JSON.parse(xhttp.responseText);
                     this.setState({surveys: obj});
                 } else {
@@ -220,7 +208,6 @@ class SurveyList extends Component {
 
     render() {
         let data = [];
-        let CurrentPage = this.state.currentPage;
         for (let survey of this.state.surveys.pages) {
             let dateTime = new Date(survey.creationDate);
             data.push({
@@ -255,7 +242,7 @@ class SurveyList extends Component {
                         manual // this would indicate that server side pagination has been enabled 
                         pages={pagesAmount}
                         onPageChange={(pageIndex) => {
-                            console.log(pageIndex)
+                            console.log(pageIndex);
                             this.state.currentPage = pageIndex;
                             this.getSurveysJson()
                         }}
@@ -285,7 +272,7 @@ const pagitationButton = props => (
     <MDBBtn {...props} color="primary">
         {props.children}
     </MDBBtn>
-)
+);
 const ErrorPage = withRouter((props) => {
     let isHandled = true;
     let errorText;
@@ -323,11 +310,11 @@ const ErrorPage = withRouter((props) => {
         </Container>
 
     )
-})
+});
 
 class MainView extends Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             logout: false,
         }
@@ -335,8 +322,8 @@ class MainView extends Component {
 
     render() {
         const path = this.props.match.path;
-        console.log(this.props.isAuthed);
-        console.log("USER", app.auth().currentUser);
+        // console.log(this.props.isAuthed);
+        // console.log("USER", app.auth().currentUser);
         if(this.state.logout === true) {
             return (
                 <Redirect to={"/logout"}/>
@@ -353,8 +340,8 @@ class MainView extends Component {
                     <MDBRow>
                         <CustomToolbar>
                             <Link to={path + "/list"}> <MDBBtn color="primary">Twoje Ankiety</MDBBtn> </Link>
-                            <Link to={path + "/create"}><MDBBtn color="primary"> Utwórz Ankietę</MDBBtn></Link>
-                            <h5 class="white-text text-center py-2 ">
+                            <Link to={path + "/create"}><MDBBtn color="primary">Utwórz Ankietę</MDBBtn></Link>
+                            <h5 className="white-text text-center py-2 ">
                             <strong>Witaj {app.auth().currentUser.email}</strong>
                             </h5>
                             <MDBBtn color="primary" float="right" onClick={() => this.setState({logout: true})}> Wyloguj</MDBBtn>

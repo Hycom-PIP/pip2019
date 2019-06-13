@@ -6,8 +6,6 @@ import Login from './Login';
 import Logout from './Logout';
 import Error from "./Error.js";
 import Register from './Register';
-import { Droppable, Draggable, DragDropContext } from 'react-beautiful-dnd';
-import { MDBBtn, MDBContainer, MDBInput, MDBPagination, MDBPageItem, MDBPageNav, MDBCol, MDBRow } from "mdbreact";
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'bootstrap-css-only/css/bootstrap.min.css';
@@ -23,9 +21,8 @@ class App extends Component {
       loading: true,
       userLogin: ""
     }
-  }
-  componentWillMount() {
     this.removeAuthListener = app.auth().onAuthStateChanged((user) => {
+      // console.log("UZ", user);
           if (user) {
             console.log("UZYTKOWNIK", app.auth().currentUser.email);
             this.setState({
@@ -35,6 +32,7 @@ class App extends Component {
 
             })
           } else {
+            // console.log("ZMIANA NA FALSE");
             this.setState({
               authenticated: false,
               loading: false,
@@ -44,13 +42,17 @@ class App extends Component {
         }
     )
   }
+  componentWillMount() {
+
+  }
 
   componentWillUnmount() {
+    // console.log("STALO SIE");
     this.removeAuthListener();
   }
 
   render() {
-    console.log("STATUS", app.auth().currentUser)
+    // console.log("STATUS", app.auth().currentUser)
     if(this.state.loading === true)
       return (
           <div style={{ textAlign: "center", position: "absolute", top: "25%", left: "50%"}}>
