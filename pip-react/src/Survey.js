@@ -60,7 +60,7 @@ class SurveyComponent extends Component {
     }
     componentDidMount() {
         let surveyID = this.props.match.params.id;
-        fetch("http://localhost:8080/survey-service/ankieta/" + surveyID)
+        fetch("http://localhost:8280/survey-service/ankieta/" + surveyID)
             .then(response => response.json())
             .then(data => this.setState({ surveyjson: data, answers: { token: surveyID, pages: [] } }));
     }
@@ -123,7 +123,7 @@ class SurveyComponent extends Component {
     //
     generateJson() {
         var xhttp = new XMLHttpRequest();
-        xhttp.open("POST", "http://localhost:8080/survey-service/ankieta", true);
+        xhttp.open("POST", "http://localhost:8280/survey-service/ankieta", true);
         xhttp.onreadystatechange = () => {
             if (xhttp.readyState === 4) {
                 if (xhttp.status === 200) {
