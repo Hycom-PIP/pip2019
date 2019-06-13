@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import { facebookProvider, googleProvider, app } from './config.js';
+import { toast } from 'react-toastify';
 require("firebase/auth");
 
 const INITIAL_STATE = {
@@ -26,15 +27,13 @@ class Register extends Component {
 
     onChange = event => {
         this.setState({ [event.target.name]: event.target.value });
-        console.log(this.state);
     };
 
     authWithFacebook() {
         app.auth().signInWithPopup(facebookProvider)
             .then((result, error) => {
                 if (error) {
-                    console.log("ERROR")
-                    // this.toaster.show({ intent: Intent.DANGER, message: "Unable to sign in with Facebook" })
+                    toast.error(error.message)
                 } else {
                     this.setState({ redirect: true })
                 }
@@ -45,8 +44,7 @@ class Register extends Component {
         app.auth().signInWithPopup(googleProvider)
             .then((result, error) => {
                 if (error) {
-                    console.log("ERROR")
-                    // this.toaster.show({ intent: Intent.DANGER, message: "Unable to sign in with Facebook" })
+                    toast.error(error.message);
                 } else {
                     this.setState({ redirect: true })
                 }
@@ -56,20 +54,18 @@ class Register extends Component {
     authWithEmailPassword(event) {
         event.preventDefault();
         const { email, passwordOne } = this.state;
-        console.log("TAK", email, passwordOne);
         app.auth().createUserWithEmailAndPassword(email, passwordOne)
             .then(() => {
                 this.setState({redirect: true, ...INITIAL_STATE});
             })
             .catch(error => {
-                console.log(error) //to be deleted :D
+                toast.error(error.message);
             })
     }
 
     render() {
         const {from} = this.props.location.state || {from: {pathname: '/'}};
         const {redirect} = this.state;
-        console.log(redirect, from, this.props.location.state);
         if (redirect || this.props.isAuthed) {
             return (
                 <Redirect to={from}/>
