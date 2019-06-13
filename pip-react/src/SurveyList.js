@@ -145,9 +145,9 @@ class SurveyList extends Component {
         try {
             let successful = document.execCommand('copy');
             let msg = successful ? 'successful' : 'unsuccessful';
-            console.log('Copying text command was ' + msg);
+            // console.log('Copying text command was ' + msg);
         } catch (err) {
-            console.log('Oops, unable to copy');
+            // console.log('Oops, unable to copy');
         }
 
         document.body.removeChild(textArea);
