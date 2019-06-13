@@ -65,13 +65,13 @@ class SurveyComponent extends Component {
     }
     componentDidMount() {
         const tokenUrl = this.props.match.params.id;
-        // console.log(tokenUrl);
+        console.log(tokenUrl);
 
         if(tokenUrl)
         {
             let xhttp = new XMLHttpRequest();
             this.setState({ isLoading: true });
-            xhttp.open("GET", "http://localhost:8280/survey-service/getSurvey/" + tokenUrl, true);
+            xhttp.open("GET", "http://localhost:8080/survey-service/getSurvey/" + tokenUrl, true);
             xhttp.send();
             xhttp.onreadystatechange = () => {
                 if (xhttp.readyState === 4) {
@@ -86,7 +86,7 @@ class SurveyComponent extends Component {
                     else {
                         this.setState({ isLoading: false });
                         this.props.history.push(this.props.redirectFailure);
-                        // console.log("Serwis zwrócił kod błędu http: " + xhttp.status);
+                        console.log("Serwis zwrócił kod błędu http: " + xhttp.status);
                     }
                 }
             }
@@ -171,26 +171,26 @@ class SurveyComponent extends Component {
         )
     }
     generateJson() {
-        // console.log(JSON.stringify(this.state.survey));
+        console.log(JSON.stringify(this.state.survey));
         let xhttp = new XMLHttpRequest();
         if (this.state.survey.token == null) {
-            xhttp.open("POST", "http://localhost:8280/survey-service/", true);
+            xhttp.open("POST", "http://localhost:8080/survey-service/", true);
         }
         else {
-            xhttp.open("PUT", "http://localhost:8280/survey-service/addNewVersion", true);
+            xhttp.open("PUT", "http://localhost:8080/survey-service/addNewVersion", true);
         }
         xhttp.onreadystatechange = () => {
             if (xhttp.readyState === 4) {
                 if (xhttp.status === 200) {
-                    // console.log("Serwis przyjął dane, kod http: " + xhttp.status);
+                    console.log("Serwis przyjął dane, kod http: " + xhttp.status);
                     //  this.setState({redirected: true});
-                    // console.log(this.props.redirectSucces);
+                    console.log(this.props.redirectSucces);
                     if (this.props.redirectSucces) {
                         this.props.history.push(this.props.redirectSucces);
                     }
                 }
                 else {
-                    // console.log("Serwis zwrócił kod błędu http: " + xhttp.status);
+                    console.log("Serwis zwrócił kod błędu http: " + xhttp.status);
                     toast.error("HTTP STATUS " + xhttp.status);
                 }
             }
