@@ -176,10 +176,10 @@ class SurveyList extends Component {
         xhr.open("DELETE", url, true);
         xhr.onload = () => {
             if (xhr.readyState === 4 && xhr.status === "200") {
-                console.log("Usunięto: " + token);
+                // console.log("Usunięto: " + token);
                 this.getSurveysJson();
             } else {
-                console.error("Błąd");
+                // console.error("Błąd");
                 this.props.history.push(this.props.redirectError);
             }
         };
@@ -198,7 +198,7 @@ class SurveyList extends Component {
                     obj = JSON.parse(xhttp.responseText);
                     this.setState({surveys: obj});
                 } else {
-                    console.log("Serwis zwrócił kod błędu http: " + xhttp.status);
+                    // console.log("Serwis zwrócił kod błędu http: " + xhttp.status);
                     this.props.history.push(this.props.redirectError + "/" + xhttp.status);
 
                 }
@@ -242,7 +242,7 @@ class SurveyList extends Component {
                         manual // this would indicate that server side pagination has been enabled 
                         pages={pagesAmount}
                         onPageChange={(pageIndex) => {
-                            console.log(pageIndex);
+                            // console.log(pageIndex);
                             this.state.currentPage = pageIndex;
                             this.getSurveysJson()
                         }}

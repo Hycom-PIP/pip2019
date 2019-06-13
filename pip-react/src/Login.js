@@ -41,7 +41,7 @@ class Login extends Component {
 
     authWithEmailPassword(event) {
         event.preventDefault();
-        console.log(event);
+        // console.log(event);
         // console.table([{email: this.emailInput.value, password: this.passwordInput.value}])
         const { email, password } = this.state;
         app.auth().signInWithEmailAndPassword(email, password)
@@ -49,7 +49,7 @@ class Login extends Component {
                 // this.setState({...INITIAL_STATE});
             })
             .catch(error => {
-                console.log(error) //to be deleted :D
+                // console.log(error) //to be deleted :D
             })
 
     }
