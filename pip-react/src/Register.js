@@ -115,7 +115,7 @@ class Register extends Component {
                         Repeat your password
                     </small>
 
-                    <button disabled={isInvalid} className="btn btn-info my-4 btn-block" type="submit">Sign in</button>
+                    <button disabled={isInvalid} className="btn btn-info my-4 btn-block" type="submit">Sign up</button>
 
                     <p>or sign up with:</p>
 
