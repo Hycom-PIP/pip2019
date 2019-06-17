@@ -3,6 +3,7 @@ import { Component } from 'react';
 import Question from './Question.js';
 import Finish from './Finish';
 import Error from './Error';
+import Answer from './Answer';
 import { ToastContainer, toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 import { MDBBtn, MDBContainer, MDBInput, MDBPagination, MDBPageItem, MDBPageNav, MDBCol, MDBRow } from "mdbreact";
@@ -255,6 +256,7 @@ class RoutingAnswer extends Component {
             <Switch>
                 <Route path="/answer/:id" component={SurveyComponentWithRouter} />
                 <Route path="/finish" component={Finish} />
+                <Route path="/summary" component={Answer} />
                 <Route path="/error" component={Error} />
                 <Redirect to='/error' />
             </Switch>

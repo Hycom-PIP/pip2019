@@ -5,3 +5,19 @@
 .PointerMouse{
   cursor: pointer;
 }
+
+.loading {
+    display: inline;
+    margin-top: 50%;
+}
+
+.container {
+    margin-bottom: 2%;
+}
+
+.list-group{
+    max-height: 70px;
+    overflow:scroll;
+    overflow-x:hidden;
+    -webkit-overflow-scrolling: touch;
+}
