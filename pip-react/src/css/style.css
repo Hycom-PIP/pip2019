@@ -2,6 +2,7 @@
   margin-top: -1.5rem !important;
   margin-bottom: -1.5rem !important;
  }
+
 .PointerMouse{
   cursor: pointer;
 }
@@ -16,8 +17,13 @@
 }
 
 .list-group{
-    max-height: 70px;
+    max-height: 200px;
     overflow:scroll;
     overflow-x:hidden;
     -webkit-overflow-scrolling: touch;
+}
+
+.answerSpinner {
+    margin-left: 50%;
+    margin-bottom: 2%;
 }

@@ -9,13 +9,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import pl.hycom.surveyservice.model.AnsweredSurvey;
-import pl.hycom.surveyservice.model.MultipleChoiceResult;
-import pl.hycom.surveyservice.model.Survey;
-import pl.hycom.surveyservice.model.TextResult;
+import pl.hycom.surveyservice.model.*;
 import pl.hycom.surveyservice.repository.AnsweredSurveyRepository;
 import pl.hycom.surveyservice.repository.SurveyRepository;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +30,46 @@ public class AnsweredSurveyViewController {
     SurveyRepository surveyRepository;
     @Autowired
     AnsweredSurveyRepository answeredSurveyRepository;
+
+    @RequestMapping(value = "/survey/{token}/{version}/questions", method = RequestMethod.GET)
+    public ResponseEntity<Summary> getQuestions(@PathVariable("token") String token, @PathVariable("version") int version) {
+        ArrayList<Summary> summaries = new ArrayList<>();
+        List<AnsweredSurvey> answeredSurveyList = answeredSurveyRepository.findAllByTokenAndVersion(token, version);
+        boolean first = true;
+        Summary summary = new Summary();
+        summary.questions = new ArrayList<>();
+        for (AnsweredSurvey survey : answeredSurveyList) {
+            for (AnsweredPage page : survey.pages) {
+                for (AnsweredQuestion question : page.questionList) {
+                    if (first) {
+                        SummaryQuestion summaryQuestion = new SummaryQuestion();
+                        summaryQuestion.id = question.questionId;
+                        summaryQuestion.question = question.questionText;
+                        if (question.questionType.equals("text")) {
+                            summaryQuestion.type = SummaryQuestion.Type.text;
+                        } else if (question.questionType.equals("selection")) {
+                            summaryQuestion.type = SummaryQuestion.Type.selection;
+                        }
+                        summary.questions.add(summaryQuestion);
+                    }
+                }
+            }
+            first = false;
+            for (AnsweredPage page : survey.pages) {
+                for (AnsweredQuestion question : page.questionList) {
+                    SummaryQuestion summaryQuestion = summary.findQuestion(question.questionId);
+                    for (String answer : question.answers) {
+                        summaryQuestion.addAnswer(answer);
+                    }
+
+                }
+            }
+        }
+        if (summary.anyAnswered())
+            return new ResponseEntity<>(summary, HttpStatus.OK);
+        else
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+    }
 
     @RequestMapping(value = "/survey/{token}/{version}/question/multipleChoice/{page}/{questionNumber}", method = RequestMethod.GET)
     public ResponseEntity<MultipleChoiceResult> getMultipleChoiceResults(@PathVariable("token") String token, @PathVariable("version") int version,

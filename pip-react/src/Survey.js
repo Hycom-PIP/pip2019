@@ -249,18 +249,42 @@ class SurveyComponent extends Component {
     }
 }
 const SurveyComponentWithRouter = withRouter(SurveyComponent);
+const CustomToolbar = (data) => (<div style={{
+    display: 'flex',
+    width: '1200px',
+    backgroundColor: '#2979FF',
+    padding: '6px 8px',
+    boxShadow: "0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)"
+}} >
+    {data.children}
+</div>);
 
+const pagitationButton = props => (
+    <MDBBtn {...props} color="primary">
+        {props.children}
+    </MDBBtn>
+)
 class RoutingAnswer extends Component {
     render() {
-        return (<Router>
-            <Switch>
-                <Route path="/answer/:id" component={SurveyComponentWithRouter} />
-                <Route path="/finish" component={Finish} />
-                <Route path="/summary" component={Answer} />
-                <Route path="/error" component={Error} />
-                <Redirect to='/error' />
-            </Switch>
-        </Router>);
+        return (
+            <MDBContainer className="verticallFill" >
+                <Router>
+                    <MDBRow>
+                        <CustomToolbar>
+                            <Link to="/">  <MDBBtn color="primary">Twoje Ankiety</MDBBtn> </Link>
+                            <Link to="/createsurvey"><MDBBtn color="primary"> Utwórz Ankietę</MDBBtn></Link>
+                        </CustomToolbar>
+                    </MDBRow>
+                    <Switch>
+                        <Route path="/answer/:id" component={SurveyComponentWithRouter} />
+                        <Route path="/finish" component={Finish} />
+                        <Route path="/summary" component={Answer} />
+                        <Route path="/error" component={Error} />
+                        <Redirect to='/error' />
+                    </Switch>
+                </Router>
+            </MDBContainer>
+        );
     }
 
 }

@@ -81,13 +81,15 @@ class AnswerComponent extends Component {
     render() {
         if(!this.state.isLoaded) {
             return (
-                <MDBContainer className="block-example border pt-4">
-                    <div className="spinner-border fast" role="status"/>
-                    <div className="loading">Loading...</div>
-                </MDBContainer>
+                <div>
+                    <MDBContainer className="block-example border pt-4">
+                        <div className="spinner-border fast answerSpinner" role="status"/>
+                    </MDBContainer>
+                </div>
             );
         } else {
             return (
+            <div>
                 <MDBContainer className="block-example border pt-4">
                     {
                         this.state.questions.map((value, index) => {
@@ -117,7 +119,7 @@ class AnswerComponent extends Component {
                                         {
                                             (value.type === "selection") ?
                                                 <MDBContainer>
-                                                    <Bar data={this.getData(value.answers)}></Bar>
+                                                    <Bar data={this.getData(value.answers)}/>
                                                 </MDBContainer> : null
                                         }
                                     </MDBCollapse>
@@ -126,6 +128,7 @@ class AnswerComponent extends Component {
                         })
                     }
                 </MDBContainer>
+            </div>
             );
         }
     }
