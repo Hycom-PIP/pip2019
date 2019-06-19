@@ -285,8 +285,8 @@ const ErrorPage = (errorData) =>
         <Container className="pt-5">
             <Row className="text-center">
                 <Col>
-                    <a className="display-1 d-block">Coś poszło nie tak</a>
-                    <Link to="/">  <div className="mb-4 lead">Spróbuj ponownie</div></Link>
+                    <a class="display-1 d-block">Coś poszło nie tak</a>
+                    <Link to="/">  <div class="mb-4 lead">Spróbuj ponownie</div></Link>
                 </Col>
             </Row>
         </Container>

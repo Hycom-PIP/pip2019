@@ -31,10 +31,9 @@ public class AnsweredSurveyViewController {
     @Autowired
     AnsweredSurveyRepository answeredSurveyRepository;
 
-    @RequestMapping(value = "/survey/{token}/{version}/questions", method = RequestMethod.GET)
-    public ResponseEntity<Summary> getQuestions(@PathVariable("token") String token, @PathVariable("version") int version) {
-        ArrayList<Summary> summaries = new ArrayList<>();
-        List<AnsweredSurvey> answeredSurveyList = answeredSurveyRepository.findAllByTokenAndVersion(token, version);
+    @RequestMapping(value = "/survey/{token}/questions", method = RequestMethod.GET)
+    public ResponseEntity<Summary> getQuestions(@PathVariable("token") String token) {
+        List<AnsweredSurvey> answeredSurveyList = answeredSurveyRepository.findAllByTokenAndVersion(token, 1);
         boolean first = true;
         Summary summary = new Summary();
         summary.questions = new ArrayList<>();
