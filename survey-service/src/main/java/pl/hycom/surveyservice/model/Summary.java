@@ -3,6 +3,8 @@ package pl.hycom.surveyservice.model;
 import java.util.ArrayList;
 
 public class Summary {
+    public String surveyName;
+    public String surveyDesc;
     public ArrayList<SummaryQuestion> questions;
     public Summary()
     {

@@ -66,7 +66,7 @@ class App extends Component {
           <Route exact path="/" render={()=>(<Redirect to='/manage' />)} />
           <Route path="/manage" render={(props) => <ManageSurvey {...props} isAuthed={this.state.authenticated}/>} />
           <Route path="/answer" component={AnswerSurvey} />
-          <Route path="/summary" render={(props) => <Answer {...props} isAuthed={this.state.authenticated}/>} />/>
+          <Route path="/summary/:token/:version" render={(props) => <Answer {...props} isAuthed={this.state.authenticated}/>} />/>
           <Route path="/login"  render={(props) => <Login {...props} isAuthed={this.state.authenticated} />} />
           <Route path="/logout"  render={(props) => <Logout {...props} isAuthed={this.state.authenticated} />} />
           <Route path="/register"  render={(props) => <Register {...props} isAuthed={this.state.authenticated} />} />

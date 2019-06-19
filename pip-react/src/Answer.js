@@ -4,20 +4,19 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'bootstrap-css-only/css/bootstrap.min.css';
 import 'mdbreact/dist/css/mdb.css';
 import './css/style.css';
-import MainView from "./SurveyList";
-import { MDBContainer, MDBBtn, MDBCollapse, MDBListGroup, MDBListGroupItem } from "mdbreact";
+import { MDBContainer, MDBBtn, MDBCollapse, MDBListGroup, MDBListGroupItem, MDBBadge } from "mdbreact";
 import { Bar } from "react-chartjs-2";
-import {Link} from "react-router-dom";
-import {app} from "./config";
+import { Redirect } from 'react-router-dom';
 
 class AnswerComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            token: undefined,
-            version: undefined,
+            name: undefined,
+            desc: undefined,
+            token: props.match.params.token,
+            version: props.match.params.version,
             isLoaded: false,
-            currentPage: 0,
             collapseID: "",
             questions: [
                 {
@@ -52,20 +51,14 @@ class AnswerComponent extends Component {
         }));
     };
 
-    loadAnswers(url)
+    loadAnswers()
     {
-        fetch("http://localhost:8080/survey-service/survey/52934054-9af0-4325-94c3-12d7171be712/1/questions")
-            .then(data => data.json())
-            .then(json =>
-            {
-                if(json !== null)
-                {
-                    this.setState({questions: json.questions});
-                    this.setState({isLoaded: true});
-                } else {
-                    this.setState({isLoaded: true});
-                }
-            });
+        fetch("http://localhost:8080/survey-service/survey/"+this.state.token+"/"+this.state.version+"/questions")
+            .then(data =>   data.json())
+            .then(json => {
+                this.setState({questions: json.questions, name: json.surveyName, desc: json.surveyDesc});
+                this.setState({isLoaded: true});
+            }).catch(err => this.setState({isLoaded: err}));
     }
 
     componentDidMount() {
@@ -78,7 +71,24 @@ class AnswerComponent extends Component {
             datasets: [
                 {
                     label: "Ilość odpowiedzi",
-                    data: []
+                    data: [],
+                    backgroundColor: [
+                        "rgba(255, 134,159,0.4)",
+                        "rgba(98,  182, 239,0.4)",
+                        "rgba(255, 218, 128,0.4)",
+                        "rgba(113, 205, 205,0.4)",
+                        "rgba(170, 128, 252,0.4)",
+                        "rgba(255, 177, 101,0.4)"
+                    ],
+                    borderWidth: 2,
+                    borderColor: [
+                        "rgba(255, 134, 159, 1)",
+                        "rgba(98,  182, 239, 1)",
+                        "rgba(255, 218, 128, 1)",
+                        "rgba(113, 205, 205, 1)",
+                        "rgba(170, 128, 252, 1)",
+                        "rgba(255, 177, 101, 1)"
+                    ]
                 }
             ]
         };
@@ -90,6 +100,10 @@ class AnswerComponent extends Component {
     }
 
     render() {
+        if(this.state.isLoaded !== true && this.state.isLoaded !== false)
+        {
+            return(<Redirect to='/error'/>)
+        }
         if(!this.state.isLoaded) {
             return (
                 <div style={{ textAlign: "center", position: "absolute", top: "25%", left: "50%"}}>
@@ -97,47 +111,47 @@ class AnswerComponent extends Component {
                 </div>
             );
         } else {
-            //<div className="spinner-border fast answerSpinner" role="status"/>
-            //console.log(this.state.questions);
             return (
             <div>
+                <MDBContainer className="block-example border pt-4">
+                    <div><div style={{ marginLeft: "15%" }}>Name: {this.state.name}</div></div>
+                    <div><div style={{ marginLeft: "15%" }}>Description: {this.state.desc}</div></div>
+                    <div><div style={{ display: "inline-block", marginLeft: "15%" }}>Token: {this.state.token}</div><div className="summaryInfo">Version: {this.state.version}</div></div>
+                </MDBContainer>
                 <MDBContainer className="block-example border pt-4">
                     {
                         this.state.questions.map((value, index) => {
                             return (
-                                <div>
-                                    <MainView />
-                                    <MDBContainer key={"container" + index.toString()} className="block-example border pt-4 container">
-                                        <MDBBtn
-                                            key={"Button" + index.toString()}
-                                            color="grey"
-                                            onClick={this.toggleCollapse("collapse" + index.toString())}
-                                            style={{ marginBottom: "1rem" }}
-                                        >{value.question}</MDBBtn>
-                                        <MDBCollapse id={"collapse" + index.toString()} key={"element" + index.toString()} isOpen={this.state.collapseID}>
-                                            {
-                                                (value.type === "text") ?
-                                                    <MDBListGroup key={"elementContainer" + index.toString()} className="container list-group">
-                                                    {
-                                                        value.answers.map((answer, i) => {
-                                                            return (
-                                                                <MDBListGroupItem key={"elementItem" + index.toString() + i.toString()}>
-                                                                    {answer.answer}
-                                                                </MDBListGroupItem>
-                                                            )
-                                                        })
-                                                    }
-                                                    </MDBListGroup> : null
-                                            }
-                                            {
-                                                (value.type === "selection") ?
-                                                    <MDBContainer key={"elementContainer" + index.toString()}>
-                                                        <Bar data={this.getData(value.answers)}/>
-                                                    </MDBContainer> : null
-                                            }
-                                        </MDBCollapse>
-                                    </MDBContainer>
-                                </div>
+                                <MDBContainer key={"container" + index.toString()} className="block-example border pt-4 container">
+                                    <MDBBtn
+                                        key={"Button" + index.toString()}
+                                        color="grey"
+                                        onClick={this.toggleCollapse("collapse" + index.toString())}
+                                        style={{ marginBottom: "2.75%" }}
+                                    >{value.question}</MDBBtn>
+                                    <MDBCollapse id={"collapse" + index.toString()} key={"element" + index.toString()} isOpen={this.state.collapseID}>
+                                        {
+                                            (value.type === "text") ?
+                                                <MDBListGroup key={"elementContainer" + index.toString()} className="container list-group">
+                                                {
+                                                    value.answers.map((answer, i) => {
+                                                        return (
+                                                            <MDBListGroupItem key={"elementItem" + index.toString() + i.toString()} className="d-flex justify-content-between align-items-center">
+                                                                {answer.answer}{(answer.value > 1) ? <MDBBadge color="primary" pill>{answer.value}</MDBBadge> : null}
+                                                            </MDBListGroupItem>
+                                                        )
+                                                    })
+                                                }
+                                                </MDBListGroup> : null
+                                        }
+                                        {
+                                            (value.type === "selection") ?
+                                                <MDBContainer key={"elementContainer" + index.toString()}>
+                                                    <Bar data={this.getData(value.answers)} options={barChartOptions}/>
+                                                </MDBContainer> : null
+                                        }
+                                    </MDBCollapse>
+                                </MDBContainer>
                             );
                         })
                     }
@@ -147,5 +161,32 @@ class AnswerComponent extends Component {
         }
     }
 }
+
+const barChartOptions =  {
+    responsive: true,
+    maintainAspectRatio: true,
+    scales: {
+        xAxes: [
+            {
+                barPercentage: 1,
+                gridLines: {
+                    display: true,
+                    color: "rgba(0, 0, 0, 0.1)"
+                }
+            }
+        ],
+        yAxes: [
+            {
+                gridLines: {
+                    display: true,
+                    color: "rgba(0, 0, 0, 0.1)"
+                },
+                ticks: {
+                    beginAtZero: true
+                }
+            }
+        ]
+    }
+};
 
 export default AnswerComponent;

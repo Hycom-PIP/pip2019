@@ -37,6 +37,14 @@ public class AnsweredSurveyViewController {
         boolean first = true;
         Summary summary = new Summary();
         for (AnsweredSurvey survey : answeredSurveyList) {
+            if(first)
+            {
+                Optional<Survey> sur = surveyRepository.findByToken(survey.token);
+                if(sur.isPresent()) {
+                    summary.surveyName = sur.get().getSurveyName();
+                    summary.surveyDesc = sur.get().getSurveyDescription();
+                }
+            }
             for (AnsweredPage page : survey.pages) {
                 for (AnsweredQuestion question : page.questionList) {
                     if (first) {

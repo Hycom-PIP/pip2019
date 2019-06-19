@@ -7,9 +7,14 @@
   cursor: pointer;
 }
 
-.loading {
-    display: inline;
-    margin-top: 50%;
+.summaryInfo {
+    display: inline-block;
+    margin-left: 30%;
+    margin-bottom: 2%;
+}
+
+.pill {
+    text-align: right;
 }
 
 .container {
