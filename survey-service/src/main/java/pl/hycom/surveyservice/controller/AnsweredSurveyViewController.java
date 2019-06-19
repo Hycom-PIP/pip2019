@@ -31,12 +31,11 @@ public class AnsweredSurveyViewController {
     @Autowired
     AnsweredSurveyRepository answeredSurveyRepository;
 
-    @RequestMapping(value = "/survey/{token}/questions", method = RequestMethod.GET)
-    public ResponseEntity<Summary> getQuestions(@PathVariable("token") String token) {
-        List<AnsweredSurvey> answeredSurveyList = answeredSurveyRepository.findAllByTokenAndVersion(token, 1);
+    @RequestMapping(value = "/survey/{token}/{version}/questions", method = RequestMethod.GET)
+    public ResponseEntity<Summary> getQuestions(@PathVariable("token") String token, @PathVariable("version") int version) {
+        List<AnsweredSurvey> answeredSurveyList = answeredSurveyRepository.findAllByTokenAndVersion(token, version);
         boolean first = true;
         Summary summary = new Summary();
-        summary.questions = new ArrayList<>();
         for (AnsweredSurvey survey : answeredSurveyList) {
             for (AnsweredPage page : survey.pages) {
                 for (AnsweredQuestion question : page.questionList) {
@@ -56,10 +55,12 @@ public class AnsweredSurveyViewController {
             first = false;
             for (AnsweredPage page : survey.pages) {
                 for (AnsweredQuestion question : page.questionList) {
-                    SummaryQuestion summaryQuestion = summary.findQuestion(question.questionId);
+                    SummaryQuestion element = summary.findQuestion(question.questionId);
                     for (String answer : question.answers) {
-                        summaryQuestion.addAnswer(answer);
-                    }
+                        int index = summary.questions.indexOf(element);
+                        element.addAnswer(answer);
+                        summary.questions.set(index, element);
+                }
 
                 }
             }

@@ -1,5 +1,6 @@
 package pl.hycom.surveyservice.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SummaryQuestion {
@@ -7,8 +8,13 @@ public class SummaryQuestion {
     public String question;
     public Type type;
     public List<SummaryAnswer> answers;
+    public SummaryQuestion()
+    {
+        answers = new ArrayList<>();
+    }
+
     public enum Type {
-        text, selection;
+        text, selection
     }
 
     public void addAnswer(String answer)
@@ -16,11 +22,14 @@ public class SummaryQuestion {
         int index = findAnswer(answer);
         if(index > -1)
         {
-            answers.get(index).value++;
+            SummaryAnswer summaryAnswer = answers.get(index);
+            summaryAnswer.value++;
+            answers.set(index, summaryAnswer);
         } else {
             SummaryAnswer summaryAnswer = new SummaryAnswer();
             summaryAnswer.answer = answer;
             summaryAnswer.value = 1;
+            answers.add(summaryAnswer);
         }
     }
 
