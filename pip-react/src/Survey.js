@@ -4,7 +4,6 @@ import Question from './Question.js';
 import Finish from './Finish';
 import Error from './Error';
 import Answer from './Answer';
-import SurveyList from './SurveyList';
 import { ToastContainer, toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 import { MDBBtn, MDBContainer, MDBPagination, MDBPageItem, MDBPageNav, MDBCol, MDBRow } from "mdbreact";
@@ -280,10 +279,10 @@ class RoutingAnswer extends Component {
         const path =this.props.match.path;
         return (<Router>
             <Switch>
+                <Route path={"/summary"} component={Answer} />
                 <Route exact path={path+"/survey/:id"} component={()=>(<SurveyComponentWithRouter redirectError={path+"/error"} redirectSucces={path+"/finish"} />)} />
                 <Route path={path+"/finish"} component={Finish} />
-                <Route path={path+"/error"} component={()=>(<Error redirectError={path+"/error"}/>)} />
-                <Redirect to={path+"/error"} />
+
             </Switch>
         </Router>);
     }

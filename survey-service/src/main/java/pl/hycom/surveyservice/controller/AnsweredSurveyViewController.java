@@ -43,9 +43,9 @@ public class AnsweredSurveyViewController {
                         SummaryQuestion summaryQuestion = new SummaryQuestion();
                         summaryQuestion.id = question.questionId;
                         summaryQuestion.question = question.questionText;
-                        if (question.questionType.equals("text")) {
+                        if (question.questionType.equals("shortText") || question.questionType.equals("longText")) {
                             summaryQuestion.type = SummaryQuestion.Type.text;
-                        } else if (question.questionType.equals("selection")) {
+                        } else if (question.questionType.equals("singleOption") || question.questionType.equals("multipleOptions")) {
                             summaryQuestion.type = SummaryQuestion.Type.selection;
                         }
                         summary.questions.add(summaryQuestion);
