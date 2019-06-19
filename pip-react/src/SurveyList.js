@@ -148,27 +148,13 @@ class SurveyList extends Component {
         document.body.removeChild(textArea);
     }
     share(direction) {
-        this.copyTextToClipboard("localhost:3000/ankieta/" + this.state.surveys.pages[direction.index].token);
+        this.copyTextToClipboard("localhost:3000/answer/survey/" + this.state.surveys.pages[direction.index].token);
     }
 
     edit(direction) {
-        var token = this.state.surveys.pages[direction.index].token;
-        var xhttp = new XMLHttpRequest();
-        xhttp.open("GET", "http://localhost:8080/survey-service/getSurvey/" + token, true)
-        xhttp.send();
-        xhttp.onreadystatechange = () => {
-            if (xhttp.readyState == 4) {
-                if (xhttp.status == 200) {
-                    this.setState({
-                        json: xhttp.responseText,
-                        activeState: "edit"
-                    });
-                }
-                else {
-                    console.log("Serwis zwrócił kod błędu http: " + xhttp.status);
-                }
-            }
-        }
+        const token = this.state.surveys.pages[direction.index].token;
+        this.props.history.push(this.props.redirectEdit + "/" + token);
+
 
     }
     trash(direction) {
@@ -187,7 +173,7 @@ class SurveyList extends Component {
                 this.getSurveysJson();
             } else {
                 console.error("Błąd");
-                this.showErrorPage(true);
+                this.props.history.push(this.props.redirectError);
             }
         }
         xhr.send(null);
@@ -207,14 +193,13 @@ class SurveyList extends Component {
                 }
                 else {
                     console.log("Serwis zwrócił kod błędu http: " + xhttp.status);
-                    this.showErrorPage(true);
+                    this.props.history.push(this.props.redirectError + "/" + xhttp.status);
 
                 }
             }
         }
     }
     render() {
-        //this.getSurveysJson(); //If front end will be too slow remove this line
         let data = [];
         let CurrentPage = this.state.currentPage;
         for (let survey of this.state.surveys.pages) {
@@ -230,7 +215,7 @@ class SurveyList extends Component {
         let pagesAmount = 1;
         if (typeof this.state.surveys.statistics !== "undefined") { pagesAmount = this.state.surveys.statistics.pagesAmount; }
         if (this.state.errorState) {
-            return <Redirect push to={"/error"} />;
+            return <Redirect push to={this.props.match.path + "/error"} />;
         }
         else
             return (
@@ -264,7 +249,7 @@ class SurveyList extends Component {
                 </MDBContainer>)
     }
 }
-
+const SurveyListWithRouter = withRouter(SurveyList);
 const CustomToolbar = (data) => (<div style={{
     display: 'flex',
     width: '1200px',
@@ -280,34 +265,62 @@ const pagitationButton = props => (
         {props.children}
     </MDBBtn>
 )
-const ErrorPage = (errorData) =>
-    (
+const ErrorPage = withRouter((props) => {
+    let isHandled = true;
+    let errorText;
+    const errorCode = props.match.params.id;
+
+    switch (errorCode) {
+        case "403":
+            errorText = "Brak uprawnien dostępu";
+            break;
+        case "404":
+            errorText = "Nie znaleziono danych, sprawdź url";
+            break;
+        case "500":
+            errorText = "Wewnętrzny błąd serwera";
+            break;
+        case "504":
+            errorText = "Przekroczono limit czasu połączenia";
+            break;
+        default:
+            isHandled = false;
+            errorText = "Coś poszło nie tak";
+            break;
+    }
+    return (
         <Container className="pt-5">
             <Row className="text-center">
                 <Col>
-                    <a class="display-1 d-block">Coś poszło nie tak</a>
-                    <Link to="/">  <div class="mb-4 lead">Spróbuj ponownie</div></Link>
+                    {isHandled ? (<h1 className="font-weight-bold  display-1 ">{errorCode}</h1>) : null}
+                    <h2 className=" h2-responsive font-weight-light ">{errorText}</h2>
+                    <Link to={props.redirectUrl}>  <div class="mb-4 lead">Spróbuj ponownie</div></Link>
                 </Col>
             </Row>
         </Container>
 
     )
+})
 
 class MainView extends Component {
     render() {
-        return (<MDBContainer className="verticallFill" >
+        const path = this.props.match.path;
+        return (<MDBContainer>
             <Router>
                 <MDBRow>
                     <CustomToolbar>
-                        <Link to="/">  <MDBBtn color="primary">Twoje Ankiety</MDBBtn> </Link>
-                        <Link to="/createsurvey"><MDBBtn color="primary"> Utwórz Ankietę</MDBBtn></Link>
+                        <Link to={path + "/list"}>  <MDBBtn color="primary">Twoje Ankiety</MDBBtn> </Link>
+                        <Link to={path + "/create"}><MDBBtn color="primary"> Utwórz Ankietę</MDBBtn></Link>
                     </CustomToolbar>
                 </MDBRow>
                 <Switch>
-                    <Route path="/list" component={SurveyList} />
-                    <Route path="/createsurvey" component={SurveyComponent} />
-                    <Route path="/error" component={ErrorPage} />
-                    <Route path="" component={ErrorPage} />
+                    <Route exact path={path + "/"} render={() => (<Redirect to={path + "/list"} />)} />
+                    <Route path={path + "/list"} component={() => (<SurveyListWithRouter redirectEdit={path + "/modify"} redirectError={path + "/error"} />)} />
+                    <Route path={path + "/create"} component={() => (<SurveyComponent redirectSucces={path + "/"} />)} />
+                    <Route path={path + "/modify/:id"} component={() => (<SurveyComponent redirectSucces={path + "/"} redirectFailure={path + "/error"} />)} />
+
+                    <Route path={path + "/error/:id"} render={() => (ErrorPage({ redirectUrl: path + "/list" }))} />
+                    <Redirect to={path + "/error"} />
                 </Switch>
             </Router>
         </MDBContainer>)
