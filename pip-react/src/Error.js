@@ -3,10 +3,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { withRouter, Link } from "react-router-dom";
 
 class Error extends Component {
-    constructor(props) {
-        super(props);
-
-    }
     render() {
         return (
             <div className="card card-cascade wider reverse">

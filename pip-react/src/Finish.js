@@ -1,12 +1,7 @@
 import React, { Component } from 'react';
 import "react-toastify/dist/ReactToastify.css";
-import { BrowserRouter as Router, Route, Link, Redirect, Switch ,withRouter} from "react-router-dom";
 
 class Finish extends Component {
-    constructor(props) {
-        super(props);
-
-    }
     render() {
         return (
             <div className="card card-cascade wider reverse justify-content-center">

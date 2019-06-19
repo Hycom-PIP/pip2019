@@ -7,8 +7,8 @@ import Answer from './Answer';
 import SurveyList from './SurveyList';
 import { ToastContainer, toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
-import { MDBBtn, MDBContainer, MDBInput, MDBPagination, MDBPageItem, MDBPageNav, MDBCol, MDBRow } from "mdbreact";
-import { BrowserRouter as Router, Route, Link, withRouter, Switch, Redirect } from "react-router-dom"
+import { MDBBtn, MDBContainer, MDBPagination, MDBPageItem, MDBPageNav, MDBCol, MDBRow } from "mdbreact";
+import { BrowserRouter as Router, Route, withRouter, Switch, Redirect } from "react-router-dom"
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'bootstrap-css-only/css/bootstrap.min.css';
 import 'mdbreact/dist/css/mdb.css';
@@ -125,7 +125,7 @@ class SurveyComponent extends Component {
     //
     generateJson() {
         var xhttp = new XMLHttpRequest();
-        xhttp.open("POST", "http://localhost:8080/survey-service/ankieta", true)
+        xhttp.open("POST", "http://localhost:8080/survey-service/ankieta", true);
         xhttp.onreadystatechange = () => {
             if (xhttp.readyState === 4) {
                 if (xhttp.status === 200) {
@@ -160,9 +160,11 @@ class SurveyComponent extends Component {
                         page.questionList.push(
                             {
                                 questionId: questionIndex, //TODO: ustawic QuestionID - zrobione
+                                questionText: elem2.questionText,
+                                questionType: elem2.questionType,
                                 answers: []
                             }
-                        )
+                        );
                         questionIndex++;
                     });
                     this.state.answers.pages.push(page)
