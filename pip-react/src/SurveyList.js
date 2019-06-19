@@ -13,6 +13,7 @@ import {BrowserRouter as Router, Route, Link, Redirect, Switch, withRouter} from
 import Share from 'react-icons/lib/io/android-share';
 import Trash from 'react-icons/lib/io/trash-a';
 import Edit from 'react-icons/lib/io/edit';
+import Info from 'react-icons/lib/io/informatcircled';
 import ReactTable from 'react-table';
 
 import 'react-table/react-table.css';
@@ -45,6 +46,7 @@ class SurveyList extends Component {
         this.trash = this.trash.bind(this);
         this.copyTextToClipboard = this.copyTextToClipboard.bind(this);
         this.deleteSurvey = this.deleteSurvey.bind(this);
+        this.infoSurvey = this.infoSurvey.bind(this);
         this.columns = [
             {
                 Header: 'Nazwa',
@@ -57,7 +59,7 @@ class SurveyList extends Component {
                 Header: 'Utworzono',
                 accessor: 'creationDate',
                 sortable: false,
-                width: 193,
+                width: 155,
             },
             {
                 Header: 'Wersja',
@@ -120,6 +122,20 @@ class SurveyList extends Component {
                         </MDBBtn>
                     </div>
                 )
+            },
+            {
+                Header: 'Info',
+                sortable: false,
+                width: 80,
+                resizable: false,
+                Cell: row => (
+                    <div>
+                        <MDBBtn onClick={() => this.infoSurvey(row)} color="primary" size="sm"
+                                style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                            <Info fontSize="20px" color="white"/>
+                        </MDBBtn>
+                    </div>
+                )
             }
         ]
     }
@@ -170,6 +186,12 @@ class SurveyList extends Component {
 
     }
 
+    infoSurvey(direction) {
+        var token = this.state.surveys.pages[direction.index].token;
+        var version = this.state.surveys.pages[direction.index].version;
+        window.location.href = "http://localhost:3000/summary/" + token + "/" + version + "/questions";
+    }
+
     deleteSurvey(token) {
         var url = "http://localhost:8080/survey-service/" + token;
         var xhr = new XMLHttpRequest();
@@ -213,7 +235,15 @@ class SurveyList extends Component {
             data.push({
                 name: survey.name,
                 version: survey.version,
-                creationDate: dateTime.toDateString() + " " + dateTime.toTimeString(),
+                creationDate: new Intl.DateTimeFormat('pl-PL', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit",
+
+                }).format(dateTime),
                 numberOfCompletedSyrveys: survey.numberOfCompletedSurveys,
                 token: survey.token
             })
@@ -245,6 +275,12 @@ class SurveyList extends Component {
                             // console.log(pageIndex);
                             this.state.currentPage = pageIndex;
                             this.getSurveysJson()
+                        }}
+                        onRowClick={(state, rowInfo, column, instance) => {
+                            console.log(state);
+                            console.log(rowInfo);
+                            console.log(column);
+                            console.log(instance);
                         }}
                         nextText="Następna strona"
                         previousText="Poprzednia strona"

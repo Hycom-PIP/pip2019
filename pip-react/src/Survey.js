@@ -282,7 +282,8 @@ class RoutingAnswer extends Component {
                 <Route path={"/summary"} component={Answer} />
                 <Route exact path={path+"/survey/:id"} component={()=>(<SurveyComponentWithRouter redirectError={path+"/error"} redirectSucces={path+"/finish"} />)} />
                 <Route path={path+"/finish"} component={Finish} />
-
+                <Route path={path+"/error"} component={()=>(<Error redirectError={path+"/error"}/>)} />
+                <Redirect to={path+"/error"} />
             </Switch>
         </Router>);
     }
