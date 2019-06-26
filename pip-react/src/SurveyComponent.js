@@ -20,9 +20,9 @@ class SurveyComponent extends Component {
             isLoading: true,
             currentPage: 1,
             survey: {
-                token: "",
-                surveyName: "",
-                surveyDescription: "",
+                token: null,
+                surveyName: null,
+                surveyDescription: null,
                 pageList: [
                     {
                         pageDescription: "",
@@ -313,11 +313,6 @@ class SurveyComponent extends Component {
 
         })
     }
-
-    componentDidMount() {
-        fetch("http://localhost:8083/")
-    }
-
     render() {
         if (this.state.isLoading) {
             return (<div className="text-center SpinMe">
