@@ -107,16 +107,16 @@ class AnswerComponent extends Component {
         if(!this.state.isLoaded) {
             return (
                 <div style={{ textAlign: "center", position: "absolute", top: "25%", left: "50%"}}>
-                    <h3> Loading </h3>
+                    <h3> Ładowanie </h3>
                 </div>
             );
         } else {
             return (
             <div>
                 <MDBContainer className="block-example border pt-4">
-                    <div><div style={{ marginLeft: "15%" }}>Name: {this.state.name}</div></div>
-                    <div><div style={{ marginLeft: "15%" }}>Description: {this.state.desc}</div></div>
-                    <div><div style={{ display: "inline-block", marginLeft: "15%" }}>Token: {this.state.token}</div><div className="summaryInfo">Version: {this.state.version}</div></div>
+                    <div><div style={{ marginLeft: "15%" }}>Nazwa: {this.state.name}</div></div>
+                    <div><div style={{ marginLeft: "15%" }}>Opis: {this.state.desc}</div></div>
+                    <div><div style={{ display: "inline-block", marginLeft: "15%" }}>Token: {this.state.token}</div><div className="summaryInfo">Wersja: {this.state.version}</div></div>
                 </MDBContainer>
                 <MDBContainer className="block-example border pt-4">
                     {

@@ -57,7 +57,7 @@ class App extends Component {
     if(this.state.loading === true)
       return (
           <div style={{ textAlign: "center", position: "absolute", top: "25%", left: "50%"}}>
-            <h3> Loading </h3>
+            <h3> Ładowanie </h3>
           </div>
       );
     return (
