@@ -44,6 +44,8 @@ align-items: center;
   animation-timing-function: linear; 
 }
 
+.noscroll { overflow: hidden; }
+
 @keyframes spin {
     from {
         transform:rotate(0deg);

@@ -52,7 +52,7 @@ class SurveyList extends Component {
                 Header: 'Nazwa',
                 accessor: 'name',
                 sortable: false,
-                width: 220,
+                width: 260,
                 height: 400,
             },
             {
@@ -66,13 +66,6 @@ class SurveyList extends Component {
                 accessor: 'version',
                 sortable: false,
                 width: 70,
-                Cell: row => <div style={{textAlign: "center"}}>{row.value}</div>
-            },
-            {
-                Header: 'Wypełnienia',
-                accessor: 'numberOfCompletedSyrveys',
-                sortable: false,
-                width: 100,
                 Cell: row => <div style={{textAlign: "center"}}>{row.value}</div>
             },
             {
@@ -244,7 +237,6 @@ class SurveyList extends Component {
                     second: "2-digit",
 
                 }).format(dateTime),
-                numberOfCompletedSyrveys: survey.numberOfCompletedSurveys,
                 token: survey.token
             })
         }

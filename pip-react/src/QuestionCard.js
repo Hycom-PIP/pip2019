@@ -3,7 +3,7 @@ import { MDBIcon, MDBBtn, MDBInput, MDBCard, MDBRow, MDBContainer, MDBCol, MDBLi
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Form from 'react-bootstrap/Form';
-import { Draggable } from 'react-beautiful-dnd';
+import { Droppable, Draggable, DragDropContext } from 'react-beautiful-dnd';
 
 class MultipleAnswer extends Component {
   constructor(props) {
@@ -14,15 +14,15 @@ class MultipleAnswer extends Component {
     this.DeleteMultiQuestion = this.DeleteMultiQuestion.bind(this);
   }
   DeleteMultiQuestion(e) {
-    this.props.multiDltfunc(this.props.index, e);
+    this.props.multiDltfunc(this.props.index, e)
     this.forceUpdate();
   }
   AddNewQuestion() {
-    let old = this.props.answers;
-    if (old === undefined) {
+    let old = this.props.answers
+    if (old == undefined) {
       old = []
     }
-    old.push({ answer: "" });
+    old.push({ answer: "" })
     this.props.func(old, this.props.index, "multiQuestions")
     this.forceUpdate();
   }
@@ -142,9 +142,9 @@ class QuestionCard extends Component {
             {...provided.draggableProps}>
             <MDBContainer className="block-example border pt-4 pb-2 mt-2 ml-0 mr-0">
               <div className="row">
-                <div className="col-2 align-self-center">
+                <div className="col-2 align-self-center ">
                   <MDBCard className="text-center " >
-                    <MDBListGroup className="h-100 PointerMouse">
+                    <MDBListGroup className="h-100 PointerMouse noscroll">
                       <MDBListGroupItem onClick={this.MoveUp}>
                         <MDBIcon icon="angle-up " />
                       </MDBListGroupItem>
@@ -184,16 +184,7 @@ class QuestionCard extends Component {
               }
               <MDBRow end className="mb-2">
                 <MDBCol size="auto">
-                  <Form>
-                    <Form.Check
-                      onChange={this.isRequieredChange}
-                      checked={this.props.data.isRequiered}
-                      custom
-                      type='checkbox'
-                      id={`CheckBox-${this.props.index}`}
-                      label={`Wymagane`}
-                    />
-                  </Form>
+                
                   </MDBCol>
               </MDBRow>
             </MDBContainer>
