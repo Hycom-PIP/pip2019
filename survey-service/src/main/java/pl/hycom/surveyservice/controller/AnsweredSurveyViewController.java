@@ -37,10 +37,9 @@ public class AnsweredSurveyViewController {
         boolean first = true;
         Summary summary = new Summary();
         for (AnsweredSurvey survey : answeredSurveyList) {
-            if(first)
-            {
+            if (first) {
                 Optional<Survey> sur = surveyRepository.findByToken(survey.token);
-                if(sur.isPresent()) {
+                if (sur.isPresent()) {
                     summary.surveyName = sur.get().getSurveyName();
                     summary.surveyDesc = sur.get().getSurveyDescription();
                 }
@@ -50,6 +49,7 @@ public class AnsweredSurveyViewController {
                     if (first) {
                         SummaryQuestion summaryQuestion = new SummaryQuestion();
                         summaryQuestion.id = question.questionId;
+                        summaryQuestion.page = page.pageId;
                         summaryQuestion.question = question.questionText;
                         if (question.questionType.equals("shortText") || question.questionType.equals("longText")) {
                             summaryQuestion.type = SummaryQuestion.Type.text;
@@ -62,14 +62,14 @@ public class AnsweredSurveyViewController {
             }
             first = false;
             for (AnsweredPage page : survey.pages) {
+                int temppp = 13;
                 for (AnsweredQuestion question : page.questionList) {
-                    SummaryQuestion element = summary.findQuestion(question.questionId);
+                    SummaryQuestion element = summary.findQuestion(question.questionId, page.pageId);
                     for (String answer : question.answers) {
                         int index = summary.questions.indexOf(element);
                         element.addAnswer(answer);
                         summary.questions.set(index, element);
-                }
-
+                    }
                 }
             }
         }
@@ -124,7 +124,7 @@ public class AnsweredSurveyViewController {
                 survey.getPageList()[page].getQuestionList()[questionNumber].getQuestionType().equals("singleOption")) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        if(stringsPage < 0) {
+        if (stringsPage < 0) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 

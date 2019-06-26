@@ -5,6 +5,7 @@ import java.util.List;
 
 public class SummaryQuestion {
     public int id;
+    public int page;
     public String question;
     public Type type;
     public List<SummaryAnswer> answers;

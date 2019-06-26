@@ -11,11 +11,11 @@ public class Summary {
         questions = new ArrayList<>();
     }
 
-    public SummaryQuestion findQuestion(int id)
+    public SummaryQuestion findQuestion(int id, int page)
     {
         for(SummaryQuestion question : questions)
         {
-            if(question.id == id)
+            if(question.id == id && question.page == page)
                 return question;
         }
         return null;
