@@ -73,10 +73,7 @@ public class AnsweredSurveyViewController {
                 }
             }
         }
-        if (summary.anyAnswered())
             return new ResponseEntity<>(summary, HttpStatus.OK);
-        else
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
     @RequestMapping(value = "/survey/{token}/{version}/question/multipleChoice/{page}/{questionNumber}", method = RequestMethod.GET)
