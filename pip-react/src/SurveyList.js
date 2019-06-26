@@ -197,7 +197,7 @@ class SurveyList extends Component {
         var xhr = new XMLHttpRequest();
         xhr.open("DELETE", url, true);
         xhr.onload = () => {
-            if (xhr.readyState === 4 && xhr.status === "200") {
+            if (xhr.readyState == 4 && xhr.status == "200") {
                 // console.log("Usunięto: " + token);
                 this.getSurveysJson();
             } else {
