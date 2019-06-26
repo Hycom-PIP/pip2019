@@ -38,7 +38,7 @@ public class AnsweredSurveyViewController {
         Summary summary = new Summary();
         for (AnsweredSurvey survey : answeredSurveyList) {
             if (first) {
-                Optional<Survey> sur = surveyRepository.findByToken(survey.token);
+                Optional<Survey> sur = surveyRepository.findByTokenAndVersion(survey.token, survey.version);
                 if (sur.isPresent()) {
                     summary.surveyName = sur.get().getSurveyName();
                     summary.surveyDesc = sur.get().getSurveyDescription();
